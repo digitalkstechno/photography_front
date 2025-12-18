@@ -1,3 +1,5 @@
+import { Injectable } from '@angular/core';
+
 // core/auth/auth.service.ts
 @Injectable({ providedIn: 'root' })
 export class AuthService {
