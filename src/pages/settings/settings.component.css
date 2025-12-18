@@ -1,0 +1,17 @@
+button {
+  margin-right: 6px;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:first-child {
+  background: #2563eb;
+  color: white;
+}
+
+button:last-child {
+  background: #dc2626;
+  color: white;
+}

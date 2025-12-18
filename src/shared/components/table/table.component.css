@@ -1,0 +1,97 @@
+/* Wrapper */
+.table-wrapper {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+}
+
+/* Search input */
+.table-wrapper input[type="text"] {
+  width: 240px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  outline: none;
+}
+
+.table-wrapper input[type="text"]:focus {
+  border-color: #4f46e5;
+}
+
+/* Table */
+table {
+  width: 100%;  
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+/* Header */
+thead {
+  background: #f9fafb;
+}
+
+th {
+  padding: 12px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  position: sticky;
+  top: 0;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+th:hover {
+  background: #eef2ff;
+}
+
+/* Body */
+td {
+  padding: 12px;
+  font-size: 14px;
+  color: #111827;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* Row hover */
+tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.pagination button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.pagination button:hover {
+  background: #f3f4f6;
+}
+
+.pagination span {
+  font-size: 13px;
+  color: #374151;
+}
+
+/* Empty state (future-proof) */
+tbody tr.empty td {
+  text-align: center;
+  padding: 24px;
+  color: #9ca3af;
+}

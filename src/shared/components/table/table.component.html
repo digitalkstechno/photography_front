@@ -1,0 +1,28 @@
+<div class="table-wrapper">
+
+  <input type="text" placeholder="Search..." (input)="onSearch($event)" />
+
+  <table>
+    <thead>
+      <tr>
+        <th *ngFor="let col of columns" (click)="sort(col.key)">
+          {{ col.label }}
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let row of data">
+        <td *ngFor="let col of columns">
+          {{ row[col.key] }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    <button (click)="prev()">Prev</button>
+    <span>{{ page }}</span>
+    <button (click)="next()">Next</button>
+  </div>
+</div>
