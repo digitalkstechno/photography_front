@@ -33,7 +33,7 @@ export class TableComponent implements OnInit {
       sortBy: this.sortBy,
       sortOrder: this.sortOrder,
     }).then((res) => {
-      this.data = res.data;
+      this.data = res;
       this.total = res.total;
     });
   }
