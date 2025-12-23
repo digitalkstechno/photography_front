@@ -16,11 +16,8 @@ export class UsersComponent implements OnInit {
 
   // Table column config (example)
   columns = [
-    { key: 'name', label: 'Name' },
-    { key: 'phone', label: 'Phone' },
     { key: 'email', label: 'Email' },
     { key: 'role', label: 'Role' },
-    { key: 'createdAt', label: 'Created At' }
   ];
 
   constructor(private userService: UserService) { }
@@ -28,7 +25,7 @@ export class UsersComponent implements OnInit {
   ngOnInit(): void {
     this.loadUsers();
   }
-  
+
   fetchUsers = (params: any) => {
     return this.userService.getUsers(params).toPromise();
   };
