@@ -1,14 +1,2 @@
-<div class="card">
-  <h4>Total Users</h4>
-  <p>120</p>
-</div>
-
-<div class="card">
-  <h4>Active Sessions</h4>
-  <p>45</p>
-</div>
-
-<div class="card">
-  <h4>Revenue</h4>
-  <p>₹ 32,000</p>
-</div>
+<app-table [columns]="appointmentColumns" [fetchFn]="fetchByStatus('scheduled')">
+</app-table>
