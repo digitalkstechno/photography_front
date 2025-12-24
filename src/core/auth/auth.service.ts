@@ -1,17 +1,57 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { tap } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
-// core/auth/auth.service.ts
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  login(token: string) {
-    localStorage.setItem('token', token);
+
+  private readonly API_URL = environment.apiUrl; // change this
+  private readonly TOKEN_KEY = 'token';
+
+  constructor(private http: HttpClient) {}
+
+  /**
+   * Call backend login API and store token
+   */
+  login(credentials: { email: any; password: any }) {
+    return this.http
+      .post<{ token: string }>(
+        `${this.API_URL}/user/login`,
+        credentials
+      )
+      .pipe(
+        tap(res => {
+          this.setToken(res.token);
+        })
+      );
   }
 
+  /**
+   * Store token
+   */
+  private setToken(token: string) {
+    localStorage.setItem(this.TOKEN_KEY, token);
+  }
+
+  /**
+   * Remove token
+   */
   logout() {
-    localStorage.removeItem('token');
+    localStorage.removeItem(this.TOKEN_KEY);
   }
 
+  /**
+   * Check login state
+   */
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('token');
+    return !!localStorage.getItem(this.TOKEN_KEY);
+  }
+
+  /**
+   * Used by HTTP interceptor
+   */
+  getToken(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
   }
 }

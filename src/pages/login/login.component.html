@@ -1,19 +1,36 @@
-<div class="login-container">
+<form
+  [formGroup]="form"
+  (ngSubmit)="onLogin()"
+  class="login-container"
+  novalidate
+>
   <h2>Login</h2>
 
   <div class="input-group">
-    <label>Username</label>
-    <input type="text" />
+    <label>Email</label>
+    <input
+      type="email"
+      formControlName="email"
+      placeholder="you@example.com"
+    />
   </div>
 
   <div class="input-group">
     <label>Password</label>
-    <input type="password" />
+    <input
+      type="password"
+      formControlName="password"
+      placeholder="••••••••"
+    />
   </div>
 
-  <button type="button" (click)="onLogin()">Login</button>
+  <button type="submit" [disabled]="loading || form.invalid">
+    {{ loading ? 'Logging in...' : 'Login' }}
+  </button>
 
-  <p class="forgot-password">
+  <div class="forgot-password">
     <a href="#">Forgot Password?</a>
-  </p>
-</div>
+  </div>
+
+  <p class="error" *ngIf="error">{{ error }}</p>
+</form>
