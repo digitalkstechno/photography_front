@@ -15,14 +15,13 @@ export class DashboardComponent {
 
   // Common columns for all appointment tables
   appointmentColumns = [
-    { key: 'patient.name', label: 'Patient' },
-    { key: 'doctor.name', label: 'Doctor' },
-    { key: 'appointmentDate', label: 'Date' },
-    { key: 'timeSlot.startTime', label: 'From' },
-    { key: 'timeSlot.endTime', label: 'To' },
-    { key: 'status', label: 'Status' },
-  ];
-
+  { key: 'patient.name', label: 'Patient' },
+  { key: 'doctorId', label: 'Doctor' },
+  { key: 'appointmentDate', label: 'Date' },
+  { key: 'timeSlot.startTime', label: 'From' },
+  { key: 'timeSlot.endTime', label: 'To' },
+  { key: 'status', label: 'Status' },
+]
   // Generic fetch function (status-based)
   fetchByStatus = (status: string) => {
     return (params: any) => {

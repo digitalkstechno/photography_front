@@ -33,10 +33,23 @@ export class TableComponent implements OnInit {
       sortBy: this.sortBy,
       sortOrder: this.sortOrder,
     }).then((res) => {
-      this.data = res;
-      this.total = res.total;
+
+      // ✅ SUPPORT ARRAY OR { data, total }
+      if (Array.isArray(res)) {
+        this.data = res;
+        this.total = res.length;
+      } else {
+        this.data = res.data ?? [];
+        this.total = res.total ?? this.data.length;
+      }
     });
   }
+
+  // ✅ NESTED KEY RESOLVER (THIS FIXES YOUR ISSUE)
+  getValue(row: any, key: string): any {
+    return key.split('.').reduce((obj, k) => obj?.[k], row) ?? '';
+  }
+
   onSearch(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.search = value;
