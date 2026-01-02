@@ -1,0 +1,116 @@
+/* ===============================
+   FORM LAYOUT
+   =============================== */
+
+form {
+  max-width: 900px;
+}
+
+/* ===============================
+   FIELD WRAPPER
+   =============================== */
+
+.form-field {
+  margin-bottom: 1.25rem;       /* vertical breathing */
+  padding-right: 0.75rem;       /* horizontal gap */
+  box-sizing: border-box;
+}
+
+.form-field label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ===============================
+   GRID SYSTEM
+   =============================== */
+
+.col-3 {
+  width: 33.333%;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.col-6 {
+  width: 50%;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.col-12 {
+  width: 100%;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .col-3,
+  .col-6 {
+    width: 100%;
+  }
+}
+
+/* ===============================
+   INPUTS
+   =============================== */
+
+.input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  border-color: #2563eb;
+  outline: none;
+}
+
+/* ===============================
+   TEXTAREA
+   =============================== */
+
+.textarea {
+  width: 100%;
+  min-height: 90px;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  resize: vertical;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+/* ===============================
+   BUTTON
+   =============================== */
+
+button[type="submit"] {
+  margin-top: 16px;
+  padding: 10px 22px;
+  border-radius: 6px;
+  border: none;
+  background-color: #2563eb;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button[type="submit"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===============================
+   MESSAGE
+   =============================== */
+
+.form-message {
+  margin-top: 12px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+  

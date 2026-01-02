@@ -1,0 +1,9 @@
+<div class="page-header">
+  <h2>Doctors</h2>
+  <button (click)="addDoctor()">+ Add Doctor</button>
+</div>
+
+<app-table
+  [columns]="columns"
+  [fetchFn]="fetchDoctors">
+</app-table>

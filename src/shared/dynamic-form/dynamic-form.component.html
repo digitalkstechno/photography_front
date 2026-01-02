@@ -1,0 +1,40 @@
+<form (ngSubmit)="submit()" #f="ngForm">
+
+  <div
+    *ngFor="let field of fields"
+    class="form-field"
+    [ngClass]="field.wrapperClass || ''">
+
+    <label [ngClass]="field.labelClass || ''">
+      {{ field.label }}
+    </label>
+
+    <!-- INPUT -->
+    <input
+      *ngIf="field.type !== 'textarea' && field.type !== 'select' && field.type !== 'checkbox'"
+      [type]="field.type"
+      [name]="field.key"
+      [(ngModel)]="model[field.key]"
+      [required]="!!field.required"
+      [disabled]="!!field.disabled"
+      [placeholder]="field.placeholder || ''"
+      [ngClass]="field.class || ''" />
+
+    <!-- TEXTAREA -->
+    <textarea
+      *ngIf="field.type === 'textarea'"
+      [name]="field.key"
+      [(ngModel)]="model[field.key]"
+      [required]="!!field.required"
+      [placeholder]="field.placeholder || ''"
+      [ngClass]="field.class || ''">
+    </textarea>
+
+  </div>
+
+  <button type="submit" [disabled]="loading || !f.valid">
+    {{ loading ? 'Saving...' : submitLabel }}
+  </button>
+
+  <p class="form-message">{{ message }}</p>
+</form>
