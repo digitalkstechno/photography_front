@@ -71,4 +71,21 @@ export class PatientNoticeService {
       { headers: this.getHeaders() }
     );
   }
+
+
+
+  /* =====================
+     READ (ALL - Admin / Doctor)
+     ===================== */
+  getAllNotices({
+  }): Observable<any[]> {
+
+    return this.http.get<any[]>(
+      this.baseUrl+'/patient',
+      {
+        headers: this.getHeaders()
+      }
+    );
+  }
+
 }

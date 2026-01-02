@@ -10,6 +10,7 @@ import { AuthGuard } from '../core/auth/auth.guard.ts.service';
 import { DoctorListComponent } from '../pages/doctor-list/doctor-list.component';
 import { AddDoctorComponent } from '../pages/add-doctor/add-doctor.component';
 import { CreatePatientNoticeComponent } from '../pages/notice/notice.component';
+import { NoticeListComponent } from '../pages/notice-list/notice-list.component';
 export const routes: Routes = [
   // 🔓 Public
   { path: 'login', component: LoginComponent },
@@ -24,6 +25,7 @@ export const routes: Routes = [
       { path: 'users', component: UsersComponent },
       { path: 'reports', component: ReportsComponent },
       { path: 'settings', component: SettingsComponent },
+      { path: 'notices', component: NoticeListComponent },
       { path: 'notices/add', component: CreatePatientNoticeComponent },
       { path: 'admin/doctors', component: DoctorListComponent },
       { path: "admin/doctors/add", component: AddDoctorComponent },
