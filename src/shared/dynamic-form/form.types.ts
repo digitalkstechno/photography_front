@@ -7,8 +7,14 @@ export interface FormField {
   disabled?: boolean;
   placeholder?: string;
 
-  /** 🔥 NEW: CSS control */
-  class?: string;                 // input / textarea class
-  wrapperClass?: string;          // outer div class
-  labelClass?: string;            // label class
+  /** 🔥 NEW (BACKWARD COMPATIBLE) */
+  options?: {
+    label: string;
+    value: string;
+  }[];
+
+  /** 🎨 CSS control */
+  class?: string;
+  wrapperClass?: string;
+  labelClass?: string;
 }

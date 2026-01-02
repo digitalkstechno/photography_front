@@ -1,59 +1,8 @@
-<form (ngSubmit)="submit(f)" #f="ngForm" style="max-width:600px">
+<h2>Add Blog</h2>
 
-  <h2>Add Blog</h2>
-
-  <input
-    name="title"
-    [(ngModel)]="blog.title"
-    placeholder="Title"
-    required />
-
-  <input
-    name="slug"
-    [(ngModel)]="blog.slug"
-    placeholder="Slug"
-    required />
-
-  <select name="category" [(ngModel)]="blog.category">
-    <option value="general">General</option>
-    <option value="digestive">Digestive</option>
-    <option value="mental">Mental</option>
-    <option value="heart">Heart</option>
-  </select>
-
-  <input
-    name="badge"
-    [(ngModel)]="blog.badge"
-    placeholder="Badge" />
-
-  <textarea
-    name="summary"
-    [(ngModel)]="blog.summary"
-    placeholder="Summary"></textarea>
-
-  <input
-    name="coverImage"
-    [(ngModel)]="blog.coverImage"
-    placeholder="Cover Image URL"
-    required />
-
-  <input
-    type="number"
-    name="readTimeMin"
-    [(ngModel)]="blog.readTimeMin"
-    min="1" />
-
-  <label>
-    <input
-      type="checkbox"
-      name="isPublished"
-      [(ngModel)]="blog.isPublished" />
-    Publish
-  </label>
-
-  <button type="submit" [disabled]="loading || !f.valid">
-    {{ loading ? 'Saving...' : 'Add Blog' }}
-  </button>
-
-  <p>{{ message }}</p>
-</form>
+<app-dynamic-form
+  [fields]="fields"
+  [model]="model"
+  [submitFn]="submitBlog"
+  [submitLabel]="submitLabel">
+</app-dynamic-form>

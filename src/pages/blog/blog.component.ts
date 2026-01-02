@@ -1,67 +1,87 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { NgForm } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { firstValueFrom } from 'rxjs';
+import { HealthAdviceService } from '../../core/blog.service';
+import { DynamicFormComponent } from '../../shared/dynamic-form/dynamic-form.component';
+import { FormField } from '../../shared/dynamic-form/form.types';
 
 @Component({
   selector: 'app-add-blog',
-  imports: [
-    BrowserModule,
-    FormsModule        // ✅ REQUIRED
-  ],
-  templateUrl: './blog.component.html'
+  standalone: true,
+  templateUrl: 'blog.component.html',
+  imports: [DynamicFormComponent]
 })
 export class AddBlogComponent {
-  loading = false;
-  message = '';
 
-  blog = {
+  submitLabel = 'Add Blog';
+
+  model: any = {
     title: '',
     slug: '',
     category: 'general',
     badge: '',
     summary: '',
     coverImage: '',
-    readTimeMin: 5,
+    readTimeMin: 1,
     isPublished: false
   };
 
-  constructor(private http: HttpClient) { }
+  fields: FormField[] = [
+    {
+      key: 'title',
+      label: 'Title',
+      type: 'text',
+      required: true
+    },
+    {
+      key: 'slug',
+      label: 'Slug',
+      type: 'text',
+      required: true
+    },
+    {
+      key: 'category',
+      label: 'Category',
+      type: 'select',
+      options: [
+        { label: 'General', value: 'general' },
+        { label: 'Digestive', value: 'digestive' },
+        { label: 'Mental', value: 'mental' },
+        { label: 'Heart', value: 'heart' }
+      ]
+    },
+    {
+      key: 'badge',
+      label: 'Badge',
+      type: 'text'
+    },
+    {
+      key: 'summary',
+      label: 'Summary',
+      type: 'textarea'
+    },
+    {
+      key: 'coverImage',
+      label: 'Cover Image URL',
+      type: 'text',
+      required: true
+    },
+    {
+      key: 'readTimeMin',
+      label: 'Read Time (min)',
+      type: 'number'
+    },
+    {
+      key: 'isPublished',
+      label: 'Publish',
+      type: 'checkbox'
+    }
+  ];
 
-  submit(form: NgForm) {
-    if (form.invalid) return;
+  constructor(private blogService: HealthAdviceService) {}
 
-    this.loading = true;
-    this.message = '';
-
-    const token = localStorage.getItem('token');
-
-    const payload = {
-      ...this.blog,
-      publishedAt: this.blog.isPublished
-        ? new Date().toISOString()
-        : null
-    };
-
-    this.http.post('/api/health-advice', payload, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }).subscribe({
-      next: () => {
-        this.message = '✅ Blog added';
-        this.loading = false;
-        form.resetForm({
-          category: 'general',
-          readTimeMin: 5,
-          isPublished: false
-        });
-      },
-      error: (err) => {
-        this.message = err.error?.message || '❌ Failed to add blog';
-        this.loading = false;
-      }
-    });
-  }
+  submitBlog = async (data: any) => {
+    return await firstValueFrom(
+      this.blogService.createHealthAdvice(data)
+    );
+  };
 }

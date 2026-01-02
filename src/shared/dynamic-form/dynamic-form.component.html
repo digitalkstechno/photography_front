@@ -11,7 +11,9 @@
 
     <!-- INPUT -->
     <input
-      *ngIf="field.type !== 'textarea' && field.type !== 'select' && field.type !== 'checkbox'"
+      *ngIf="field.type !== 'textarea'
+          && field.type !== 'select'
+          && field.type !== 'checkbox'"
       [type]="field.type"
       [name]="field.key"
       [(ngModel)]="model[field.key]"
@@ -29,6 +31,28 @@
       [placeholder]="field.placeholder || ''"
       [ngClass]="field.class || ''">
     </textarea>
+
+    <!-- ✅ SELECT (THIS WAS MISSING) -->
+    <select
+      *ngIf="field.type === 'select'"
+      [name]="field.key"
+      [(ngModel)]="model[field.key]"
+      [required]="!!field.required"
+      [ngClass]="field.class || ''">
+
+      <option *ngFor="let opt of field.options"
+              [value]="opt.value">
+        {{ opt.label }}
+      </option>
+
+    </select>
+
+    <!-- ✅ CHECKBOX (THIS WAS MISSING) -->
+    <input
+      *ngIf="field.type === 'checkbox'"
+      type="checkbox"
+      [name]="field.key"
+      [(ngModel)]="model[field.key]" />
 
   </div>
 
