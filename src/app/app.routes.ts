@@ -18,8 +18,7 @@ import { NoticeListComponent } from '../pages/notice-list/notice-list.component'
 
 // 📚 Blogs
 import { BlogListComponent } from '../pages/blog-list/blog-list.component';
-// import { AddBlogComponent } from '../pages/add-blog/add-blog.component';
-
+import { AddBlogComponent } from '../pages/blog/blog.component';
 export const routes: Routes = [
   // 🔓 Public
   { path: 'login', component: LoginComponent },
@@ -41,7 +40,8 @@ export const routes: Routes = [
 
       // 📚 Blogs
       { path: 'blogs', component: BlogListComponent },
-      
+      { path: 'blogs/add', component: AddBlogComponent},
+
       // 👨‍⚕️ Doctors (Admin)
       { path: 'admin/doctors', component: DoctorListComponent },
       { path: 'admin/doctors/add', component: AddDoctorComponent },

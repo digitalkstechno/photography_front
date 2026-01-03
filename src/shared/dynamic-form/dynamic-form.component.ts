@@ -8,7 +8,7 @@ import { FormField } from './form.types';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './dynamic-form.component.html',
-    styleUrls: ['./dynamic-form.component.css'] // ✅ THIS
+  styleUrls: ['./dynamic-form.component.css'] // ✅ THIS
 })
 export class DynamicFormComponent {
 

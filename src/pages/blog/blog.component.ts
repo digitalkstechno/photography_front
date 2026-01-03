@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { HealthAdviceService } from '../../core/blog.service';
 import { DynamicFormComponent } from '../../shared/dynamic-form/dynamic-form.component';
 import { FormField } from '../../shared/dynamic-form/form.types';
-
+import { HealthAdviceService } from '../../core/blog/blog.service';
 @Component({
   selector: 'app-add-blog',
   standalone: true,
@@ -30,18 +29,24 @@ export class AddBlogComponent {
       key: 'title',
       label: 'Title',
       type: 'text',
-      required: true
+      required: true,
+      class: 'input',
+      wrapperClass: 'col-6'
     },
     {
       key: 'slug',
       label: 'Slug',
       type: 'text',
-      required: true
+      required: true,
+      class: 'input',
+      wrapperClass: 'col-6'
     },
     {
       key: 'category',
       label: 'Category',
       type: 'select',
+      class: 'input',
+      wrapperClass: 'col-6',
       options: [
         { label: 'General', value: 'general' },
         { label: 'Digestive', value: 'digestive' },
@@ -52,28 +57,38 @@ export class AddBlogComponent {
     {
       key: 'badge',
       label: 'Badge',
-      type: 'text'
+      type: 'text',
+      class: 'input',
+      wrapperClass: 'col-6'
     },
     {
       key: 'summary',
       label: 'Summary',
-      type: 'textarea'
+      type: 'textarea',
+      class: 'textarea',
+      wrapperClass: 'col-12'
     },
     {
       key: 'coverImage',
       label: 'Cover Image URL',
       type: 'text',
-      required: true
+      required: true,
+      class: 'input',
+      wrapperClass: 'col-6'
     },
     {
       key: 'readTimeMin',
       label: 'Read Time (min)',
-      type: 'number'
+      type: 'number',
+      class: 'input',
+      wrapperClass: 'col-3'
     },
     {
       key: 'isPublished',
       label: 'Publish',
-      type: 'checkbox'
+      type: 'checkbox',
+      class: 'checkbox',
+      wrapperClass: 'col-3'
     }
   ];
 
