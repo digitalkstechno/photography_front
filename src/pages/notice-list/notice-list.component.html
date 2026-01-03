@@ -2,5 +2,7 @@
 
 <app-table
   [columns]="columns"
-  [fetchFn]="fetchNotices">
+  [fetchFn]="fetchNotices"
+  addRoute="/notices/add"
+  [updateRoute]="getUpdateRoute">
 </app-table>

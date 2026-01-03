@@ -1,6 +1,18 @@
 <div class="table-wrapper">
 
-  <input type="text" placeholder="Search..." (input)="onSearch($event)" />
+  <!-- Top actions -->
+  <div class="table-actions">
+    <input
+      type="text"
+      placeholder="Search..."
+      (input)="onSearch($event)"
+    />
+
+    <!-- ✅ ADD BUTTON (optional) -->
+    <button *ngIf="addRoute" (click)="goToAdd()">
+      Add New
+    </button>
+  </div>
 
   <table>
     <thead>
@@ -8,6 +20,9 @@
         <th *ngFor="let col of columns" (click)="sort(col.key)">
           {{ col.label }}
         </th>
+
+        <!-- ✅ ACTION COLUMN -->
+        <th *ngIf="updateRoute">Actions</th>
       </tr>
     </thead>
 
@@ -15,6 +30,13 @@
       <tr *ngFor="let row of data">
         <td *ngFor="let col of columns">
           {{ getValue(row, col.key) }}
+        </td>
+
+        <!-- ✅ UPDATE BUTTON -->
+        <td *ngIf="updateRoute">
+          <button (click)="goToUpdate(row)">
+            Update
+          </button>
         </td>
       </tr>
     </tbody>
@@ -25,4 +47,5 @@
     <span>{{ page }}</span>
     <button (click)="next()">Next</button>
   </div>
+
 </div>

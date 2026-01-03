@@ -2,5 +2,7 @@
 
 <app-table
   [columns]="columns"
-  [fetchFn]="fetchBlogs">
+  [fetchFn]="fetchBlogs"
+  addRoute="/blogs/add"
+  [updateRoute]="getUpdateRoute">
 </app-table>

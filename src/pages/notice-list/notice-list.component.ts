@@ -12,7 +12,7 @@ import { firstValueFrom } from 'rxjs';
 })
 export class NoticeListComponent {
 
-  constructor(private noticeService: PatientNoticeService) {}
+  constructor(private noticeService: PatientNoticeService) { }
 
   columns = [
     { key: 'title', label: 'Title' },
@@ -26,4 +26,9 @@ export class NoticeListComponent {
       this.noticeService.getAllNotices(params)
     );
   };
+
+  getUpdateRoute(row: any): string {
+    return `/notices/edit/${row._id}`;
+  }
+
 }

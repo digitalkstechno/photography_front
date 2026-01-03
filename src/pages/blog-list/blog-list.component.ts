@@ -39,4 +39,12 @@ export class BlogListComponent {
       isPublished: !!blog.publishedAt
     }));
   };
+
+  getUpdateRoute(row: any): string {
+    return `/blogs/edit/${row._id}`;
+  }
+
+
+
 }
+

@@ -23,7 +23,7 @@
 
 /* Table */
 table {
-  width: 100%;  
+  width: 100%;
   border-collapse: collapse;
   min-width: 600px;
 }
@@ -94,4 +94,81 @@ tbody tr.empty td {
   text-align: center;
   padding: 24px;
   color: #9ca3af;
+}
+
+
+/* ---------- Top actions layout ---------- */
+.table-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+/* Ensure search stays aligned */
+.table-actions input[type="text"] {
+  margin-bottom: 0;
+}
+
+/* ---------- Buttons (shared base) ---------- */
+.table-wrapper button {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease, opacity 0.15s;
+}
+
+/* ---------- Add New button ---------- */
+.table-actions button {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.table-actions button:hover {
+  background: #1d4ed8;
+}
+
+.table-actions button:active {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+/* ---------- Update button (row action) ---------- */
+tbody td button {
+  background: #10b981;
+  color: #ffffff;
+}
+
+tbody td button:hover {
+  background: #059669;
+}
+
+/* ---------- Disabled state ---------- */
+.table-wrapper button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #9ca3af;
+}
+
+/* ---------- Action column width ---------- */
+th:last-child,
+td:last-child {
+  width: 120px;
+  text-align: center;
+}
+
+/* ---------- Pagination buttons alignment ---------- */
+.pagination button {
+  min-width: 70px;
+}
+
+/* ---------- Focus accessibility ---------- */
+.table-wrapper button:focus-visible,
+.table-wrapper input:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
 }

@@ -1,16 +1,19 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
+
 import { AdminDoctorService } from '../../core/doctormangment/doctor-managment.service';
 import { TableComponent } from "../../shared/components/table/table.component";
 
 @Component({
   selector: 'app-doctor-list',
-  templateUrl: './doctor-list.component.html',
+  standalone: true,
   imports: [TableComponent],
+  templateUrl: './doctor-list.component.html',
 })
 export class DoctorListComponent {
 
-  // ✅ columns (nested keys supported by your table)
+  // ✅ Table columns (nested keys supported)
   columns = [
     { key: 'name', label: 'Name' },
     { key: 'email', label: 'Email' },
@@ -21,32 +24,28 @@ export class DoctorListComponent {
   constructor(
     private adminDoctorService: AdminDoctorService,
     private router: Router
-  ) {}
+  ) { }
 
   /**
-   * ✅ REQUIRED BY <app-table>
-   * Must return Promise
-   * Must accept params (even if unused)
+   * ✅ Required by <app-table>
+   * - Must return Promise
+   * - Accepts params for future pagination/search
    */
   fetchDoctors = async (_params: any): Promise<any[]> => {
     try {
-      // Angular HttpClient → Observable → Promise
-      const doctors = await this.adminDoctorService
-        .listDoctors()
-        .toPromise();
-
-      return doctors ?? [];
+      return await firstValueFrom(
+        this.adminDoctorService.listDoctors()
+      );
     } catch (err) {
       console.error('Failed to fetch doctors', err);
       return [];
     }
   };
 
-  addDoctor() {
-    this.router.navigate(['/admin/doctors/add']);
-  }
-
-  editDoctor(row: any) {
-    this.router.navigate(['/admin/doctors/edit', row._id]);
+  /**
+   * ✅ Used by TableComponent (NO arrow functions in template)
+   */
+  getUpdateRoute(row: any): string {
+    return `/admin/doctors/edit/${row._id}`;
   }
 }
