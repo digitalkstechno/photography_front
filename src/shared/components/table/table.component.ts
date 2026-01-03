@@ -28,7 +28,7 @@ export class TableComponent implements OnInit {
 
   private requestId = 0; // 🔒 race-condition guard
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   ngOnInit() {
     if (!this.fetchFn) {

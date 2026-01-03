@@ -37,10 +37,11 @@ export const routes: Routes = [
       // 📢 Notices
       { path: 'notices', component: NoticeListComponent },
       { path: 'notices/add', component: CreatePatientNoticeComponent },
+      { path: 'notices/edit/:id', component: CreatePatientNoticeComponent },
 
       // 📚 Blogs
       { path: 'blogs', component: BlogListComponent },
-      { path: 'blogs/add', component: AddBlogComponent},
+      { path: 'blogs/add', component: AddBlogComponent },
 
       // 👨‍⚕️ Doctors (Admin)
       { path: 'admin/doctors', component: DoctorListComponent },
