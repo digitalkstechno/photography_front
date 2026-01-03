@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
+
 export interface DoctorProfile {
   specialization?: string;
   clinicAddress?: string;
@@ -16,14 +17,13 @@ export interface Doctor {
   profile?: DoctorProfile;
 }
 
-
 @Injectable({
   providedIn: 'root'
 })
 export class AdminDoctorService {
-  private baseUrl = environment.apiUrl + '/admin/doctor/';
+  private baseUrl = environment.apiUrl + '/admin/doctor';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   /**
    * Attach JWT token
@@ -36,42 +36,40 @@ export class AdminDoctorService {
   }
 
   /* =======================
-     CREATE
+     CREATE (🔥 FIXED)
      ======================= */
 
   /**
    * POST /admin/doctor
    * Create doctor (User + DoctorProfile)
+   * 🔑 RETURNS PROMISE so await WORKS
    */
-  createDoctor(data: {
-    name: string;
-    email: string;
-    password: string;
-    age: number;
-    specialization?: string;
-    clinicAddress?: string;
-  }): Observable<{ userId: string; profile: DoctorProfile }> {
+  createDoctor(data: any): Promise<{ userId: string; profile: DoctorProfile }> {
 
     const payload = {
       name: data.name,
       email: data.email,
       password: data.password,
       age: data.age,
+
       profile: {
         specialization: data.specialization,
         clinicAddress: data.clinicAddress
       }
     };
 
-    return this.http.post<{ userId: string; profile: DoctorProfile }>(
-      this.baseUrl,
-      payload,
-      { headers: this.getHeaders() }
+    // ✅ firstValueFrom auto-subscribes → POST WILL FIRE
+    return firstValueFrom(
+      this.http.post<{ userId: string; profile: DoctorProfile }>(
+        this.baseUrl,
+        payload,
+        { headers: this.getHeaders() }
+      )
     );
   }
 
   /* =======================
-     READ
+     READ (UNCHANGED)
      ======================= */
 
   /**
@@ -97,7 +95,7 @@ export class AdminDoctorService {
   }
 
   /* =======================
-     UPDATE
+     UPDATE (UNCHANGED)
      ======================= */
 
   /**

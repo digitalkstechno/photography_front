@@ -22,8 +22,16 @@ export class AddDoctorComponent {
     email: '',
     password: '',
     age: null,
+
+    // profile basics
     specialization: '',
-    clinicAddress: ''
+    qualification: '',
+    experienceYears: null,
+    consultationFee: null,
+
+    // contact & address (simple)
+    phone: '',
+    city: ''
   };
 
   fields: FormField[] = [
@@ -51,12 +59,52 @@ export class AddDoctorComponent {
       class: 'input',
       wrapperClass: 'col-3'
     },
+
+    // 🔹 PROFILE (20% important)
     {
-      key: 'clinicAddress',
-      label: 'Clinic Address',
-      type: 'textarea',
-      class: 'textarea',
-      wrapperClass: 'col-12'
+      key: 'specialization',
+      label: 'Specialization',
+      type: 'text',
+      required: true,
+      class: 'input',
+      wrapperClass: 'col-4'
+    },
+    {
+      key: 'qualification',
+      label: 'Qualification',
+      type: 'text',
+      class: 'input',
+      wrapperClass: 'col-4'
+    },
+    {
+      key: 'experienceYears',
+      label: 'Experience (Years)',
+      type: 'number',
+      class: 'input',
+      wrapperClass: 'col-2'
+    },
+    {
+      key: 'consultationFee',
+      label: 'Consultation Fee (₹)',
+      type: 'number',
+      class: 'input',
+      wrapperClass: 'col-2'
+    },
+
+    // 🔹 CONTACT / ADDRESS (minimal)
+    {
+      key: 'phone',
+      label: 'Contact Number',
+      type: 'text',
+      class: 'input',
+      wrapperClass: 'col-4'
+    },
+    {
+      key: 'city',
+      label: 'City',
+      type: 'text',
+      class: 'input',
+      wrapperClass: 'col-4'
     }
   ];
 
@@ -66,9 +114,26 @@ export class AddDoctorComponent {
   ) { }
 
   // 🔑 passed into dynamic form
-  submitDoctor = async (data: any) => {
-    await this.service.createDoctor(data)
-    this.router.navigate(['/admin/doctors']);
+submitDoctor = async (data: any) => {
+  const payload = {
+    name: data.name,
+    email: data.email,
+    password: data.password,
+    profile: {
+      specialization: data.specialization,
+      qualification: data.qualification,
+      experienceYears: data.experienceYears,
+      consultationFee: data.consultationFee,
+      contact: { phone: data.phone },
+      address: { city: data.city }
+    }
   };
+
+  console.log('PAYLOAD SENT 👉', payload); // 🔴 MUST ADD
+
+  await this.service.createDoctor(payload);
+  this.router.navigate(['/admin/doctors']);
+};
+
+
 }
-  
