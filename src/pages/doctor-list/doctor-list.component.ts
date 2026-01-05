@@ -15,10 +15,18 @@ export class DoctorListComponent {
 
   // ✅ Table columns (nested keys supported)
   columns = [
-    { key: 'name', label: 'Name' },
+    // Basic
+    { key: 'profile.name', label: 'Doctor Name' },
     { key: 'email', label: 'Email' },
+    { key: 'status', label: 'Status' },
+
+    // Professional Info
     { key: 'profile.specialization', label: 'Specialization' },
-    { key: 'profile.clinicAddress', label: 'Clinic Address' }
+    { key: 'profile.qualification', label: 'Qualification' },
+    { key: 'profile.experienceYears', label: 'Experience (Years)' },
+    // Fees & Department
+    { key: 'profile.consultationFee', label: 'Consultation Fee (₹)' },
+    // Metadata
   ];
 
   constructor(

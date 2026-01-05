@@ -17,8 +17,6 @@ export class NoticeListComponent {
   columns = [
     { key: 'title', label: 'Title' },
     { key: 'message', label: 'Message' },
-    { key: 'priority', label: 'Priority' },
-    { key: 'createdAt', label: 'Created On' },
   ];
 
   fetchNotices = async (params: any) => {

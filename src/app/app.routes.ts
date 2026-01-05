@@ -11,7 +11,7 @@ import { AuthGuard } from '../core/auth/auth.guard.ts.service';
 // Doctors
 import { DoctorListComponent } from '../pages/doctor-list/doctor-list.component';
 import { AddDoctorComponent } from '../pages/add-doctor/add-doctor.component';
-
+import { UpdateDoctorComponent } from '../pages/update-doctor/update-doctor.component';
 // Notices
 import { CreatePatientNoticeComponent } from '../pages/notice/notice.component';
 import { NoticeListComponent } from '../pages/notice-list/notice-list.component';
@@ -46,7 +46,7 @@ export const routes: Routes = [
       // 👨‍⚕️ Doctors (Admin)
       { path: 'admin/doctors', component: DoctorListComponent },
       { path: 'admin/doctors/add', component: AddDoctorComponent },
-      { path: 'admin/doctors/edit/:id', component: AddDoctorComponent },
+      { path: 'admin/doctors/edit/:id', component: UpdateDoctorComponent },
 
       // default
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
