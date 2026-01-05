@@ -46,6 +46,7 @@ export const routes: Routes = [
       // 👨‍⚕️ Doctors (Admin)
       { path: 'admin/doctors', component: DoctorListComponent },
       { path: 'admin/doctors/add', component: AddDoctorComponent },
+      { path: 'admin/doctors/edit/:id', component: AddDoctorComponent },
 
       // default
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }

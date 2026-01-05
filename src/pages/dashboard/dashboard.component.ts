@@ -16,7 +16,7 @@ import { TableComponent } from '../../shared/components/table/table.component';
 })
 export class DashboardComponent {
 
-  constructor(private appointmentService: AppointmentsService) {}
+  constructor(private appointmentService: AppointmentsService) { }
 
   // ✅ Columns using populated doctor → profile
   appointmentColumns = [
