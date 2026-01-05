@@ -5,7 +5,25 @@ import { environment } from '../../../environments/environment';
 
 export interface DoctorProfile {
   specialization?: string;
-  clinicAddress?: string;
+  qualification?: string;
+  experienceYears?: number | null;
+  consultationFee?: number | null;
+
+  contact?: {
+    phone?: string;
+  };
+
+  address?: {
+    city?: string;
+  };
+
+  availability?: Array<{
+    day: string;
+    from: string;
+    to: string;
+  }>;
+
+  isActive?: boolean;
 }
 
 export interface Doctor {
@@ -23,7 +41,7 @@ export interface Doctor {
 export class AdminDoctorService {
   private baseUrl = environment.apiUrl + '/admin/doctor';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   /**
    * Attach JWT token

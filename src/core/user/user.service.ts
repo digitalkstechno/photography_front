@@ -13,6 +13,9 @@ interface PaginationParams {
   providedIn: 'root'
 })
 export class UserService {
+  updateUser(doctorId: string, userPayload: any): Observable<unknown> {
+    throw new Error('Method not implemented.');
+  }
 
   constructor(private api: ApiService) {}
 

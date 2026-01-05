@@ -42,6 +42,7 @@ export const routes: Routes = [
       // 📚 Blogs
       { path: 'blogs', component: BlogListComponent },
       { path: 'blogs/add', component: AddBlogComponent },
+      { path: 'blogs/edit/:id', component: AddBlogComponent },
 
       // 👨‍⚕️ Doctors (Admin)
       { path: 'admin/doctors', component: DoctorListComponent },
