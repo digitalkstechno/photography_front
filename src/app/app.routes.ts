@@ -19,6 +19,7 @@ import { NoticeListComponent } from '../pages/notice-list/notice-list.component'
 // 📚 Blogs
 import { BlogListComponent } from '../pages/blog-list/blog-list.component';
 import { AddBlogComponent } from '../pages/blog/blog.component';
+import { AddUserComponent } from '../pages/add-user/add-user.component';
 export const routes: Routes = [
   // 🔓 Public
   { path: 'login', component: LoginComponent },
@@ -31,6 +32,8 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'users', component: UsersComponent },
+      { path: 'user/add', component: AddUserComponent },
+
       { path: 'reports', component: ReportsComponent },
       { path: 'settings', component: SettingsComponent },
 

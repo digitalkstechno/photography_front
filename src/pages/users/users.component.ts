@@ -57,4 +57,9 @@ export class UsersComponent implements OnInit {
       this.loadUsers();
     });
   }
+
+  getUpdateRoute(row: any): string {
+    return `/admin/users/edit/${row._id}`;
+  }
+
 }
