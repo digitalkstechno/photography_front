@@ -3,8 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
 
-import { AdminDoctorService } from '../../core/doctormangment/doctor-managment.service';
 import { UserService } from '../../core/user/user.service';
+import { AdminDoctorService } from '../../core/doctormangment/doctor-managment.service';
 import { FormField } from '../../shared/dynamic-form/form.types';
 import { DynamicFormComponent } from '../../shared/dynamic-form/dynamic-form.component';
 
@@ -16,7 +16,7 @@ import { DynamicFormComponent } from '../../shared/dynamic-form/dynamic-form.com
 })
 export class UpdateDoctorComponent implements OnInit {
 
-  doctorId!: string;
+  doctorId!: string; // 👈 this IS userId
   submitLabel = 'Update Doctor';
 
   model: any = {
@@ -26,44 +26,83 @@ export class UpdateDoctorComponent implements OnInit {
       specialization: '',
       qualification: '',
       experienceYears: null,
-      consultationFee: null,
-      contact: { phone: '' },
-      address: { city: '' }
+      consultationFee: null
     }
   };
+
   loaded = false;
 
   fields: FormField[] = [
-    // 🔹 USER (global)
-    { key: 'name', label: 'Full Name', type: 'text', required: true, class: 'input', wrapperClass: 'col-6' },
-    { key: 'email', label: 'Email', type: 'email', required: true, class: 'input', wrapperClass: 'col-6' },
+    // USER (OLD – unchanged)
+    {
+      key: 'name',
+      label: 'Full Name',
+      type: 'text',
+      required: true,
+      class: 'input',
+      wrapperClass: 'col-6'
+    },
+    {
+      key: 'email',
+      label: 'Email',
+      type: 'email',
+      required: true,
+      class: 'input',
+      wrapperClass: 'col-6'
+    },
 
-    // 🔹 DOCTOR PROFILE
-    { key: 'profile.specialization', label: 'Specialization', type: 'text', class: 'input', wrapperClass: 'col-4' },
-    { key: 'profile.qualification', label: 'Qualification', type: 'text', class: 'input', wrapperClass: 'col-4' },
-    { key: 'profile.experienceYears', label: 'Experience (Years)', type: 'number', class: 'input', wrapperClass: 'col-2' },
-    { key: 'profile.consultationFee', label: 'Consultation Fee (₹)', type: 'number', class: 'input', wrapperClass: 'col-2' },
-
-    { key: 'profile.contact.phone', label: 'Contact Number', type: 'text', class: 'input', wrapperClass: 'col-4' },
-    { key: 'profile.address.city', label: 'City', type: 'text', class: 'input', wrapperClass: 'col-4' }
+    // DOCTOR PROFILE (NEW – optional)
+    {
+      key: 'profile.specialization',
+      label: 'Specialization',
+      type: 'text',
+      class: 'input',
+      wrapperClass: 'col-6'
+    },
+    {
+      key: 'profile.qualification',
+      label: 'Qualification',
+      type: 'text',
+      class: 'input',
+      wrapperClass: 'col-6'
+    },
+    {
+      key: 'profile.experienceYears',
+      label: 'Experience (Years)',
+      type: 'number',
+      class: 'input',
+      wrapperClass: 'col-4'
+    },
+    {
+      key: 'profile.consultationFee',
+      label: 'Consultation Fee',
+      type: 'number',
+      class: 'input',
+      wrapperClass: 'col-4'
+    }
   ];
 
   constructor(
     private userService: UserService,
-    private doctorService: AdminDoctorService,
+    private adminDoctorService: AdminDoctorService,
     private route: ActivatedRoute,
     private router: Router
-  ) { }
+  ) {}
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) return;
+
     this.doctorId = id;
     this.loadDoctor();
   }
 
+  /**
+   * Load doctor by USER ID
+   * (User + DoctorProfile)
+   */
   loadDoctor() {
-    this.doctorService.getDoctorById(this.doctorId).subscribe(res => {
+    this.adminDoctorService.getDoctorById(this.doctorId).subscribe(res => {
       this.model = {
         name: res.name || '',
         email: res.email || '',
@@ -71,44 +110,38 @@ export class UpdateDoctorComponent implements OnInit {
           specialization: res.profile?.specialization || '',
           qualification: res.profile?.qualification || '',
           experienceYears: res.profile?.experienceYears ?? null,
-          consultationFee: res.profile?.consultationFee ?? null,
-          contact: { phone: res.profile?.contact?.phone || '' },
-          address: { city: res.profile?.address?.city || '' }
+          consultationFee: res.profile?.consultationFee ?? null
         }
       };
       this.loaded = true;
     });
   }
 
+  /**
+   * Update:
+   * 1️⃣ User (name, email)  ← OLD behavior preserved
+   * 2️⃣ DoctorProfile using USER ID
+   */
   submitDoctor = async (data: any) => {
-    console.log('SUBMIT DATA 👉', data);
 
-    // =========================
-    // 1️⃣ UPDATE USER
-    // =========================
-    const userPayload: any = {};
-    if (data.name !== undefined) userPayload.name = data.name;
-    if (data.email !== undefined) userPayload.email = data.email;
+    // 1️⃣ UPDATE USER (OLD – unchanged)
+    await firstValueFrom(
+      this.userService.updateUser(this.doctorId, {
+        name: data.name,
+        email: data.email
+      })
+    );
 
-    if (Object.keys(userPayload).length) {
-      await firstValueFrom(
-        this.userService.updateUser(this.doctorId, userPayload)
-      );
-    }
-
-    // =========================
-    // 2️⃣ UPDATE DOCTOR PROFILE
-    // =========================
+    // 2️⃣ UPDATE DOCTOR PROFILE (NEW)
     if (data.profile && Object.keys(data.profile).length) {
       await firstValueFrom(
-        this.doctorService.updateDoctorProfile(
-          this.doctorId,
+        this.adminDoctorService.updateDoctorProfile(
+          this.doctorId,   // 👈 USER ID
           data.profile
         )
       );
     }
 
-    console.log('UPDATE API DONE ✅');
     this.router.navigate(['/admin/doctors']);
   };
 }

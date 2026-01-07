@@ -13,11 +13,11 @@ interface PaginationParams {
   providedIn: 'root'
 })
 export class UserService {
-  updateUser(doctorId: string, userPayload: any): Observable<unknown> {
-    throw new Error('Method not implemented.');
+  updateUser(userId: string, payload: any): Observable<any> {
+    return this.api.patch(`/user/${userId}`, payload);
   }
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService) { }
 
   register(payload: any): Observable<any> {
     return this.api.post('/user/register', payload);

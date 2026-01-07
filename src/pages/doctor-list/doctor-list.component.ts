@@ -16,7 +16,7 @@ export class DoctorListComponent {
   // ✅ Table columns (nested keys supported)
   columns = [
     // Basic
-    { key: 'profile.name', label: 'Doctor Name' },
+    { key: 'name', label: 'Doctor Name' },
     { key: 'email', label: 'Email' },
     { key: 'status', label: 'Status' },
 

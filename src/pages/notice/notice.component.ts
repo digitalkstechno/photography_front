@@ -92,6 +92,6 @@ export class CreatePatientNoticeComponent implements OnInit {
     }
 
     // navigate back
-    this.router.navigate(['/admin/patients', data.patientId, 'notices']);
+    this.router.navigate(['/notices']);
   };
 }

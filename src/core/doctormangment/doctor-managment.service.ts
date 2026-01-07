@@ -39,9 +39,10 @@ export interface Doctor {
   providedIn: 'root'
 })
 export class AdminDoctorService {
+
   private baseUrl = environment.apiUrl + '/admin/doctor';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   /**
    * Attach JWT token
@@ -54,13 +55,12 @@ export class AdminDoctorService {
   }
 
   /* =======================
-     CREATE (🔥 FIXED)
+     CREATE
      ======================= */
 
   /**
    * POST /admin/doctor
    * Create doctor (User + DoctorProfile)
-   * 🔑 RETURNS PROMISE so await WORKS
    */
   createDoctor(data: any): Promise<{ userId: string; profile: DoctorProfile }> {
 
@@ -69,14 +69,12 @@ export class AdminDoctorService {
       email: data.email,
       password: data.password,
       age: data.age,
-
       profile: {
         specialization: data.specialization,
         clinicAddress: data.clinicAddress
       }
     };
 
-    // ✅ firstValueFrom auto-subscribes → POST WILL FIRE
     return firstValueFrom(
       this.http.post<{ userId: string; profile: DoctorProfile }>(
         this.baseUrl,
@@ -87,12 +85,12 @@ export class AdminDoctorService {
   }
 
   /* =======================
-     READ (UNCHANGED)
+     READ
      ======================= */
 
   /**
    * GET /admin/doctor
-   * LIST doctors (Admin table)
+   * List doctors
    */
   listDoctors(): Observable<Doctor[]> {
     return this.http.get<Doctor[]>(
@@ -103,7 +101,7 @@ export class AdminDoctorService {
 
   /**
    * GET /admin/doctor/:userId
-   * Get SINGLE doctor
+   * Get single doctor (User + Profile)
    */
   getDoctorById(userId: string): Observable<Doctor> {
     return this.http.get<Doctor>(
@@ -113,7 +111,26 @@ export class AdminDoctorService {
   }
 
   /* =======================
-     UPDATE (UNCHANGED)
+     UPDATE USER  ✅ ADDED
+     ======================= */
+
+  /**
+   * PATCH /user/:userId
+   * Update doctor USER (name, email only)
+   */
+  updateDoctorUser(
+    userId: string,
+    payload: { name?: string; email?: string }
+  ): Observable<any> {
+    return this.http.patch(
+      `${environment.apiUrl}/user/${userId}`,
+      payload,
+      { headers: this.getHeaders() }
+    );
+  }
+
+  /* =======================
+     UPDATE PROFILE
      ======================= */
 
   /**
