@@ -52,6 +52,14 @@ export class AddDoctorComponent {
       wrapperClass: 'col-6'
     },
     {
+      key: 'phoneNumber',
+      label: 'Phone Number',
+      type: 'text',
+      required: true,
+      class: 'input',
+      wrapperClass: 'col-6'
+    },
+    {
       key: 'password',
       label: 'Password',
       type: 'password',
@@ -114,26 +122,27 @@ export class AddDoctorComponent {
   ) { }
 
   // 🔑 passed into dynamic form
-submitDoctor = async (data: any) => {
-  const payload = {
-    name: data.name,
-    email: data.email,
-    password: data.password,
-    profile: {
-      specialization: data.specialization,
-      qualification: data.qualification,
-      experienceYears: data.experienceYears,
-      consultationFee: data.consultationFee,
-      contact: { phone: data.phone },
-      address: { city: data.city }
-    }
+  submitDoctor = async (data: any) => {
+    const payload = {
+      name: data.name,
+      email: data.email,
+      password: data.password,
+      phoneNumber:data.phoneNumber,
+      profile: {
+        specialization: data.specialization,
+        qualification: data.qualification,
+        experienceYears: data.experienceYears,
+        consultationFee: data.consultationFee,
+        contact: { phone: data.phone },
+        address: { city: data.city }
+      }
+    };
+
+    console.log('PAYLOAD SENT 👉', payload);
+
+    await this.service.createDoctor(payload);
+    this.router.navigate(['/admin/doctors']);
   };
-
-  console.log('PAYLOAD SENT 👉', payload); // 🔴 MUST ADD
-
-  await this.service.createDoctor(payload);
-  this.router.navigate(['/admin/doctors']);
-};
 
 
 }

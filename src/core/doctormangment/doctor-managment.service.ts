@@ -11,6 +11,7 @@ export interface DoctorProfile {
 
   contact?: {
     phone?: string;
+    email?: string;
   };
 
   address?: {
@@ -30,7 +31,6 @@ export interface Doctor {
   _id: string;
   name: string;
   email: string;
-  age?: number;
   role: 'DOCTOR';
   profile?: DoctorProfile;
 }
@@ -50,7 +50,8 @@ export class AdminDoctorService {
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
     return new HttpHeaders({
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
     });
   }
 
@@ -61,19 +62,22 @@ export class AdminDoctorService {
   /**
    * POST /admin/doctor
    * Create doctor (User + DoctorProfile)
+   *
+   * ⚠️ IMPORTANT:
+   * Payload MUST be sent AS-IS.
+   * Do NOT reshape here.
    */
-  createDoctor(data: any): Promise<{ userId: string; profile: DoctorProfile }> {
+  createDoctor(
+    payload: {
+      name: string;
+      email: string;
+      password: string;
+      phoneNumber: string;
+      profile: DoctorProfile;
+    }
+  ): Promise<{ userId: string; profile: DoctorProfile }> {
 
-    const payload = {
-      name: data.name,
-      email: data.email,
-      password: data.password,
-      age: data.age,
-      profile: {
-        specialization: data.specialization,
-        clinicAddress: data.clinicAddress
-      }
-    };
+    console.log('SERVICE PAYLOAD 👉', payload);
 
     return firstValueFrom(
       this.http.post<{ userId: string; profile: DoctorProfile }>(
@@ -111,7 +115,7 @@ export class AdminDoctorService {
   }
 
   /* =======================
-     UPDATE USER  ✅ ADDED
+     UPDATE USER
      ======================= */
 
   /**
