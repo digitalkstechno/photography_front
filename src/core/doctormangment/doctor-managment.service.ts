@@ -42,7 +42,7 @@ export class AdminDoctorService {
 
   private baseUrl = environment.apiUrl + '/admin/doctor';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   /**
    * Attach JWT token
@@ -127,7 +127,7 @@ export class AdminDoctorService {
     payload: { name?: string; email?: string }
   ): Observable<any> {
     return this.http.patch(
-      `${environment.apiUrl}/user/${userId}`,
+      `${environment.apiUrl}/admin/doctor/${userId}/profile`,
       payload,
       { headers: this.getHeaders() }
     );

@@ -126,7 +126,7 @@ export class UpdateDoctorComponent implements OnInit {
 
     // 1️⃣ UPDATE USER (OLD – unchanged)
     await firstValueFrom(
-      this.userService.updateUser(this.doctorId, {
+      this.adminDoctorService.updateDoctorUser(this.doctorId, {
         name: data.name,
         email: data.email
       })
