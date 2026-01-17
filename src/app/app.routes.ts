@@ -50,7 +50,10 @@ export const routes: Routes = [
       // 👨‍⚕️ Doctors (Admin)
       { path: 'admin/doctors', component: DoctorListComponent },
       { path: 'admin/doctors/add', component: AddDoctorComponent },
-      { path: 'admin/doctors/edit/:id', component: UpdateDoctorComponent },
+      {
+        path: 'admin/doctors/edit/:userId/:profileId',
+        component: UpdateDoctorComponent
+      },
 
       // default
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }

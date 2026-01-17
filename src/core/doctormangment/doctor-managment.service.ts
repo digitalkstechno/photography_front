@@ -3,38 +3,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
-export interface DoctorProfile {
-  specialization?: string;
-  qualification?: string;
-  experienceYears?: number | null;
-  consultationFee?: number | null;
-
-  contact?: {
-    phone?: string;
-    email?: string;
-  };
-
-  address?: {
-    city?: string;
-  };
-
-  availability?: Array<{
-    day: string;
-    from: string;
-    to: string;
-  }>;
-
-  isActive?: boolean;
-}
-
-export interface Doctor {
-  _id: string;
-  name: string;
-  email: string;
-  role: 'DOCTOR';
-  profile?: DoctorProfile;
-}
-
 @Injectable({
   providedIn: 'root'
 })
@@ -42,13 +10,13 @@ export class AdminDoctorService {
 
   private baseUrl = environment.apiUrl + '/admin/doctor';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  /**
-   * Attach JWT token
-   */
+  /* =======================
+     HEADERS
+     ======================= */
   private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token') || '';
     return new HttpHeaders({
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json'
@@ -61,26 +29,10 @@ export class AdminDoctorService {
 
   /**
    * POST /admin/doctor
-   * Create doctor (User + DoctorProfile)
-   *
-   * ⚠️ IMPORTANT:
-   * Payload MUST be sent AS-IS.
-   * Do NOT reshape here.
    */
-  createDoctor(
-    payload: {
-      name: string;
-      email: string;
-      password: string;
-      phoneNumber: string;
-      profile: DoctorProfile;
-    }
-  ): Promise<{ userId: string; profile: DoctorProfile }> {
-
-    console.log('SERVICE PAYLOAD 👉', payload);
-
+  createDoctor(payload: any): Promise<any> {
     return firstValueFrom(
-      this.http.post<{ userId: string; profile: DoctorProfile }>(
+      this.http.post(
         this.baseUrl,
         payload,
         { headers: this.getHeaders() }
@@ -94,10 +46,9 @@ export class AdminDoctorService {
 
   /**
    * GET /admin/doctor
-   * List doctors
    */
-  listDoctors(): Observable<Doctor[]> {
-    return this.http.get<Doctor[]>(
+  listDoctors(): Observable<any[]> {
+    return this.http.get<any[]>(
       this.baseUrl,
       { headers: this.getHeaders() }
     );
@@ -105,10 +56,9 @@ export class AdminDoctorService {
 
   /**
    * GET /admin/doctor/:userId
-   * Get single doctor (User + Profile)
    */
-  getDoctorById(userId: string): Observable<Doctor> {
-    return this.http.get<Doctor>(
+  getDoctorById(userId: string): Observable<any> {
+    return this.http.get<any>(
       `${this.baseUrl}/${userId}`,
       { headers: this.getHeaders() }
     );
@@ -119,15 +69,11 @@ export class AdminDoctorService {
      ======================= */
 
   /**
-   * PATCH /user/:userId
-   * Update doctor USER (name, email only)
+   * PUT /admin/doctor/:userId
    */
-  updateDoctorUser(
-    userId: string,
-    payload: { name?: string; email?: string }
-  ): Observable<any> {
-    return this.http.patch(
-      `${environment.apiUrl}/admin/doctor/${userId}/profile`,
+  updateDoctorUser(userId: string, payload: any): Observable<any> {
+    return this.http.put(
+      `${this.baseUrl}/${userId}`,
       payload,
       { headers: this.getHeaders() }
     );
@@ -138,16 +84,33 @@ export class AdminDoctorService {
      ======================= */
 
   /**
-   * PUT /admin/doctor/:userId/profile
-   * Update doctor profile ONLY
+   * PUT /admin/doctor/:userId/profile/:profileId
    */
   updateDoctorProfile(
     userId: string,
-    profile: DoctorProfile
-  ): Observable<{ profile: DoctorProfile; updated: boolean }> {
-    return this.http.put<{ profile: DoctorProfile; updated: boolean }>(
-      `${this.baseUrl}/${userId}/profile`,
-      profile,
+    profileId: string,
+    payload: any
+  ): Observable<any> {
+    return this.http.put(
+      `${this.baseUrl}/${userId}/profile/${profileId}`,
+      payload,
+      { headers: this.getHeaders() }
+    );
+  }
+
+  /* =======================
+     READ PROFILE
+     ======================= */
+
+  /**
+   * GET /admin/doctor/:userId/profile/:profileId
+   */
+  getDoctorProfileByUserId(
+    userId: string,
+    profileId: string
+  ): Observable<any> {
+    return this.http.get<any>(
+      `${this.baseUrl}/${userId}/profile/${profileId}`,
       { headers: this.getHeaders() }
     );
   }

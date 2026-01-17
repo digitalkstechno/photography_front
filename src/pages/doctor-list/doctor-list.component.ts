@@ -15,29 +15,23 @@ export class DoctorListComponent {
 
   // ✅ Table columns (nested keys supported)
   columns = [
-    // Basic
     { key: 'name', label: 'Doctor Name' },
     { key: 'email', label: 'Email' },
     { key: 'status', label: 'Status' },
 
-    // Professional Info
     { key: 'profile.specialization', label: 'Specialization' },
     { key: 'profile.qualification', label: 'Qualification' },
     { key: 'profile.experienceYears', label: 'Experience (Years)' },
-    // Fees & Department
     { key: 'profile.consultationFee', label: 'Consultation Fee (₹)' },
-    // Metadata
   ];
 
   constructor(
     private adminDoctorService: AdminDoctorService,
     private router: Router
-  ) { }
+  ) {}
 
   /**
    * ✅ Required by <app-table>
-   * - Must return Promise
-   * - Accepts params for future pagination/search
    */
   fetchDoctors = async (_params: any): Promise<any[]> => {
     try {
@@ -51,9 +45,20 @@ export class DoctorListComponent {
   };
 
   /**
-   * ✅ Used by TableComponent (NO arrow functions in template)
+   * ✅ Used by TableComponent
+   * FIX: pass profileId also
    */
   getUpdateRoute(row: any): string {
-    return `/admin/doctors/edit/${row._id}`;
+    const userId = row._id;
+    const profileId = row.profile?._id;
+
+    // profileId may be null for edge cases
+    if (profileId) {
+      debugger
+      return `/admin/doctors/edit/${userId}/${profileId}`;
+    }
+
+    // fallback (still safe)
+    return `/admin/doctors/edit/${userId}`;
   }
 }

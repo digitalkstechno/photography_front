@@ -17,6 +17,7 @@ import { DynamicFormComponent } from '../../shared/dynamic-form/dynamic-form.com
 export class UpdateDoctorComponent implements OnInit {
 
   doctorId!: string; // 👈 this IS userId
+  profileId!: string;
   submitLabel = 'Update Doctor';
 
   model: any = {
@@ -87,35 +88,48 @@ export class UpdateDoctorComponent implements OnInit {
     private adminDoctorService: AdminDoctorService,
     private route: ActivatedRoute,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (!id) return;
+    const userId = this.route.snapshot.paramMap.get('userId');
+    const profileId = this.route.snapshot.paramMap.get('profileId');
 
-    this.doctorId = id;
+    if (!userId || !profileId) return;
+
+    this.doctorId = userId;
+    this.profileId = profileId;
+
     this.loadDoctor();
   }
+
 
   /**
    * Load doctor by USER ID
    * (User + DoctorProfile)
    */
   loadDoctor() {
-    this.adminDoctorService.getDoctorById(this.doctorId).subscribe(res => {
-      this.model = {
-        name: res.name || '',
-        email: res.email || '',
-        profile: {
-          specialization: res.profile?.specialization || '',
-          qualification: res.profile?.qualification || '',
-          experienceYears: res.profile?.experienceYears ?? null,
-          consultationFee: res.profile?.consultationFee ?? null
-        }
-      };
-      this.loaded = true;
-    });
+    this.adminDoctorService
+      .getDoctorProfileByUserId(this.doctorId, this.profileId)
+      .subscribe(res => {
+
+        const profile = res.profile || {};
+        const user = profile.userId || {};
+
+        this.model = {
+          name: user.name || '',
+          email: user.email || '',
+          profile: {
+            specialization: profile.specialization || '',
+            qualification: profile.qualification || '',
+            experienceYears: profile.experienceYears ?? null,
+            consultationFee: profile.consultationFee ?? null
+          }
+        };
+
+        this.loaded = true;
+      });
   }
+
 
   /**
    * Update:
@@ -136,7 +150,8 @@ export class UpdateDoctorComponent implements OnInit {
     if (data.profile && Object.keys(data.profile).length) {
       await firstValueFrom(
         this.adminDoctorService.updateDoctorProfile(
-          this.doctorId,   // 👈 USER ID
+          this.doctorId,
+          this.profileId,   // 👈 USER ID
           data.profile
         )
       );
