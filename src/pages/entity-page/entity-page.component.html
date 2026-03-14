@@ -1,0 +1,12 @@
+<div *ngIf="entity">
+
+  <!-- Page title -->
+  <h2 class="page-title">
+    {{ entity.label }}
+  </h2>
+
+  <!-- Entity List -->
+  <app-entity-list [entity]="entity" [baseRoute]="'/admin/' + entity.key" (editRecord)="onEdit($event)">
+  </app-entity-list>
+
+</div>

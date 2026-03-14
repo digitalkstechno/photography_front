@@ -5,23 +5,22 @@
     <h3 class="logo">MyApp</h3>
 
     <ul class="menu">
+
       <li (click)="navigate('/dashboard')">Dashboard</li>
-      <li (click)="navigate('/users')">Users</li>
-      <!-- 📢 Notice Board -->
-      <li (click)="navigate('/notices')">Notices</li>
-      <!-- <li (click)="navigate('/notices/add')">Add Notice</li> -->
-      <!-- 📚 Blog Management -->
-      <li (click)="navigate('/blogs')">Blogs</li>
-      <!-- <li (click)="navigate('/blogs/add')">Add Blog</li> -->
 
-      <!-- 👨‍⚕️ Doctor Management (ADMIN) -->
-      <li (click)="navigate('/admin/doctors')">Doctors</li>
-      <!-- <li (click)="navigate('/admin/doctors/add')">Add Doctors</li> -->
-
+      <!-- 🧩 Dynamic Entities -->
+      <li (click)="navigate('/admin/users')">Users</li>
+      <li (click)="navigate('/admin/party')">Clients</li>
+      <li (click)="navigate('/admin/services')">Services</li>
+      <li (click)="navigate('/admin/quotes')">Quotes</li>
+      <li (click)="navigate('/admin/invoices')">Invoices</li>
+      <li (click)="navigate('/admin/payments')">Payments</li>
+      <!-- Other Pages -->
       <li (click)="navigate('/reports')">Reports</li>
       <li (click)="navigate('/settings')">Settings</li>
 
       <li class="logout" (click)="logout()">Logout</li>
+
     </ul>
   </aside>
 

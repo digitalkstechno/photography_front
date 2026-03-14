@@ -1,0 +1,49 @@
+<div class="quote-public-wrapper" *ngIf="!loading; else loadingTpl">
+  <ng-container *ngIf="!error && quote; else errorTpl">
+    <h2>Quotation #{{ quote.id }}</h2>
+
+    <section class="quote-section">
+      <h3>Client</h3>
+      <p>{{ quote.party?.name }}</p>
+    </section>
+
+    <section class="quote-section">
+      <h3>Package & Services</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Qty</th>
+            <th>Price</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let line of quote.items || []">
+            <td>{{ line.item?.name }}</td>
+            <td>{{ line.quantity }}</td>
+            <td>{{ line.price }}</td>
+            <td>{{ line.total }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="quote-total">Total: {{ quote.total }}</p>
+    </section>
+
+    <section class="quote-section" *ngIf="quote.notes">
+      <h3>Notes</h3>
+      <p>{{ quote.notes }}</p>
+    </section>
+
+    <button (click)="accept()">Accept Booking</button>
+  </ng-container>
+</div>
+
+<ng-template #loadingTpl>
+  <p>Loading quote...</p>
+</ng-template>
+
+<ng-template #errorTpl>
+  <p class="error">{{ error }}</p>
+</ng-template>
+

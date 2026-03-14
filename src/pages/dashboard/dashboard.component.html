@@ -1,2 +1,24 @@
-<app-table [columns]="appointmentColumns" [fetchFn]="fetchByStatus()">
-</app-table>
+<div class="dashboard">
+
+  <h2 class="title">Dashboard</h2>
+
+  <div class="cards">
+
+    <div class="card">
+      <h3>Upcoming Events</h3>
+      <p class="value">{{ upcomingEvents }}</p>
+    </div>
+
+    <div class="card">
+      <h3>Pending Quotes</h3>
+      <p class="value">{{ pendingQuotes }}</p>
+    </div>
+
+    <div class="card">
+      <h3>Outstanding Balance</h3>
+      <p class="value">₹ {{ outstandingBalance }}</p>
+    </div>
+
+  </div>
+
+</div>

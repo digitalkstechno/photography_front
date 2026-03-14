@@ -1,0 +1,5 @@
+/* Keep styling consistent with existing shared/dynamic-form */
+:host {
+  display: block;
+}
+

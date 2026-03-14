@@ -1,42 +1,46 @@
 import { Component } from '@angular/core';
-import { AppointmentsService } from './../../core/appoinments/appoinments.service';
-import { TableComponent } from '../../shared/components/table/table.component';
+import { ApiService } from '../../core/http/api.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [TableComponent],
-  template: `
-    <app-table
-      [columns]="appointmentColumns"
-      [fetchFn]="fetchAppointments">
-    </app-table>
-  `,
+  templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent {
 
-  constructor(private appointmentService: AppointmentsService) { }
+  upcomingEvents = 0;
+  pendingQuotes = 0;
+  outstandingBalance = 0;
 
-  // ✅ Columns using populated doctor → profile
-  appointmentColumns = [
-    { key: 'patient.name', label: 'Patient' },
-    { key: 'doctor.profile.name', label: 'Doctor' },
-    { key: 'doctor.profile.specialization', label: 'Specialization' },
-    { key: 'appointmentDate', label: 'Date' },
-    { key: 'timeSlot.startTime', label: 'From' },
-    { key: 'timeSlot.endTime', label: 'To' },
-    { key: 'status', label: 'Status' },
-  ];
+  constructor(private api: ApiService) {
+    this.loadSummary();
+  }
 
-  // ✅ Single fetch function
-  fetchAppointments = (params: any) => {
-    return this.appointmentService
-      .getAppointments({
-        page: params?.page,
-        limit: params?.limit,
-        search: params?.search
-      })
-      .toPromise();
-  };
+  async loadSummary() {
+    try {
+
+      const clients = await firstValueFrom(this.api.get<any[]>('clients'));
+      this.upcomingEvents = clients?.length || 0;
+
+      const quotes = await firstValueFrom(this.api.get<any[]>('quotes'));
+      this.pendingQuotes = quotes?.length || 0;
+
+      const invoices = await firstValueFrom(this.api.get<any[]>('invoices'));
+
+      this.outstandingBalance = (invoices || []).reduce((acc, inv: any) => {
+        const paid = (inv.payments || []).reduce(
+          (pAcc: number, p: any) => pAcc + (p.amount || 0),
+          0
+        );
+
+        return acc + Math.max((inv.total || 0) - paid, 0);
+
+      }, 0);
+
+    } catch (err) {
+      console.error(err);
+    }
+  }
 }

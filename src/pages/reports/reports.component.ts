@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { TableComponent } from '../../shared/components/table/table.component';
+import { TableComponent } from '../../shared/table/table.component';
 @Component({
   selector: 'app-reports',
   standalone: true,

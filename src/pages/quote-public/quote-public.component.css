@@ -1,0 +1,46 @@
+.quote-public-wrapper {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 24px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.quote-section {
+  margin-top: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+
+th,
+td {
+  padding: 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.quote-total {
+  text-align: right;
+  margin-top: 8px;
+  font-weight: 600;
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px 22px;
+  border-radius: 6px;
+  border: none;
+  background-color: #2563eb;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.error {
+  color: #b91c1c;
+}
+

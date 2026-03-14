@@ -1,0 +1,57 @@
+<div class="form-field" [ngClass]="field.wrapperClass || ''">
+  <label [ngClass]="field.labelClass || ''">
+    {{ field.label || field.name }}
+  </label>
+
+  <!-- TEXT / NUMBER / DATE -->
+  <input
+    *ngIf="field.type === 'text' || field.type === 'number' || field.type === 'date'"
+    [type]="field.type"
+    [name]="field.name"
+    [(ngModel)]="model[field.name]"
+    (ngModelChange)="onModelChange()"
+    [required]="!!field.required"
+    [disabled]="!!field.disabled"
+    [placeholder]="field.placeholder || ''"
+    [ngClass]="field.class || ''"
+  />
+
+  <!-- TEXTAREA -->
+  <textarea
+    *ngIf="field.type === 'textarea'"
+    [name]="field.name"
+    [(ngModel)]="model[field.name]"
+    (ngModelChange)="onModelChange()"
+    [required]="!!field.required"
+    [disabled]="!!field.disabled"
+    [placeholder]="field.placeholder || ''"
+    [ngClass]="field.class || ''"
+  ></textarea>
+
+  <!-- SELECT / RELATION -->
+  <select
+    *ngIf="field.type === 'select' || field.type === 'relation'"
+    [name]="field.name"
+    [(ngModel)]="model[field.name]"
+    (ngModelChange)="onModelChange()"
+    [required]="!!field.required"
+    [disabled]="!!field.disabled"
+    [ngClass]="field.class || ''"
+  >
+    <option [ngValue]="undefined">-- Select --</option>
+    <option *ngFor="let opt of field.options || []" [ngValue]="opt.value">
+      {{ opt.label }}
+    </option>
+  </select>
+
+  <!-- BOOLEAN -->
+  <input
+    *ngIf="field.type === 'boolean'"
+    type="checkbox"
+    [name]="field.name"
+    [(ngModel)]="model[field.name]"
+    (ngModelChange)="onModelChange()"
+    [disabled]="!!field.disabled"
+  />
+</div>
+

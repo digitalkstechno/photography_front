@@ -13,6 +13,7 @@ export class LayoutComponent {
   constructor(private router: Router) {}
 
   navigate(path: string) {
+    // alert(path)
     this.router.navigate([path]);
   }
 

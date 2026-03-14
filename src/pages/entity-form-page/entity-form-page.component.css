@@ -1,0 +1,11 @@
+.entity-form-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.entity-form-page h2 {
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #333;
+}

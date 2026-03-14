@@ -17,7 +17,7 @@ export class AuthService {
   login(credentials: { email: any; password: any }) {
     return this.http
       .post<{ token: string }>(
-        `${this.API_URL}/user/login`,
+        `${this.API_URL}/auth/login`,
         credentials
       )
       .pipe(

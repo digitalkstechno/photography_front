@@ -1,0 +1,15 @@
+<form *ngIf="entity?.fields?.length" (ngSubmit)="submit(!!f.valid)" #f="ngForm">
+
+  <app-input-renderer
+    *ngFor="let field of entity.fields"
+    [field]="field"
+    [(model)]="model">
+  </app-input-renderer>
+
+  <button type="submit" [disabled]="loading || !f.valid">
+    {{ loading ? 'Saving...' : submitLabel }}
+  </button>
+
+  <p class="form-message">{{ message }}</p>
+
+</form>

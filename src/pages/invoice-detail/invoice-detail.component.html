@@ -1,0 +1,50 @@
+<div class="quote-public-wrapper" *ngIf="!loading; else loadingTpl">
+  <ng-container *ngIf="!error && invoice; else errorTpl">
+    <h2>Invoice #{{ invoice.id }}</h2>
+
+    <section class="quote-section">
+      <h3>Client</h3>
+      <p>{{ invoice.party?.name }}</p>
+    </section>
+
+    <section class="quote-section">
+      <h3>Items</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Qty</th>
+            <th>Price</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let line of invoice.items || []">
+            <td>{{ line.item?.name }}</td>
+            <td>{{ line.quantity }}</td>
+            <td>{{ line.price }}</td>
+            <td>{{ line.total }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="quote-total">Total: {{ invoice.total }}</p>
+    </section>
+
+    <section class="quote-section">
+      <h3>Payments</h3>
+      <p>Total Paid: {{ totalPaid }}</p>
+      <p>Balance: {{ balance }}</p>
+    </section>
+
+    <button (click)="addPayment()">Add Payment</button>
+  </ng-container>
+</div>
+
+<ng-template #loadingTpl>
+  <p>Loading invoice...</p>
+</ng-template>
+
+<ng-template #errorTpl>
+  <p class="error">{{ error }}</p>
+</ng-template>
+

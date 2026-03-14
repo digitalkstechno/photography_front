@@ -1,0 +1,27 @@
+/* Reuse the same look as shared/dynamic-form */
+form {
+  max-width: 900px;
+}
+
+.form-message {
+  margin-top: 12px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+button[type="submit"] {
+  margin-top: 16px;
+  padding: 10px 22px;
+  border-radius: 6px;
+  border: none;
+  background-color: #2563eb;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button[type="submit"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
