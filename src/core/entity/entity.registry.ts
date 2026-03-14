@@ -10,7 +10,8 @@ export const USERS_ENTITY: EntityConfig = {
     { name: "role", label: "Role", type: "text" }
   ],
   label: "",
-  api: ""
+  api: "",
+  sidebar: false
 };
 
 export const SERVICES_ENTITY: EntityConfig = {
@@ -23,7 +24,8 @@ export const SERVICES_ENTITY: EntityConfig = {
     { name: "description", label: "Description", type: "textarea" }
   ],
   label: "",
-  api: ""
+  api: "",
+  sidebar: true
 };
 
 export const PARTY_ENTITY: EntityConfig = {
@@ -37,7 +39,8 @@ export const PARTY_ENTITY: EntityConfig = {
     { name: "address", label: "Address", type: "textarea" }
   ],
   label: "",
-  api: ""
+  api: "",
+  sidebar: false
 };
 
 export const ENTITY_REGISTRY: Record<string, EntityConfig> = {

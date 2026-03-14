@@ -120,6 +120,7 @@ export interface EntityHooks {
 }
 
 export interface EntityConfig {
+  sidebar: boolean;
   /** Unique key */
   key: string;
 

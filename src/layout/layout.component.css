@@ -1,73 +1,40 @@
-* {
-  box-sizing: border-box;
-  font-family: system-ui, -apple-system, sans-serif;
+.dashboard-container{
+  display:flex;
+  height:100vh;
 }
 
-.dashboard-container {
-  display: flex;
-  height: 100vh;
+.sidebar{
+  width:220px;
+  background:#1f2937;
+  color:white;
+  padding:20px;
 }
 
-/* Sidebar */
-.sidebar {
-  width: 220px;
-  background: #1f2937;
-  color: #fff;
-  padding: 20px;
+.menu{
+  list-style:none;
+  padding:0;
 }
 
-.logo {
-  text-align: center;
-  margin-bottom: 24px;
+.menu li{
+  padding:10px;
+  cursor:pointer;
 }
 
-.menu {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.menu li:hover{
+  background:#374151;
 }
 
-.menu li {
-  padding: 10px 12px;
-  margin-bottom: 6px;
-  cursor: pointer;
-  border-radius: 6px;
+.main-content{
+  flex:1;
+  display:flex;
+  flex-direction:column;
 }
 
-.menu li:hover {
-  background: #374151;
+.topbar{
+  background:#f3f4f6;
+  padding:10px 20px;
 }
 
-.logout {
-  margin-top: 24px;
-  color: #f87171;
-}
-
-/* Main content */
-.main-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background: #f9fafb;
-}
-
-/* Topbar */
-.topbar {
-  height: 56px;
-  background: #ffffff;
-  display: flex;
-  align-items: center;
-  padding: 0 20px;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.welcome {
-  font-weight: 600;
-}
-
-/* Router content area */
-.content {
-  flex: 1;
-  padding: 20px;
-  overflow: auto;
+.content{
+  padding:20px;
 }

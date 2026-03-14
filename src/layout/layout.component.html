@@ -2,40 +2,53 @@
 
   <!-- Sidebar -->
   <aside class="sidebar">
+
     <h3 class="logo">MyApp</h3>
 
     <ul class="menu">
 
-      <li (click)="navigate('/dashboard')">Dashboard</li>
+      <li (click)="navigate('/dashboard')">
+        🏠 Dashboard
+      </li>
 
-      <!-- 🧩 Dynamic Entities -->
-      <li (click)="navigate('/admin/users')">Users</li>
-      <li (click)="navigate('/admin/party')">Clients</li>
-      <li (click)="navigate('/admin/services')">Services</li>
-      <li (click)="navigate('/admin/quotes')">Quotes</li>
-      <li (click)="navigate('/admin/invoices')">Invoices</li>
-      <li (click)="navigate('/admin/payments')">Payments</li>
-      <!-- Other Pages -->
-      <li (click)="navigate('/reports')">Reports</li>
-      <li (click)="navigate('/settings')">Settings</li>
+      <!-- Dynamic Entities -->
+      <li *ngFor="let entity of entities"
+          (click)="navigate('/admin/' + entity.key)">
 
-      <li class="logout" (click)="logout()">Logout</li>
+        {{ '📁'}} {{entity.label}}
+
+      </li>
+
+      <li (click)="navigate('/reports')">
+        📊 Reports
+      </li>
+
+      <li (click)="navigate('/settings')">
+        ⚙️ Settings
+      </li>
+
+      <li class="logout" (click)="logout()">
+        🚪 Logout
+      </li>
 
     </ul>
+
   </aside>
+
 
   <!-- Main Section -->
   <div class="main-content">
 
-    <!-- Top Navbar -->
+    <!-- Topbar -->
     <header class="topbar">
       <span class="welcome">Welcome 👋</span>
     </header>
 
-    <!-- ROUTE CONTENT -->
+    <!-- Page Content -->
     <section class="content">
       <router-outlet></router-outlet>
     </section>
 
   </div>
+
 </div>
