@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableComponent } from '../../table/table.component';
 import { EntityConfig } from '../../../core/entity/entity.types';
@@ -10,19 +10,24 @@ import { EntityService } from '../../../core/entity/entity.service';
   imports: [CommonModule, TableComponent],
   templateUrl: './entity-list.component.html',
 })
-export class EntityListComponent {
+export class EntityListComponent implements OnChanges {
   @Input() entity!: EntityConfig;
   @Input() baseRoute!: string; // e.g. "/admin/client"
 
+  columns: { key: string; label: string }[] = [];
+
   constructor(private entityService: EntityService) {}
 
-  get columns() {
-    if (this.entity?.columns?.length) return this.entity.columns;
-
-    // Default: table columns from fields (skip textarea)
-    return (this.entity?.fields ?? [])
-      .filter((f) => f.type !== 'textarea')
-      .map((f) => ({ key: f.name, label: f.label || f.name }));
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['entity']) {
+      if (this.entity?.columns?.length) {
+        this.columns = this.entity.columns;
+      } else {
+        this.columns = (this.entity?.fields ?? [])
+          .filter((f) => f.type !== 'textarea')
+          .map((f) => ({ key: f.name, label: f.label || f.name }));
+      }
+    }
   }
 
   fetchRows = async (params: any) => {
@@ -36,7 +41,7 @@ export class EntityListComponent {
   getUpdateRoute = (row: any) => {
     const idKey = this.entity?.idKey ?? '_id';
     const id = row?.[idKey];
-    return id ? `${this.baseRoute}/${id}` : this.baseRoute;
+    return id ? `${this.baseRoute}/edit/${id}` : this.baseRoute;
   };
 }
 

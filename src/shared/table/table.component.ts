@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -9,9 +9,10 @@ import { Router } from '@angular/router';
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
 })
-export class TableComponent implements OnInit {
+export class TableComponent implements OnInit, OnChanges {
   @Input() columns: { key: string; label: string }[] = [];
   @Input() fetchFn!: (params: any) => Promise<any>;
+  @Input() reloadTrigger?: any;
 
   // ✅ OPTIONAL (backward compatible)
   @Input() addRoute?: string;
@@ -35,6 +36,16 @@ export class TableComponent implements OnInit {
       throw new Error('TableComponent: fetchFn is required');
     }
     this.loadData();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['reloadTrigger'] && !changes['reloadTrigger'].isFirstChange()) {
+      this.page = 1;
+      this.search = '';
+      this.sortBy = '';
+      this.sortOrder = 'asc';
+      this.loadData();
+    }
   }
 
   loadData() {
