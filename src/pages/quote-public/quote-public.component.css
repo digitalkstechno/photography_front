@@ -1,46 +1,41 @@
 .quote-public-wrapper {
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 24px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  max-width: 900px;
+  margin: 24px auto;
+  padding: 0;
 }
 
-.quote-section {
-  margin-top: 16px;
-}
+.grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.section-tag { font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-light); margin-bottom: 8px; }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 8px;
-}
+.info-card { background: var(--bg-app); border-radius: var(--radius-md); padding: 12px; border: 1px solid var(--border); }
+.p-0 { padding: 0 !important; }
+.overflow-hidden { overflow: hidden; }
 
-th,
-td {
-  padding: 8px;
-  border-bottom: 1px solid #e5e7eb;
-}
+.row-info { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border); }
+.row-info:last-child { border: none; }
+.row-info .label { font-size: 10.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+.row-info .value { font-size: 13px; font-weight: 600; color: var(--text-main); }
 
-.quote-total {
-  text-align: right;
-  margin-top: 8px;
-  font-weight: 600;
-}
+.compact-table { width: 100%; border-collapse: collapse; }
+.compact-table th { padding: 8px 12px; font-size: 9px; font-weight: 900; background: #fafafa; text-transform: uppercase; color: var(--text-muted); text-align: left; border-bottom: 1px solid var(--border); }
+.compact-table td { padding: 8px 12px; font-size: 12.5px; color: var(--text-main); border-bottom: 1px solid var(--border); }
+.compact-table tr:last-child td { border-bottom: none; }
 
-button {
-  margin-top: 20px;
-  padding: 10px 22px;
-  border-radius: 6px;
-  border: none;
-  background-color: #2563eb;
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
+.btn-secondary-light { 
+  background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,0.2); 
+  padding: 6px 14px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer;
 }
+.btn-secondary-light:hover { background: rgba(255,255,255,0.1); border-color: #fff; }
+
+.mb-5 { margin-bottom: 24px; }
+.mt-5 { margin-top: 24px; }
+.text-primary { color: var(--primary) !important; font-weight: 800 !important; }
 
 .error {
-  color: #b91c1c;
+  color: var(--danger);
+  font-weight: 600;
+  background: #fee2e2;
+  padding: 12px;
+  border-radius: 8px;
 }
 

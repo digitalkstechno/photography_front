@@ -1,52 +1,103 @@
-.dashboard {
-  padding: 24px;
-}
-
-.title {
-  font-size: 24px;
-  margin-bottom: 20px;
-  font-weight: 700;
-  color: #1f2937;
-}
-
-.cards {
+.stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
 }
 
-.card {
+.stat-card-refined {
   background: white;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  border-left: 4px solid #2563eb;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
 }
 
-.card-green {
-  border-left-color: #10b981;
+.stat-card-refined:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary);
 }
 
-.card-red {
-  border-left-color: #ef4444;
+.stat-card-refined::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--primary);
+  opacity: 0.1;
 }
 
-.card h3 {
-  font-size: 14px;
-  margin-bottom: 8px;
-  color: #6b7280;
-  font-weight: 500;
+.accent-success::after { background: var(--success); opacity: 0.8; }
+.accent-danger::after { background: var(--danger); opacity: 0.8; }
+.accent-blue::after { background: var(--accent); opacity: 0.8; }
+
+.card-tag {
+  font-size: 9px;
+  font-weight: 900;
   text-transform: uppercase;
+  color: var(--text-light);
   letter-spacing: 0.5px;
 }
 
-.value {
-  font-size: 28px;
-  font-weight: 700;
-  color: #111827;
+.card-main {
+  display: flex;
+  flex-direction: column;
 }
 
-.loading-text {
-  color: #9ca3af;
-  font-size: 14px;
+.stat-value {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0;
+  letter-spacing: -0.5px;
 }
+
+.stat-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.card-meta {
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.trend-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.trend-up {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.trend-down {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.meta-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-light);
+  font-style: italic;
+}
+
+.mb-5 { margin-bottom: 24px; }

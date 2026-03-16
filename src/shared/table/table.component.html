@@ -1,51 +1,119 @@
-<div class="table-wrapper">
+<div class="table-container card-premium">
 
-  <!-- Top actions -->
-  <div class="table-actions">
-    <input
-      type="text"
-      placeholder="Search..."
-      (input)="onSearch($event)"
-    />
+  <!-- Table Header / Search Bar Inspired by reference image -->
+  <div class="table-header">
+    <div class="search-wrapper">
+      <div class="search-box">
+        <span class="search-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </span>
+        <input
+          type="text"
+          placeholder="Search by name, ID or status..."
+          (input)="onSearch($event)"
+        />
+        <div class="search-shortcut">
+            <span>⌘</span> K
+        </div>
+      </div>
+    </div>
 
-    <!-- ✅ ADD BUTTON (optional) -->
-    <button *ngIf="addRoute" (click)="goToAdd()">
-      Add New
-    </button>
+    <div class="header-actions">
+      <button class="btn-premium btn-secondary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        Export
+      </button>
+      <button *ngIf="addRoute" (click)="goToAdd()" class="btn-premium btn-primary">
+        + Add New
+      </button>
+    </div>
   </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th *ngFor="let col of columns" (click)="sort(col.key)">
-          {{ col.label }}
-        </th>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th *ngFor="let col of columns" (click)="sort(col.key)">
+            <div class="th-content">
+              {{ col.label }}
+              <span class="sort-icon">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"></path></svg>
+              </span>
+            </div>
+          </th>
+          <th *ngIf="updateRoute || rowActions" class="text-center">
+              <span class="th-content">Action</span>
+          </th>
+        </tr>
+      </thead>
 
-        <!-- ✅ ACTION COLUMN -->
-        <th *ngIf="updateRoute">Actions</th>
-      </tr>
-    </thead>
+      <tbody>
+        <tr *ngFor="let row of data">
+          <td *ngFor="let col of columns">
+             <div [ngSwitch]="col.format" class="td-content">
+                <span *ngSwitchCase="'boolean'" 
+                      class="badge" 
+                      [class.badge-success]="getValue(row, col.key)"
+                      [class.badge-danger]="!getValue(row, col.key)">
+                  {{ displayValue(row, col) }}
+                </span>
+                
+                <span *ngSwitchCase="'currency'" class="font-bold">
+                  {{ displayValue(row, col) }}
+                </span>
 
-    <tbody>
-      <tr *ngFor="let row of data">
-        <td *ngFor="let col of columns">
-          {{ getValue(row, col.key) }}
-        </td>
+                <span *ngSwitchDefault>
+                  {{ displayValue(row, col) }}
+                </span>
+             </div>
+          </td>
 
-        <!-- ✅ UPDATE BUTTON -->
-        <td *ngIf="updateRoute">
-          <button (click)="goToUpdate(row)">
-            Update
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+          <!-- ✅ ACTIONS SECTION -->
+          <td *ngIf="updateRoute || rowActions">
+            <div class="row-actions">
+              <button *ngIf="updateRoute" (click)="goToUpdate(row)" class="btn-icon" title="Edit">
+                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+              </button>
+              
+              <ng-container *ngIf="rowActions">
+                  <button *ngFor="let action of rowActions" 
+                          [class]="'btn-icon ' + (action.class || '')"
+                          (click)="handleAction(action, row)"
+                          [title]="action.label"
+                          [hidden]="!isActionVisible(action, row)">
+                      <svg *ngIf="action.label === 'Ledger'" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                      <svg *ngIf="action.label === 'Book'" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                      <span *ngIf="action.label !== 'Ledger' && action.label !== 'Book'">⚡</span>
+                  </button>
+              </ng-container>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <!-- Empty State -->
+    <div *ngIf="!data.length" class="loading-text">
+        <p>No results found matches your search criteria.</p>
+    </div>
+  </div>
 
-  <div class="pagination">
-    <button (click)="prev()">Prev</button>
-    <span>{{ page }}</span>
-    <button (click)="next()">Next</button>
+  <!-- Pagination Styled -->
+  <div class="table-footer">
+    <div class="footer-info">
+      Total <b>{{ data.length }}</b> entries found
+    </div>
+    <div class="pagination">
+      <button class="btn-page" (click)="prev()" [disabled]="page === 1">
+        Back
+      </button>
+      <div class="page-numbers">
+        <span class="page-num active">{{ page }}</span>
+      </div>
+      <button class="btn-page" (click)="next()">
+        Next
+      </button>
+    </div>
   </div>
 
 </div>

@@ -106,6 +106,15 @@ export interface EntityColumn {
   render?: (row: any) => string;
 }
 
+export interface EntityRowAction {
+  label: string;
+  icon?: string;
+  class?: string;
+  onClick: (row: any, router: any) => void;
+  /** Optional visibility check */
+  isVisible?: (row: any) => boolean;
+}
+
 export interface EntityPermissions {
   create?: boolean;
   update?: boolean;
@@ -126,6 +135,9 @@ export interface EntityConfig {
 
   /** Label in UI */
   label: string;
+
+  /** Sidebar Icon */
+  icon?: string;
 
   /** REST endpoint */
   api: string;
@@ -165,5 +177,7 @@ export interface EntityConfig {
     showCreateButton?: boolean;
     showDeleteButton?: boolean;
     showEditButton?: boolean;
+    updateRoute?: (row: any) => string;
+    rowActions?: EntityRowAction[];
   };
 }

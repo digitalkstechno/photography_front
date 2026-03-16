@@ -1,26 +1,98 @@
-<div class="dashboard">
+<div class="dashboard-page container">
+  
+  <div class="card-premium card-header-black mb-5">
+    <div class="header-inner">
+      <div class="title-group">
+        <h1 class="text-white">Main Dashboard</h1>
+        <p class="text-muted-light">Overview of your photography business performance</p>
+      </div>
+    </div>
+  </div>
 
-  <h2 class="title">Dashboard</h2>
+  <div class="stats-grid" *ngIf="!loading">
 
-  <div class="cards" *ngIf="!loading">
-
-    <div class="card">
-      <h3>Total Invoices</h3>
-      <p class="value">{{ totalInvoices }}</p>
+    <!-- Total Sale Invoices -->
+    <div class="stat-card-refined">
+      <div class="card-tag">Invoicing</div>
+      <div class="card-main">
+        <h2 class="stat-value">{{ totalInvoices }}</h2>
+        <span class="stat-label">Total Invoices</span>
+      </div>
+      <div class="card-meta">
+        <div class="trend-pill trend-up">
+          <span class="icon">↗</span> 12.0%
+        </div>
+      </div>
     </div>
 
-    <div class="card card-green">
-      <h3>Total Paid</h3>
-      <p class="value">₹ {{ totalPaid | number:'1.0-0' }}</p>
+    <!-- Total Paid -->
+    <div class="stat-card-refined accent-success">
+      <div class="card-tag">Collection</div>
+      <div class="card-main">
+        <h2 class="stat-value">₹{{ totalPaid | number:'1.0-0' }}</h2>
+        <span class="stat-label">Total Collected</span>
+      </div>
+      <div class="card-meta">
+        <div class="trend-pill trend-up">
+          <span class="icon">↗</span> 8.5%
+        </div>
+      </div>
     </div>
 
-    <div class="card card-red">
-      <h3>Outstanding Balance</h3>
-      <p class="value">₹ {{ totalOutstanding | number:'1.0-0' }}</p>
+    <!-- Outstanding -->
+    <div class="stat-card-refined accent-danger">
+      <div class="card-tag">Receivables</div>
+      <div class="card-main">
+        <h2 class="stat-value">₹{{ totalOutstanding | number:'1.0-0' }}</h2>
+        <span class="stat-label">Pending Balances</span>
+      </div>
+      <div class="card-meta">
+        <div class="trend-pill trend-down">
+          <span class="icon">↘</span> 5.0%
+        </div>
+      </div>
+    </div>
+
+    <!-- Ledger Income -->
+    <div class="stat-card-refined accent-success">
+      <div class="card-tag">Revenue</div>
+      <div class="card-main">
+        <h2 class="stat-value">₹{{ totalIncome | number:'1.0-0' }}</h2>
+        <span class="stat-label">Ledger Income</span>
+      </div>
+      <div class="card-meta">
+        <span class="meta-label">Direct receipts</span>
+      </div>
+    </div>
+
+    <!-- Ledger Expenses -->
+    <div class="stat-card-refined accent-danger">
+      <div class="card-tag">Spending</div>
+      <div class="card-main">
+        <h2 class="stat-value">₹{{ totalExpenses | number:'1.0-0' }}</h2>
+        <span class="stat-label">Ledger Expenses</span>
+      </div>
+      <div class="card-meta">
+        <span class="meta-label">Direct payments</span>
+      </div>
+    </div>
+
+    <!-- Net P&L -->
+    <div class="stat-card-refined accent-blue">
+      <div class="card-tag">Profitability</div>
+      <div class="card-main">
+        <h2 class="stat-value">₹{{ netBalance | number:'1.0-0' }}</h2>
+        <span class="stat-label">Net Profit/Loss</span>
+      </div>
+      <div class="card-meta">
+        <span class="meta-label">Total Earnings</span>
+      </div>
     </div>
 
   </div>
 
-  <p *ngIf="loading" class="loading-text">Loading dashboard...</p>
+  <div *ngIf="loading" class="loading-text">
+    Analyzing company data...
+  </div>
 
 </div>

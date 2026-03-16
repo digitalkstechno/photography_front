@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { EntityColumn } from '../../core/entity/entity.types';
 
 @Component({
   selector: 'app-table',
@@ -10,13 +11,14 @@ import { Router } from '@angular/router';
   styleUrl: './table.component.css',
 })
 export class TableComponent implements OnInit, OnChanges {
-  @Input() columns: { key: string; label: string }[] = [];
+  @Input() columns: EntityColumn[] = [];
   @Input() fetchFn!: (params: any) => Promise<any>;
   @Input() reloadTrigger?: any;
 
   // ✅ OPTIONAL (backward compatible)
   @Input() addRoute?: string;
   @Input() updateRoute?: (row: any) => string;
+  @Input() rowActions?: any[];
 
   data: any[] = [];
   total = 0;
@@ -71,7 +73,26 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   getValue(row: any, key: string): any {
-    return key.split('.').reduce((obj, k) => obj?.[k], row) ?? '';
+    return key.split('.').reduce((obj, k) => obj?.[k], row);
+  }
+
+  displayValue(row: any, col: any): any {
+    if (col.render) {
+      return col.render(row);
+    }
+    const val = this.getValue(row, col.key);
+    if (val === undefined || val === null) return '';
+
+    if (col.format === 'date') {
+      return new Date(val).toLocaleDateString();
+    }
+    if (col.format === 'currency') {
+      return '₹ ' + Number(val).toLocaleString();
+    }
+    if (col.format === 'boolean') {
+        return val ? 'Yes' : 'No';
+    }
+    return val;
   }
 
   onSearch(event: Event) {
@@ -118,5 +139,15 @@ export class TableComponent implements OnInit, OnChanges {
         this.router.navigateByUrl(route);
       }
     }
+  }
+
+  handleAction(action: any, row: any) {
+    if (action.onClick) {
+      action.onClick(row, this.router);
+    }
+  }
+
+  isActionVisible(action: any, row: any): boolean {
+    return action.isVisible ? action.isVisible(row) : true;
   }
 }

@@ -1,15 +1,28 @@
-<form *ngIf="entity?.fields?.length" (ngSubmit)="submit(!!f.valid)" #f="ngForm">
+<div class="card-premium card-header-black" *ngIf="entity">
+  <div class="header-inner">
+    <div class="title-group">
+      <h3 class="text-white">{{ entity.label }} Details</h3>
+      <p class="text-muted-light">Please fill out the form below</p>
+    </div>
+  </div>
 
-  <app-input-renderer
-    *ngFor="let field of entity.fields"
-    [field]="field"
-    [(model)]="model">
-  </app-input-renderer>
+  <div class="form-body p-5">
+    <form (ngSubmit)="submit(!!f.valid)" #f="ngForm">
+      <app-input-renderer
+        *ngFor="let field of entity.fields"
+        [field]="field"
+        [(model)]="model">
+      </app-input-renderer>
 
-  <button type="submit" [disabled]="loading || !f.valid">
-    {{ loading ? 'Saving...' : submitLabel }}
-  </button>
+      <div class="form-actions mt-4">
+        <button type="submit" class="btn-premium btn-primary" [disabled]="loading || !f.valid">
+          {{ loading ? 'Saving...' : submitLabel }}
+        </button>
+      </div>
 
-  <p class="form-message">{{ message }}</p>
-
-</form>
+      <p class="form-message" [class.text-success]="message.includes('✅')" [class.text-danger]="message.includes('❌')">
+        {{ message }}
+      </p>
+    </form>
+  </div>
+</div>

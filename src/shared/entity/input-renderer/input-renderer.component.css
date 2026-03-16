@@ -3,3 +3,25 @@
   display: block;
 }
 
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.checkbox-wrapper input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.checkbox-label {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--text-main) !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  cursor: pointer;
+  margin: 0 !important;
+}

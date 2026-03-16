@@ -13,6 +13,7 @@
     [required]="!!field.required"
     [disabled]="!!field.disabled"
     [placeholder]="field.placeholder || ''"
+    class="input"
     [ngClass]="field.class || ''"
   />
 
@@ -25,6 +26,7 @@
     [required]="!!field.required"
     [disabled]="!!field.disabled"
     [placeholder]="field.placeholder || ''"
+    class="textarea"
     [ngClass]="field.class || ''"
   ></textarea>
 
@@ -36,6 +38,7 @@
     (ngModelChange)="onModelChange()"
     [required]="!!field.required"
     [disabled]="!!field.disabled"
+    class="input"
     [ngClass]="field.class || ''"
   >
     <option [ngValue]="undefined">-- Select --</option>
@@ -45,13 +48,16 @@
   </select>
 
   <!-- BOOLEAN -->
-  <input
-    *ngIf="field.type === 'boolean'"
-    type="checkbox"
-    [name]="field.name"
-    [(ngModel)]="model[field.name]"
-    (ngModelChange)="onModelChange()"
-    [disabled]="!!field.disabled"
-  />
+  <div class="checkbox-wrapper" *ngIf="field.type === 'boolean'">
+    <input
+      type="checkbox"
+      [id]="field.name"
+      [name]="field.name"
+      [(ngModel)]="model[field.name]"
+      (ngModelChange)="onModelChange()"
+      [disabled]="!!field.disabled"
+    />
+    <label [for]="field.name" class="checkbox-label">Enabled</label>
+  </div>
 </div>
 

@@ -16,6 +16,18 @@ export class LayoutComponent {
 
   constructor(private router: Router) {}
 
+  get activeRouteLabel(): string {
+    const url = this.router.url;
+    if (url.includes('/dashboard')) return 'Dashboard';
+    
+    // Check if it's an entity route
+    const entityKey = url.split('/').pop() || '';
+    const entity = this.entities.find(e => e.key === entityKey);
+    if (entity) return entity.label;
+
+    return 'Overview';
+  }
+
   navigate(path: string) {
     this.router.navigate([path]);
   }

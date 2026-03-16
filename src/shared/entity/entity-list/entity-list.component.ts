@@ -1,7 +1,8 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { TableComponent } from '../../table/table.component';
-import { EntityConfig } from '../../../core/entity/entity.types';
+import { EntityConfig, EntityColumn } from '../../../core/entity/entity.types';
 import { EntityService } from '../../../core/entity/entity.service';
 
 @Component({
@@ -14,9 +15,12 @@ export class EntityListComponent implements OnChanges {
   @Input() entity!: EntityConfig;
   @Input() baseRoute!: string; // e.g. "/admin/client"
 
-  columns: { key: string; label: string }[] = [];
+  columns: EntityColumn[] = [];
 
-  constructor(private entityService: EntityService) {}
+  constructor(
+    private entityService: EntityService,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['entity']) {
@@ -31,7 +35,9 @@ export class EntityListComponent implements OnChanges {
   }
 
   fetchRows = async (params: any) => {
-    return await this.entityService.list(this.entity, params);
+    // Merge URL query params (like partyId) into fetch params
+    const mergedParams = { ...this.route.snapshot.queryParams, ...params };
+    return await this.entityService.list(this.entity, mergedParams);
   };
 
   get addRoute() {
@@ -43,5 +49,9 @@ export class EntityListComponent implements OnChanges {
     const id = row?.[idKey];
     return id ? `${this.baseRoute}/edit/${id}` : this.baseRoute;
   };
+
+  get rowActions() {
+    return this.entity?.ui?.rowActions || [];
+  }
 }
 

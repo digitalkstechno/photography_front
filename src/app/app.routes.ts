@@ -8,6 +8,10 @@ import { EntityFormPageComponent } from '../pages/entity-form-page/entity-form-p
 import { EntityPageComponent } from '../pages/entity-page/entity-page.component';
 import { QuotePublicComponent } from '../pages/quote-public/quote-public.component';
 import { BookingConfirmationComponent } from '../pages/booking-confirmation/booking-confirmation.component';
+import { BookingListComponent } from '../pages/booking-list/booking-list.component';
+import { BookingFormComponent } from '../pages/booking-form/booking-form.component';
+import { BookingDetailComponent } from '../pages/booking-detail/booking-detail.component';
+import { CalendarComponent } from '../pages/calendar/calendar.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -28,6 +32,15 @@ export const routes: Routes = [
 
       { path: 'reports', component: ReportsComponent },
       { path: 'settings', component: SettingsComponent },
+
+      // Bookings Custom Routes
+      { path: 'bookings', component: BookingListComponent },
+      { path: 'bookings/new', component: BookingFormComponent },
+      { path: 'bookings/edit/:id', component: BookingFormComponent },
+      { path: 'bookings/:id', component: BookingDetailComponent },
+      
+      // Calendar
+      { path: 'calendar', component: CalendarComponent },
 
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]

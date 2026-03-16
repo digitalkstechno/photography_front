@@ -1,49 +1,69 @@
-<div class="quote-public-wrapper" *ngIf="!loading; else loadingTpl">
+<div class="quote-public-wrapper container" *ngIf="!loading; else loadingTpl">
   <ng-container *ngIf="!error && quote; else errorTpl">
-    <h2>Quotation #{{ quote.id }}</h2>
+    
+    <div class="card-premium card-header-black">
+      <div class="header-inner">
+        <div class="title-group">
+          <h2 class="text-white">Quotation #{{ quote.id }}</h2>
+          <p class="text-muted-light">Prepared for {{ quote.party?.name }}</p>
+        </div>
+        <div class="header-actions">
+           <button class="btn-premium btn-secondary-light" (click)="accept()">Confirm & Accept</button>
+        </div>
+      </div>
 
-    <section class="quote-section">
-      <h3>Client</h3>
-      <p>{{ quote.party?.name }}</p>
-    </section>
+      <div class="p-5">
+        <div class="grid-2col mb-5">
+          <div class="detail-section">
+             <div class="section-tag">Package & Services</div>
+             <div class="info-card p-0 overflow-hidden">
+                <table class="compact-table">
+                  <thead>
+                    <tr>
+                      <th>Service</th>
+                      <th>Qty</th>
+                      <th>Price</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let line of quote.items || []">
+                      <td>{{ line.item?.name }}</td>
+                      <td>{{ line.quantity }}</td>
+                      <td>₹{{ line.price }}</td>
+                      <td><b>₹{{ line.total }}</b></td>
+                    </tr>
+                  </tbody>
+                </table>
+             </div>
+          </div>
 
-    <section class="quote-section">
-      <h3>Package & Services</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Item</th>
-            <th>Qty</th>
-            <th>Price</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let line of quote.items || []">
-            <td>{{ line.item?.name }}</td>
-            <td>{{ line.quantity }}</td>
-            <td>{{ line.price }}</td>
-            <td>{{ line.total }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <p class="quote-total">Total: {{ quote.total }}</p>
-    </section>
-
-    <section class="quote-section" *ngIf="quote.notes">
-      <h3>Notes</h3>
-      <p>{{ quote.notes }}</p>
-    </section>
-
-    <button (click)="accept()">Accept Booking</button>
+          <div class="detail-section">
+            <div class="section-tag">Estimate Summary</div>
+            <div class="info-card">
+               <div class="row-info"><span class="label">Estimated Total</span> <span class="value text-primary">₹{{ quote.total }}</span></div>
+               <div class="row-info"><span class="label">Validity</span> <span class="value">7 Days</span></div>
+               <div class="row-info" *ngIf="quote.notes">
+                  <span class="label">Additional Notes</span>
+                  <span class="value">{{ quote.notes }}</span>
+               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </ng-container>
 </div>
 
 <ng-template #loadingTpl>
-  <p>Loading quote...</p>
+  <div class="loading-wrapper">
+    <p class="loading-text">Preparing your quotation...</p>
+  </div>
 </ng-template>
 
 <ng-template #errorTpl>
-  <p class="error">{{ error }}</p>
+  <div class="error mt-5">
+    {{ error }}
+  </div>
 </ng-template>
 

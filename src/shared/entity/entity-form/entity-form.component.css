@@ -1,27 +1,32 @@
-/* Reuse the same look as shared/dynamic-form */
 form {
-  max-width: 900px;
+  max-width: 600px; /* Narrower for vertical orientation */
+  margin: 0 auto;
 }
 
 .form-message {
-  margin-top: 12px;
-  font-size: 13px;
-  line-height: 1.4;
+  margin-top: 16px;
+  font-size: 14px;
 }
 
 button[type="submit"] {
   margin-top: 16px;
-  padding: 10px 22px;
-  border-radius: 6px;
+  width: 100%; /* Full width button for stacked form */
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
   border: none;
-  background-color: #2563eb;
+  background-color: var(--primary);
   color: #fff;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+button[type="submit"]:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+  transform: translateY(-1px);
 }
 
 button[type="submit"]:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
-

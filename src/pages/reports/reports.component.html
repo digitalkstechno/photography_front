@@ -1,6 +1,17 @@
-<h2>Reports</h2>
-
-<app-table
-  [columns]="columns"
-  [fetchFn]="fetchReports">
-</app-table>
+<div class="reports-page container">
+  <div class="card-premium card-header-black mb-5">
+    <div class="header-inner">
+      <div class="title-group">
+        <h2 class="text-white">Business Reports</h2>
+        <p class="text-muted-light">Analyze revenue, growth and session statistics</p>
+      </div>
+    </div>
+    
+    <div class="p-5">
+      <app-table
+        [columns]="columns"
+        [fetchFn]="fetchReports">
+      </app-table>
+    </div>
+  </div>
+</div>

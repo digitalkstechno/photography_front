@@ -1,53 +1,68 @@
 <div class="dashboard-container">
 
-  <!-- Sidebar -->
+  <!-- Premium Sidebar -->
   <aside class="sidebar">
-
-    <h3 class="logo">MyApp</h3>
+    <div class="logo-container">
+      <div class="logo-icon">P</div>
+      <span class="logo-text">Photography</span>
+    </div>
 
     <ul class="menu">
-
-      <li (click)="navigate('/dashboard')">
-        🏠 Dashboard
+      <li class="menu-item" (click)="navigate('/dashboard')">
+        <span class="m-icon">🏠</span>
+        <span class="m-text">Dashboard</span>
       </li>
 
       <!-- Dynamic Entities -->
-      <li *ngFor="let entity of entities" (click)="navigate('/admin/' + entity.key)">
-
-        {{ '📁'}} {{entity.label}}
-
+      <li *ngFor="let entity of entities" class="menu-item" (click)="navigate('/admin/' + entity.key)">
+        <span class="m-icon">{{ entity.icon || '📁' }}</span>
+        <span class="m-text">{{ entity.label }}</span>
       </li>
 
-      <li (click)="navigate('/reports')">
-        📊 Reports
+      <li class="menu-item" (click)="navigate('/reports')">
+        <span class="m-icon">📊</span>
+        <span class="m-text">Reports</span>
       </li>
-
-      <li (click)="navigate('/settings')">
-        ⚙️ Settings
-      </li>
-
-      <li class="logout" (click)="logout()">
-        🚪 Logout
-      </li>
-
     </ul>
 
+    <div class="menu-footer">
+      <li class="menu-item logout-btn" (click)="logout()">
+        <span class="m-icon">🚪</span>
+        <span class="m-text">Logout</span>
+      </li>
+    </div>
   </aside>
-
 
   <!-- Main Section -->
   <div class="main-content">
-
-    <!-- Topbar -->
+    <!-- Premium Topbar -->
     <header class="topbar">
-      <span class="welcome">Welcome 👋</span>
+      <div class="topbar-left">
+        <span class="nav-hint">System</span>
+        <div class="breadcrumb-dot"></div>
+        <span class="nav-hint">{{ activeRouteLabel }}</span>
+      </div>
+      <div class="topbar-right">
+        <div class="notification-bell">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+        </div>
+        <div class="user-profile">
+          <div class="avatar">AD</div>
+          <span class="user-name">Administrator</span>
+        </div>
+      </div>
     </header>
 
     <!-- Page Content -->
     <section class="content">
-      <router-outlet></router-outlet>
+      <div class="container">
+        <router-outlet></router-outlet>
+      </div>
     </section>
-
   </div>
 
 </div>

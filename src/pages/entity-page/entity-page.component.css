@@ -1,5 +1,25 @@
+.entity-page-container {
+  padding: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.entity-header {
+  margin-bottom: 24px;
+  padding-left: 8px;
+}
+
 .page-title {
-  font-size: 22px;
-  font-weight: 600;
-  margin-bottom: 20px;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--primary);
+  margin: 0;
+  letter-spacing: -1px;
+}
+
+.page-subtitle {
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-top: 4px;
 }

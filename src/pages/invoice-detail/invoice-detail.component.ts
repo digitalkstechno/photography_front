@@ -8,6 +8,7 @@ import { ApiService } from '../../core/http/api.service';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './invoice-detail.component.html',
+  styleUrls: ['../quote-public/quote-public.component.css'],
 })
 export class InvoiceDetailComponent implements OnInit {
   loading = true;
