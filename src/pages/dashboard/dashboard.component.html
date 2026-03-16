@@ -2,23 +2,25 @@
 
   <h2 class="title">Dashboard</h2>
 
-  <div class="cards">
+  <div class="cards" *ngIf="!loading">
 
     <div class="card">
-      <h3>Upcoming Events</h3>
-      <p class="value">{{ upcomingEvents }}</p>
+      <h3>Total Invoices</h3>
+      <p class="value">{{ totalInvoices }}</p>
     </div>
 
-    <div class="card">
-      <h3>Pending Quotes</h3>
-      <p class="value">{{ pendingQuotes }}</p>
+    <div class="card card-green">
+      <h3>Total Paid</h3>
+      <p class="value">₹ {{ totalPaid | number:'1.0-0' }}</p>
     </div>
 
-    <div class="card">
+    <div class="card card-red">
       <h3>Outstanding Balance</h3>
-      <p class="value">₹ {{ outstandingBalance }}</p>
+      <p class="value">₹ {{ totalOutstanding | number:'1.0-0' }}</p>
     </div>
 
   </div>
+
+  <p *ngIf="loading" class="loading-text">Loading dashboard...</p>
 
 </div>

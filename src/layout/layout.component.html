@@ -12,8 +12,7 @@
       </li>
 
       <!-- Dynamic Entities -->
-      <li *ngFor="let entity of entities"
-          (click)="navigate('/admin/' + entity.key)">
+      <li *ngFor="let entity of entities" (click)="navigate('/admin/' + entity.key)">
 
         {{ '📁'}} {{entity.label}}
 

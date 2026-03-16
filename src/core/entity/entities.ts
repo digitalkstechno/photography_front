@@ -1,32 +1,39 @@
 import { EntityConfig } from './entity.types';
 
 export const ENTITIES: Record<string, EntityConfig> = {
-  // Phase 1: core booking & money
 
-  // Client = backend party (customer)
+  // ── Parties (Customers & Vendors) ──
   party: {
     key: 'party',
-    label: 'Party',
-    api: 'parties',
-    listApi: '/parties/customers',
+    label: 'Parties',
+    api: '/parties',
+    listApi: '/parties',
     idKey: 'id',
     fields: [
       { name: 'name', label: 'Name', type: 'text', required: true, class: 'input', wrapperClass: 'col-6' },
       { name: 'phone', label: 'Phone', type: 'text', class: 'input', wrapperClass: 'col-6' },
-      { name: 'eventType', label: 'Event Type', type: 'text', class: 'input', wrapperClass: 'col-6' },
-      { name: 'eventDate', label: 'Event Date', type: 'date', class: 'input', wrapperClass: 'col-6' },
-      { name: 'notes', label: 'Notes', type: 'textarea', class: 'textarea', wrapperClass: 'col-12' },
+      { name: 'email', label: 'Email', type: 'text', class: 'input', wrapperClass: 'col-6' },
+      {
+        name: 'partyTypeId',
+        label: 'Type',
+        type: 'relation',
+        relation: { entity: 'partyTypes', valueKey: 'id', labelKey: 'name' },
+        required: true,
+        class: 'input',
+        wrapperClass: 'col-6',
+      },
+      { name: 'address', label: 'Address', type: 'textarea', class: 'textarea', wrapperClass: 'col-12' },
     ],
     columns: [
       { key: 'name', label: 'Name' },
       { key: 'phone', label: 'Phone' },
-      { key: 'eventDate', label: 'Event Date' },
-      { key: 'eventType', label: 'Event Type' },
+      { key: 'email', label: 'Email' },
+      { key: 'partyType.name', label: 'Type' },
     ],
     sidebar: true
   },
 
-  // Package = backend item
+  // ── Services / Items ──
   services: {
     key: 'services',
     label: 'Services',
@@ -34,40 +41,55 @@ export const ENTITIES: Record<string, EntityConfig> = {
     idKey: 'id',
     fields: [
       { name: 'name', label: 'Name', type: 'text', required: true, class: 'input', wrapperClass: 'col-6' },
-      { name: 'price', label: 'Base Price', type: 'number', required: true, class: 'input', wrapperClass: 'col-3' },
-      { name: 'category', label: 'Category', type: 'text', class: 'input', wrapperClass: 'col-3' },
-      { name: 'durationHours', label: 'Duration (Hours)', type: 'number', class: 'input', wrapperClass: 'col-3' },
-      { name: 'description', label: 'Description', type: 'textarea', class: 'textarea', wrapperClass: 'col-12' },
+      { name: 'price', label: 'Price (₹)', type: 'number', required: true, class: 'input', wrapperClass: 'col-6' },
+      {
+        name: 'unitId',
+        label: 'Unit',
+        type: 'relation',
+        relation: { entity: 'units', valueKey: 'id', labelKey: 'name' },
+        required: true,
+        class: 'input',
+        wrapperClass: 'col-6',
+      },
+      {
+        name: 'categoryId',
+        label: 'Category',
+        type: 'relation',
+        relation: { entity: 'categories', valueKey: 'id', labelKey: 'name' },
+        class: 'input',
+        wrapperClass: 'col-6',
+      },
     ],
     columns: [
       { key: 'name', label: 'Name' },
-      { key: 'price', label: 'Base Price' },
-      { key: 'category', label: 'Category' },
+      { key: 'price', label: 'Price (₹)' },
+      { key: 'unit.name', label: 'Unit' },
+      { key: 'category.name', label: 'Category' },
     ],
     sidebar: true
   },
 
-  // Quote = SALE_QUOTATION transaction
+  // ── Quotations (SALE_QUOTATION) ──
   quotes: {
     key: 'quotes',
-    label: 'Quotes',
+    label: 'Quotations',
     api: '/transactions/sales/quotations',
     idKey: 'id',
     fields: [
       {
         name: 'partyId',
-        label: 'Client',
+        label: 'Customer',
         type: 'relation',
-        relation: { entity: 'client', valueKey: 'id', labelKey: 'name' },
+        relation: { entity: 'party', valueKey: 'id', labelKey: 'name' },
         required: true,
         class: 'input',
         wrapperClass: 'col-6',
       },
       {
         name: 'items[0].itemId',
-        label: 'Package',
+        label: 'Service',
         type: 'relation',
-        relation: { entity: 'package', valueKey: 'id', labelKey: 'name' },
+        relation: { entity: 'services', valueKey: 'id', labelKey: 'name' },
         required: true,
         class: 'input',
         wrapperClass: 'col-6',
@@ -89,15 +111,8 @@ export const ENTITIES: Record<string, EntityConfig> = {
         wrapperClass: 'col-3',
       },
       {
-        name: 'discount',
-        label: 'Discount',
-        type: 'number',
-        class: 'input',
-        wrapperClass: 'col-3',
-      },
-      {
         name: 'notes',
-        label: 'Notes / Extra Services',
+        label: 'Notes',
         type: 'textarea',
         class: 'textarea',
         wrapperClass: 'col-12',
@@ -105,15 +120,15 @@ export const ENTITIES: Record<string, EntityConfig> = {
     ],
     columns: [
       { key: 'id', label: 'Quote #' },
-      { key: 'party.name', label: 'Client' },
-      { key: 'total', label: 'Total' },
+      { key: 'party.name', label: 'Customer' },
+      { key: 'total', label: 'Total (₹)' },
       { key: 'status.name', label: 'Status' },
-      { key: 'createdAt', label: 'Created' },
+      { key: 'createdAt', label: 'Date' },
     ],
     sidebar: true
   },
 
-  // Invoice = SALE_INVOICE transaction
+  // ── Invoices (SALE_INVOICE) ──
   invoices: {
     key: 'invoices',
     label: 'Invoices',
@@ -122,12 +137,37 @@ export const ENTITIES: Record<string, EntityConfig> = {
     fields: [
       {
         name: 'partyId',
-        label: 'Client',
+        label: 'Customer',
         type: 'relation',
-        relation: { entity: 'client', valueKey: 'id', labelKey: 'name' },
+        relation: { entity: 'party', valueKey: 'id', labelKey: 'name' },
         required: true,
         class: 'input',
         wrapperClass: 'col-6',
+      },
+      {
+        name: 'items[0].itemId',
+        label: 'Service',
+        type: 'relation',
+        relation: { entity: 'services', valueKey: 'id', labelKey: 'name' },
+        required: true,
+        class: 'input',
+        wrapperClass: 'col-6',
+      },
+      {
+        name: 'items[0].quantity',
+        label: 'Quantity',
+        type: 'number',
+        required: true,
+        class: 'input',
+        wrapperClass: 'col-3',
+      },
+      {
+        name: 'items[0].price',
+        label: 'Price',
+        type: 'number',
+        required: true,
+        class: 'input',
+        wrapperClass: 'col-3',
       },
       {
         name: 'notes',
@@ -139,15 +179,15 @@ export const ENTITIES: Record<string, EntityConfig> = {
     ],
     columns: [
       { key: 'id', label: 'Invoice #' },
-      { key: 'party.name', label: 'Client' },
-      { key: 'total', label: 'Total' },
+      { key: 'party.name', label: 'Customer' },
+      { key: 'total', label: 'Total (₹)' },
       { key: 'status.name', label: 'Status' },
-      { key: 'createdAt', label: 'Created' },
+      { key: 'createdAt', label: 'Date' },
     ],
     sidebar: true
   },
 
-  // Payment on a transaction (invoice)
+  // ── Payments ──
   payments: {
     key: 'payments',
     label: 'Payments',
@@ -156,32 +196,33 @@ export const ENTITIES: Record<string, EntityConfig> = {
     fields: [
       {
         name: 'transactionId',
-        label: 'Invoice',
+        label: 'Invoice #',
         type: 'relation',
-        relation: { entity: 'invoice', valueKey: 'id', labelKey: 'id' },
+        relation: { entity: 'invoices', valueKey: 'id', labelKey: 'id' },
         required: true,
         class: 'input',
         wrapperClass: 'col-6',
       },
       {
         name: 'paymentMethodId',
-        label: 'Payment Method Id',
-        type: 'number',
+        label: 'Payment Method',
+        type: 'relation',
+        relation: { entity: 'paymentMethods', valueKey: 'id', labelKey: 'name' },
         required: true,
         class: 'input',
-        wrapperClass: 'col-3',
+        wrapperClass: 'col-6',
       },
       {
         name: 'amount',
-        label: 'Amount',
+        label: 'Amount (₹)',
         type: 'number',
         required: true,
         class: 'input',
-        wrapperClass: 'col-3',
+        wrapperClass: 'col-6',
       },
       {
         name: 'reference',
-        label: 'Note / Reference',
+        label: 'Reference / Note',
         type: 'text',
         class: 'input',
         wrapperClass: 'col-6',
@@ -189,15 +230,66 @@ export const ENTITIES: Record<string, EntityConfig> = {
     ],
     columns: [
       { key: 'id', label: 'Payment #' },
-      { key: 'transactionId', label: 'Invoice #' },
-      { key: 'amount', label: 'Amount' },
+      { key: 'transaction.party.name', label: 'Customer' },
+      { key: 'paymentMethod.name', label: 'Method' },
+      { key: 'amount', label: 'Amount (₹)' },
       { key: 'createdAt', label: 'Date' },
     ],
     sidebar: true
+  },
+
+  // ── Lookup entities (for relation dropdowns, not shown in sidebar) ──
+  partyTypes: {
+    key: 'partyTypes',
+    label: 'Party Types',
+    api: '/lookups/party-types',
+    idKey: 'id',
+    fields: [],
+    columns: [],
+    sidebar: false
+  },
+
+  units: {
+    key: 'units',
+    label: 'Units',
+    api: '/lookups/units',
+    idKey: 'id',
+    fields: [
+      { name: 'name', label: 'Name', type: 'text', required: true, class: 'input', wrapperClass: 'col-6' },
+      { name: 'shortName', label: 'Short Name', type: 'text', class: 'input', wrapperClass: 'col-6' },
+    ],
+    columns: [
+      { key: 'name', label: 'Name' },
+      { key: 'shortName', label: 'Short Name' },
+    ],
+    sidebar: false
+  },
+
+  categories: {
+    key: 'categories',
+    label: 'Categories',
+    api: '/lookups/categories',
+    idKey: 'id',
+    fields: [
+      { name: 'name', label: 'Name', type: 'text', required: true, class: 'input', wrapperClass: 'col-12' },
+    ],
+    columns: [
+      { key: 'name', label: 'Name' },
+    ],
+    sidebar: false
+  },
+
+  paymentMethods: {
+    key: 'paymentMethods',
+    label: 'Payment Methods',
+    api: '/lookups/payment-methods',
+    idKey: 'id',
+    fields: [],
+    columns: [],
+    sidebar: false
   },
 };
 
 export function getEntityConfig(entityKey: string): EntityConfig | null {
   return ENTITIES[entityKey] ?? null;
 }
-

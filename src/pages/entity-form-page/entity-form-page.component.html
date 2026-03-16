@@ -1,12 +1,15 @@
 <div class="entity-form-page">
 
-  <h2>{{ entity.label}}</h2>
+  <h2>{{ isEdit ? 'Edit' : 'New' }} {{ entity.label }}</h2>
+
+  <p *ngIf="loading">Loading...</p>
 
   <app-entity-form
-  *ngIf="entity"
-  [entity]="entity"
-  [(model)]="model"
-  [submitFn]="save"
-  submitLabel="Save">
-</app-entity-form>
+    *ngIf="entity && !loading"
+    [entity]="entity"
+    [(model)]="model"
+    [submitFn]="save"
+    [submitLabel]="isEdit ? 'Update' : 'Save'">
+  </app-entity-form>
+
 </div>

@@ -5,9 +5,7 @@ import { EntityConfig } from './entity.types';
 
 @Injectable({ providedIn: 'root' })
 export class EntityService {
-  get(entity: EntityConfig, id: string): any {
-    throw new Error('Method not implemented.');
-  }
+
   constructor(private api: ApiService) {}
 
   list(entity: EntityConfig, params?: any): Promise<any> {
@@ -24,11 +22,10 @@ export class EntityService {
   }
 
   update(entity: EntityConfig, id: string, data: any): Promise<any> {
-    return firstValueFrom(this.api.patch<any>(`${entity.api}/${id}`, data));
+    return firstValueFrom(this.api.put<any>(`${entity.api}/${id}`, data));
   }
 
   remove(entity: EntityConfig, id: string): Promise<any> {
     return firstValueFrom(this.api.delete<any>(`${entity.api}/${id}`));
   }
 }
-
