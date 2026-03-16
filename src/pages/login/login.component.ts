@@ -13,7 +13,7 @@ import { AuthService } from '../../core/auth/auth.service';
 })
 export class LoginComponent {
 
-   loading = false;
+  loading = false;
   error = '';
   form!: ReturnType<FormBuilder['group']>;
 

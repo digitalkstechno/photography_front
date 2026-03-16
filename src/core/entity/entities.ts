@@ -23,6 +23,7 @@ export const ENTITIES: Record<string, EntityConfig> = {
       { key: 'eventDate', label: 'Event Date' },
       { key: 'eventType', label: 'Event Type' },
     ],
+    sidebar: true
   },
 
   // Package = backend item
@@ -43,6 +44,7 @@ export const ENTITIES: Record<string, EntityConfig> = {
       { key: 'price', label: 'Base Price' },
       { key: 'category', label: 'Category' },
     ],
+    sidebar: true
   },
 
   // Quote = SALE_QUOTATION transaction
@@ -108,6 +110,7 @@ export const ENTITIES: Record<string, EntityConfig> = {
       { key: 'status.name', label: 'Status' },
       { key: 'createdAt', label: 'Created' },
     ],
+    sidebar: true
   },
 
   // Invoice = SALE_INVOICE transaction
@@ -141,6 +144,7 @@ export const ENTITIES: Record<string, EntityConfig> = {
       { key: 'status.name', label: 'Status' },
       { key: 'createdAt', label: 'Created' },
     ],
+    sidebar: true
   },
 
   // Payment on a transaction (invoice)
@@ -189,6 +193,7 @@ export const ENTITIES: Record<string, EntityConfig> = {
       { key: 'amount', label: 'Amount' },
       { key: 'createdAt', label: 'Date' },
     ],
+    sidebar: true
   },
 };
 
