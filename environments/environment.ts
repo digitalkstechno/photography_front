@@ -1,5 +1,5 @@
 // src/environments/environment.ts
 export const environment = {
   production: false,
-  apiUrl: 'https://photography.digitalks.co.in/api/api'
+  apiUrl: 'https://photography-back-ajwk.onrender.com/api'
 };
