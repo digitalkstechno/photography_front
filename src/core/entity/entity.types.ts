@@ -86,6 +86,9 @@ export interface EntityField {
   class?: string;
   wrapperClass?: string;
   labelClass?: string;
+
+  /** Help text */
+  help?: string;
 }
 
 export interface EntityColumn {

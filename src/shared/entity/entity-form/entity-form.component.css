@@ -1,32 +1,90 @@
-form {
-  max-width: 600px; /* Narrower for vertical orientation */
-  margin: 0 auto;
+.pro-form-container {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.form-header {
+  padding: 1.25rem 1.5rem;
+  background: #fcfdfe;
+  border-bottom: 1px solid var(--border);
+}
+
+.form-header h2 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.form-header .subtitle {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.form-content {
+  padding: 2rem 1.5rem;
+}
+
+.accounting-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.fields-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+/* Full width fields */
+app-input-renderer {
+  grid-column: span 1;
+}
+
+/* Specific field types or large text areas can be made full width */
+/* app-input-renderer[field.type='textarea'] { grid-column: span 2; } */
+
+.form-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  margin-top: 1rem;
 }
 
 .form-message {
-  margin-top: 16px;
-  font-size: 14px;
+  font-size: 0.875rem;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  display: none;
 }
 
-button[type="submit"] {
-  margin-top: 16px;
-  width: 100%; /* Full width button for stacked form */
-  padding: 10px 20px;
-  border-radius: var(--radius-md);
-  border: none;
-  background-color: var(--primary);
-  color: #fff;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
+.form-message.success {
+  display: block;
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbfcce;
 }
 
-button[type="submit"]:hover:not(:disabled) {
-  background-color: var(--primary-hover);
-  transform: translateY(-1px);
+.form-message.danger {
+  display: block;
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
 }
 
-button[type="submit"]:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+/* Responsive adjustment */
+@media (max-width: 768px) {
+  .fields-grid {
+    grid-template-columns: 1fr;
+  }
 }

@@ -1,63 +1,72 @@
-<div class="form-field" [ngClass]="field.wrapperClass || ''">
-  <label [ngClass]="field.labelClass || ''">
+<div class="field-container" [ngClass]="field.wrapperClass || ''">
+  <label class="field-label" [ngClass]="field.labelClass || ''">
     {{ field.label || field.name }}
+    <span *ngIf="field.required" class="required-mark">*</span>
   </label>
 
-  <!-- TEXT / NUMBER / DATE -->
-  <input
-    *ngIf="field.type === 'text' || field.type === 'number' || field.type === 'date'"
-    [type]="field.type"
-    [name]="field.name"
-    [(ngModel)]="model[field.name]"
-    (ngModelChange)="onModelChange()"
-    [required]="!!field.required"
-    [disabled]="!!field.disabled"
-    [placeholder]="field.placeholder || ''"
-    class="input"
-    [ngClass]="field.class || ''"
-  />
-
-  <!-- TEXTAREA -->
-  <textarea
-    *ngIf="field.type === 'textarea'"
-    [name]="field.name"
-    [(ngModel)]="model[field.name]"
-    (ngModelChange)="onModelChange()"
-    [required]="!!field.required"
-    [disabled]="!!field.disabled"
-    [placeholder]="field.placeholder || ''"
-    class="textarea"
-    [ngClass]="field.class || ''"
-  ></textarea>
-
-  <!-- SELECT / RELATION -->
-  <select
-    *ngIf="field.type === 'select' || field.type === 'relation'"
-    [name]="field.name"
-    [(ngModel)]="model[field.name]"
-    (ngModelChange)="onModelChange()"
-    [required]="!!field.required"
-    [disabled]="!!field.disabled"
-    class="input"
-    [ngClass]="field.class || ''"
-  >
-    <option [ngValue]="undefined">-- Select --</option>
-    <option *ngFor="let opt of field.options || []" [ngValue]="opt.value">
-      {{ opt.label }}
-    </option>
-  </select>
-
-  <!-- BOOLEAN -->
-  <div class="checkbox-wrapper" *ngIf="field.type === 'boolean'">
+  <div class="input-wrapper">
+    <!-- TEXT / NUMBER / DATE -->
     <input
-      type="checkbox"
-      [id]="field.name"
+      *ngIf="field.type === 'text' || field.type === 'number' || field.type === 'date'"
+      [type]="field.type"
       [name]="field.name"
       [(ngModel)]="model[field.name]"
       (ngModelChange)="onModelChange()"
+      [required]="!!field.required"
       [disabled]="!!field.disabled"
+      [placeholder]="field.placeholder || ''"
+      class="pro-input"
+      [ngClass]="field.class || ''"
     />
-    <label [for]="field.name" class="checkbox-label">Enabled</label>
-  </div>
-</div>
 
+    <!-- TEXTAREA -->
+    <textarea
+      *ngIf="field.type === 'textarea'"
+      [name]="field.name"
+      [(ngModel)]="model[field.name]"
+      (ngModelChange)="onModelChange()"
+      [required]="!!field.required"
+      [disabled]="!!field.disabled"
+      [placeholder]="field.placeholder || ''"
+      class="pro-textarea"
+      [ngClass]="field.class || ''"
+    ></textarea>
+
+    <!-- SELECT / RELATION -->
+    <div class="select-wrapper" *ngIf="field.type === 'select' || field.type === 'relation'">
+      <select
+        [name]="field.name"
+        [(ngModel)]="model[field.name]"
+        (ngModelChange)="onModelChange()"
+        [required]="!!field.required"
+        [disabled]="!!field.disabled"
+        class="pro-select"
+        [ngClass]="field.class || ''"
+      >
+        <option [ngValue]="undefined">-- Select {{ field.label }} --</option>
+        <option *ngFor="let opt of field.options || []" [ngValue]="opt.value">
+          {{ opt.label }}
+        </option>
+      </select>
+      <span class="select-arrow">▼</span>
+    </div>
+
+    <!-- BOOLEAN -->
+    <div class="toggle-wrapper" *ngIf="field.type === 'boolean'">
+      <label class="toggle">
+        <input
+          type="checkbox"
+          [id]="field.name"
+          [name]="field.name"
+          [(ngModel)]="model[field.name]"
+          (ngModelChange)="onModelChange()"
+          [disabled]="!!field.disabled"
+        />
+        <span class="slider"></span>
+      </label>
+      <span class="toggle-label">{{ model[field.name] ? 'Enabled' : 'Disabled' }}</span>
+    </div>
+  </div>
+
+  <div *ngIf="field.help" class="field-help">{{ field.help }}</div>
+</div>

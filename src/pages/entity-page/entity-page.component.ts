@@ -36,7 +36,7 @@ export class EntityPageComponent {
     this.router.navigate(['/admin', this.entity.key, record.id]);
   }
 
-  onAddNew() {
+  onNew() {
     if (!this.entity) return;
     this.router.navigate(['/admin', this.entity.key, 'new']);
   }

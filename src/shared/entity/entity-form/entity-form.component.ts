@@ -24,6 +24,8 @@ export class EntityFormComponent {
 
   @Input() submitLabel = 'Save';
 
+  @Output() cancelEvent = new EventEmitter<void>();
+
   @Input() submitFn!: (data: any) => Promise<any>;
 
   loading = false;
@@ -115,4 +117,7 @@ export class EntityFormComponent {
 
   }
 
+  cancel() {
+    this.cancelEvent.emit();
+  }
 }

@@ -1,25 +1,34 @@
 <div class="dashboard-container">
-
-  <!-- Premium Sidebar -->
+  <!-- Professional Sidebar -->
   <aside class="sidebar">
     <div class="logo-container">
       <div class="logo-icon">P</div>
-      <span class="logo-text">Photography</span>
+      <div class="logo-text">Photography</div>
     </div>
 
     <ul class="menu">
-      <li class="menu-item" (click)="navigate('/dashboard')">
+      <li class="menu-item" (click)="navigate('/dashboard')" [class.active]="router.url.includes('/dashboard')">
         <span class="m-icon">🏠</span>
         <span class="m-text">Dashboard</span>
       </li>
 
-      <!-- Dynamic Entities -->
-      <li *ngFor="let entity of entities" class="menu-item" (click)="navigate('/admin/' + entity.key)">
-        <span class="m-icon">{{ entity.icon || '📁' }}</span>
-        <span class="m-text">{{ entity.label }}</span>
+      <li class="menu-item" (click)="navigate('/ledger')" [class.active]="router.url.includes('/ledger')">
+        <span class="m-icon">📒</span>
+        <span class="m-text">Ledger</span>
       </li>
 
-      <li class="menu-item" (click)="navigate('/reports')">
+      <!-- Dynamic Entity Links -->
+      <ng-container *ngFor="let config of entityConfigs">
+        <li *ngIf="config.sidebar" 
+            class="menu-item" 
+            (click)="navigate('/admin/' + config.key)"
+            [class.active]="router.url.includes('/admin/' + config.key)">
+          <span class="m-icon">{{ config.icon || '📦' }}</span>
+          <span class="m-text">{{ config.label }}</span>
+        </li>
+      </ng-container>
+
+      <li class="menu-item" (click)="navigate('/reports')" [class.active]="router.url.includes('/reports')">
         <span class="m-icon">📊</span>
         <span class="m-text">Reports</span>
       </li>
@@ -33,36 +42,27 @@
     </div>
   </aside>
 
-  <!-- Main Section -->
-  <div class="main-content">
-    <!-- Premium Topbar -->
+  <!-- Main Content Area -->
+  <main class="main-content">
     <header class="topbar">
       <div class="topbar-left">
-        <span class="nav-hint">System</span>
+        <span class="nav-hint">Photography</span>
         <div class="breadcrumb-dot"></div>
-        <span class="nav-hint">{{ activeRouteLabel }}</span>
+        <span class="nav-hint active">{{ activeRouteLabel }}</span>
       </div>
+
       <div class="topbar-right">
-        <div class="notification-bell">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-          </svg>
-        </div>
+        <div class="notification-bell">🔔</div>
         <div class="user-profile">
           <div class="avatar">AD</div>
-          <span class="user-name">Administrator</span>
+          <span class="user-name">Admin User</span>
         </div>
       </div>
     </header>
 
     <!-- Page Content -->
     <section class="content">
-      <div class="container">
-        <router-outlet></router-outlet>
-      </div>
+      <router-outlet></router-outlet>
     </section>
-  </div>
-
+  </main>
 </div>

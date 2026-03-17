@@ -12,13 +12,21 @@ import { ENTITIES } from '../core/entity/entities';
 })
 export class LayoutComponent {
 
-  entities = Object.values(ENTITIES).filter(e => e.sidebar !== false);
+  constructor(public router: Router) {}
 
-  constructor(private router: Router) {}
+  get entityConfigs() {
+    return Object.values(ENTITIES);
+  }
+
+  get entities() {
+    return this.entityConfigs.filter(e => e.sidebar !== false);
+  }
 
   get activeRouteLabel(): string {
     const url = this.router.url;
     if (url.includes('/dashboard')) return 'Dashboard';
+    if (url.includes('/ledger')) return 'Ledger';
+    if (url.includes('/reports')) return 'Reports';
     
     // Check if it's an entity route
     const entityKey = url.split('/').pop() || '';
@@ -36,5 +44,4 @@ export class LayoutComponent {
     localStorage.clear();
     this.router.navigate(['/login']);
   }
-
 }

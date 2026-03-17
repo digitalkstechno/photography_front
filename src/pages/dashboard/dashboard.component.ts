@@ -1,7 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../core/http/api.service';
 import { firstValueFrom } from 'rxjs';
+
+interface LedgerSummary {
+  totalCredit: number;
+  totalDebit: number;
+  netBalance: number;
+}
+
+interface DashboardSummary {
+  totalInvoices: number;
+  totalPaid: number;
+  totalOutstanding: number;
+  ledgerSummary: LedgerSummary;
+}
 
 @Component({
   selector: 'app-dashboard',
@@ -10,42 +23,66 @@ import { firstValueFrom } from 'rxjs';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
 
-  totalInvoices = 0;
-  totalPaid = 0;
-  totalOutstanding = 0;
+  public summary: DashboardSummary = {
+    totalInvoices: 0,
+    totalPaid: 0,
+    totalOutstanding: 0,
+    ledgerSummary: {
+      totalCredit: 0,
+      totalDebit: 0,
+      netBalance: 0
+    }
+  };
 
-  totalIncome = 0;
-  totalExpenses = 0;
-  netBalance = 0;
+  public isLoading = true;
+  public error: string | null = null;
 
-  loading = true;
+  constructor(private api: ApiService) {}
 
-  constructor(private api: ApiService) {
+  ngOnInit(): void {
     this.loadSummary();
   }
 
-  async loadSummary() {
+  async loadSummary(): Promise<void> {
     try {
-      const summary = await firstValueFrom(
+      this.isLoading = true;
+      this.error = null;
+
+      const data = await firstValueFrom(
         this.api.get<any>('/dashboard/summary')
       );
 
-      this.totalInvoices = summary.totalSaleInvoices ?? 0;
-      this.totalPaid = summary.totalPaid ?? 0;
-      this.totalOutstanding = summary.totalOutstanding ?? 0;
-
-      if (summary.ledger) {
-        this.totalIncome = summary.ledger.totalIncome ?? 0;
-        this.totalExpenses = summary.ledger.totalExpenses ?? 0;
-        this.netBalance = summary.ledger.netBalance ?? 0;
-      }
+      this.summary = this.mapSummary(data);
 
     } catch (err) {
-      console.error('Dashboard load error:', err);
+      console.error(err);
+      this.error = 'Failed to load dashboard';
     } finally {
-      this.loading = false;
+      this.isLoading = false;
     }
+  }
+
+  private mapSummary(data: any): DashboardSummary {
+    return {
+      totalInvoices: data?.totalSaleInvoices ?? 0,
+      totalPaid: data?.totalPaid ?? 0,
+      totalOutstanding: data?.totalOutstanding ?? 0,
+      ledgerSummary: {
+        totalCredit: data?.ledger?.totalCredit ?? 0,
+        totalDebit: data?.ledger?.totalDebit ?? 0,
+        netBalance: data?.ledger?.netBalance ?? 0
+      }
+    };
+  }
+
+  get collectionRate(): number {
+    if (!this.summary.totalInvoices || !this.summary.totalPaid) return 0;
+    return (this.summary.totalPaid / this.summary.totalInvoices) / 100;
+  }
+
+  refresh(): void {
+    this.loadSummary();
   }
 }

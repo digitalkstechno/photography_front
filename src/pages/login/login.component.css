@@ -1,93 +1,166 @@
-.auth-page {
-  min-height: 100vh;
+.login-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-app);
-  padding: 20px;
+  min-height: 100vh;
+  background-color: var(--bg-app);
+  padding: 1.5rem;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.login-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-logo {
+  width: 48px;
+  height: 48px;
+  background-color: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  font-weight: 800;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
+}
+
+.brand-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
 }
 
 .login-card {
-  width: 100%;
-  max-width: 440px;
-  padding: 32px;
-  box-shadow: var(--shadow-lg);
-  border-radius: var(--radius-lg);
-  background: #fff;
-}
-
-.title {
-  font-size: 26px;
-  font-weight: 800;
-  color: var(--primary);
-  letter-spacing: -1px;
-}
-
-.subtitle {
-  font-size: 14.5px;
-  margin-top: 6px;
-  font-weight: 500;
-  color: var(--text-muted);
-}
-
-.mb-5 { margin-bottom: 32px; }
-.mt-5 { margin-top: 32px; }
-.mt-4 { margin-top: 20px; }
-.mt-3 { margin-top: 14px; }
-.w-100 { width: 100%; }
-.text-center { text-align: center; }
-
-.divider-text {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  margin: 24px 0;
-  color: var(--text-light);
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.divider-text::before,
-.divider-text::after {
-  content: '';
-  flex: 1;
-  border-bottom: 1.5px solid var(--border);
-}
-
-.divider-text::before { margin-right: 16px; }
-.divider-text::after { margin-left: 16px; }
-
-.social-btn {
   background: white;
-  border-color: var(--border);
-  color: var(--primary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  padding: 2.5rem;
 }
 
-.social-btn:hover {
-  background: var(--bg-app);
-  border-color: var(--primary);
+.card-header {
+  text-align: center;
+  margin-bottom: 2rem;
 }
 
-.forgot-link a {
+.card-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
+}
+
+.card-header p {
+  font-size: 0.875rem;
   color: var(--text-muted);
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: color 0.2s;
 }
 
-.forgot-link a:hover {
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.forgot-link {
+  font-size: 0.75rem;
+  font-weight: 600;
   color: var(--primary);
+  text-decoration: none;
+}
+
+.forgot-link:hover {
   text-decoration: underline;
 }
 
-.error {
-  color: var(--danger);
-  font-size: 13.5px;
-  font-weight: 600;
-  background: #fee2e2;
-  padding: 10px;
-  border-radius: 8px;
+.pro-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  transition: all 0.2s;
 }
+
+.pro-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 1.5rem 0;
+  color: var(--text-light);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--border);
+}
+
+.divider::before { margin-right: 1rem; }
+.divider::after { margin-left: 1rem; }
+
+.google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  font-weight: 500;
+  padding: 0.75rem;
+}
+
+.error-msg {
+  color: var(--danger);
+  font-size: 0.8125rem;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.login-footer {
+  text-align: center;
+}
+
+.login-footer p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.w-100 { width: 100%; }
+.mt-2 { margin-top: 0.5rem; }

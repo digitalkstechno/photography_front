@@ -4,7 +4,8 @@
     [entity]="entity"
     [(model)]="model"
     [submitFn]="save"
-    [submitLabel]="isEdit ? 'Update Record' : 'Create Record'">
+    [submitLabel]="isEdit ? 'Update Record' : 'Create Record'"
+    (cancelEvent)="onCancel()">
   </app-entity-form>
   
   <div *ngIf="loading" class="loading-text">

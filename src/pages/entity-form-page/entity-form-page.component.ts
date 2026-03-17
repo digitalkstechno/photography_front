@@ -73,4 +73,8 @@ export class EntityFormPageComponent implements OnInit {
     // Redirect back to list page
     this.router.navigate([`/admin/${this.entityName}`]);
   };
+
+  onCancel() {
+    this.router.navigate([`/admin/${this.entityName}`]);
+  }
 }

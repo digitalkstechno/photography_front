@@ -12,6 +12,7 @@ import { BookingListComponent } from '../pages/booking-list/booking-list.compone
 import { BookingFormComponent } from '../pages/booking-form/booking-form.component';
 import { BookingDetailComponent } from '../pages/booking-detail/booking-detail.component';
 import { CalendarComponent } from '../pages/calendar/calendar.component';
+import { LedgerComponent } from '../pages/ledger/ledger.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -41,6 +42,10 @@ export const routes: Routes = [
       
       // Calendar
       { path: 'calendar', component: CalendarComponent },
+      
+      // Ledger (Main & Sub)
+      { path: 'ledger', component: LedgerComponent },
+      { path: 'ledger/:partyId', component: LedgerComponent },
 
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]

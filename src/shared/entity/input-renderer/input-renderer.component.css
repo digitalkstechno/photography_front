@@ -1,27 +1,142 @@
-/* Keep styling consistent with existing shared/dynamic-form */
-:host {
-  display: block;
+.field-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
 }
 
-.checkbox-wrapper {
+.field-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-main);
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 4px 0;
+  gap: 0.25rem;
 }
 
-.checkbox-wrapper input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
+.required-mark {
+  color: var(--danger);
+  font-size: 1rem;
 }
 
-.checkbox-label {
-  font-size: 13px !important;
-  font-weight: 600 !important;
-  color: var(--text-main) !important;
-  text-transform: none !important;
-  letter-spacing: normal !important;
+.input-wrapper {
+  width: 100%;
+}
+
+.pro-input, .pro-textarea, .pro-select {
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: var(--text-main);
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: all 0.2s;
+}
+
+.pro-input:focus, .pro-textarea:focus, .pro-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.pro-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Select Wrapper */
+.select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.pro-select {
+  appearance: none;
+  padding-right: 2.5rem;
+}
+
+.select-arrow {
+  position: absolute;
+  right: 1rem;
+  font-size: 0.6rem;
+  color: var(--text-light);
+  pointer-events: none;
+}
+
+/* Toggle / Checkbox */
+.toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
   cursor: pointer;
-  margin: 0 !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--border);
+  transition: .4s;
+  border-radius: 20px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: var(--success);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px var(--success);
+}
+
+input:checked + .slider:before {
+  transform: translateX(16px);
+}
+
+.toggle-label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.field-help {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  margin-top: 0.25rem;
+}
+
+/* Disabled State */
+.pro-input:disabled, .pro-textarea:disabled, .pro-select:disabled {
+  background-color: #f9fafb;
+  cursor: not-allowed;
+  color: var(--text-light);
 }

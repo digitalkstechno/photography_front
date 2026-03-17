@@ -37,7 +37,7 @@ export const ENTITIES: Record<string, EntityConfig> = {
         {
           label: 'Ledger',
           class: 'btn-sm btn-info',
-          onClick: (row, router) => router.navigate(['/admin/ledger'], { queryParams: { partyId: row.id } }),
+          onClick: (row, router) => router.navigate(['/ledger', row.id]),
           isVisible: (row) => row.id !== undefined
         }
       ]
@@ -190,16 +190,7 @@ export const ENTITIES: Record<string, EntityConfig> = {
       { name: 'category', label: 'Category / Head', type: 'text', class: 'input', wrapperClass: 'col-12' },
       { name: 'description', label: 'Description / Notes', type: 'textarea', class: 'textarea', wrapperClass: 'col-12' },
     ],
-    columns: [
-      { key: 'id', label: 'Voucher #' }, // Journal no in image
-      { key: 'date', label: 'Date' },
-      { key: 'party.name', label: 'Party' },
-      { key: 'category', label: 'Head' },
-      { key: 'description', label: 'Notes' },
-      { key: 'debit', label: 'Debit', render: (row: any) => row.type === 'DEBIT' ? `₹${row.amount}` : '-' },
-      { key: 'credit', label: 'Credit', render: (row: any) => row.type === 'CREDIT' ? `₹${row.amount}` : '-' },
-    ],
-    sidebar: true
+    sidebar: false
   },
 
   // ── Availability / Calendar Blockers ──
@@ -464,7 +455,7 @@ export const ENTITIES: Record<string, EntityConfig> = {
       { key: 'status', label: 'Status' },
       { key: 'createdAt', label: 'Date' },
     ],
-    sidebar: true,
+    sidebar: false,
     ui: {
       updateRoute: (row: any) => `/bookings/${row.id}`
     }

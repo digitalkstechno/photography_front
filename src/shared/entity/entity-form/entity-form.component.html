@@ -1,28 +1,34 @@
-<div class="card-premium card-header-black" *ngIf="entity">
-  <div class="header-inner">
-    <div class="title-group">
-      <h3 class="text-white">{{ entity.label }} Details</h3>
-      <p class="text-muted-light">Please fill out the form below</p>
+<div class="pro-form-container">
+  
+  <div class="form-header">
+    <div class="header-left">
+      <h2>{{ entity.label }} Details</h2>
+      <p class="subtitle">Enter the required information for this {{ entity.label.toLowerCase() }}</p>
     </div>
   </div>
 
-  <div class="form-body p-5">
-    <form (ngSubmit)="submit(!!f.valid)" #f="ngForm">
-      <app-input-renderer
-        *ngFor="let field of entity.fields"
-        [field]="field"
-        [(model)]="model">
-      </app-input-renderer>
+  <div class="form-content">
+    <form (ngSubmit)="submit(!!f.valid)" #f="ngForm" class="accounting-form">
+      
+      <div class="fields-grid">
+        <app-input-renderer
+          *ngFor="let field of entity.fields"
+          [field]="field"
+          [(model)]="model">
+        </app-input-renderer>
+      </div>
 
-      <div class="form-actions mt-4">
-        <button type="submit" class="btn-premium btn-primary" [disabled]="loading || !f.valid">
+      <div class="form-footer">
+        <button type="button" class="btn-outline" (click)="cancel()">Cancel</button>
+        <button type="submit" class="btn-primary-pro" [disabled]="loading || !f.valid">
           {{ loading ? 'Saving...' : submitLabel }}
         </button>
       </div>
 
-      <p class="form-message" [class.text-success]="message.includes('✅')" [class.text-danger]="message.includes('❌')">
+      <p class="form-message" [class.success]="message.includes('✅')" [class.danger]="message.includes('❌')">
         {{ message }}
       </p>
     </form>
   </div>
+
 </div>
