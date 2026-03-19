@@ -6,13 +6,12 @@
 
 /* Professional Sidebar */
 .sidebar {
-  width: 240px;
-  background: white;
-  border-right: 1px solid var(--border);
+  width: 250px;
+  background: #0f172a; /* Premium Dark Navy */
   display: flex;
   flex-direction: column;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.02);
   z-index: 100;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .logo-container {
@@ -37,10 +36,10 @@
 }
 
 .logo-text {
-  font-weight: 700;
-  font-size: 1.1rem;
-  color: var(--text-main);
-  letter-spacing: -0.01em;
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: #fff;
+  letter-spacing: -0.02em;
 }
 
 .menu {
@@ -52,36 +51,42 @@
 }
 
 .menu-item {
-  padding: 0.75rem 1.5rem;
+  padding: 0.875rem 1.5rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.875rem;
   cursor: pointer;
-  transition: all 0.2s;
-  color: var(--text-main);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #cbd5e1; /* Brighter Slate for visibility */
   font-weight: 500;
   font-size: 0.9rem;
 }
 
 .m-icon {
-  font-size: 1.1rem;
   width: 20px;
+  height: 20px;
   display: flex;
+  align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+}
+
+.m-icon svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
 }
 
 
 .menu-item:hover {
-  background: #f8fafc;
-  color: var(--primary);
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
 }
 
-
 .menu-item.active {
-  background: #f0f7ff;
-  color: var(--primary);
-  border-left: 4px solid var(--primary);
-  padding-left: calc(1.5rem - 4px);
+  background: var(--primary); /* Vibrant highlight */
+  color: #fff;
+  font-weight: 600;
 }
 
 
