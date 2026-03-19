@@ -1,6 +1,7 @@
 .entity-form-page {
-  max-width: 800px;
-  margin: 0 auto;
+  max-width: none;
+  width: 100%;
+  margin: 0;
   padding: 1rem;
 }
 

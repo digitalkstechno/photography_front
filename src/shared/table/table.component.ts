@@ -143,7 +143,8 @@ export class TableComponent implements OnInit, OnChanges {
 
   handleAction(action: any, row: any) {
     if (action.onClick) {
-      action.onClick(row, this.router);
+      // Pass reload function as 3rd parameter
+      action.onClick(row, this.router, () => this.loadData());
     }
   }
 

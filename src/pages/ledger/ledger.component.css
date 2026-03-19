@@ -1,259 +1,82 @@
-/* ============================= */
-/* LAYOUT */
-/* ============================= */
+/* Ledger Page */
+.ledger-page { padding-top: 8px; }
+.mb-4 { margin-bottom: 16px; }
+.mt-4 { margin-top: 16px; }
 
-.ledger-wrapper {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 80px);
-  background: var(--bg-app);
+.btn-back {
+  background: transparent; border: 1px solid rgba(255,255,255,0.2);
+  color: #fff; padding: 4px 12px; border-radius: 6px;
+  font-size: 12px; font-weight: 700; cursor: pointer;
+}
+.btn-back:hover { background: rgba(255,255,255,0.1); }
+
+/* Summary Row */
+.summary-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
 }
 
-.ledger-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
+.summary-card {
   background: white;
-  border-bottom: 1px solid var(--border);
-}
-
-.ledger-header h1 {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin: 0;
-}
-
-/* ============================= */
-/* CONTENT */
-/* ============================= */
-
-.ledger-content {
-  display: flex;
-  flex: 1;
-  overflow: hidden;
-}
-
-/* ============================= */
-/* SIDEBAR */
-/* ============================= */
-
-.accounts-sidebar {
-  width: 280px;
-  background: white;
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-}
-
-/* Total Balance */
-.total-balance-box {
-  padding: 1rem;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  font-weight: 600;
-}
-
-.total-balance-box span:last-child {
-  font-size: 1.1rem;
-}
-
-/* Account Item */
-.account-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.7rem 1rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border-left: 3px solid transparent;
-}
-
-.account-item:hover {
-  background: #f8fafc;
-}
-
-.account-item.active {
-  background: #eef6ff;
-  border-left-color: var(--primary);
-}
-
-.account-item span:last-child {
-  font-weight: 600;
-}
-
-.negative {
-  color: var(--danger);
-}
-
-/* ============================= */
-/* MAIN SECTION */
-/* ============================= */
-
-.transactions-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background: white;
-  margin: 1rem;
+  padding: 20px;
+  border-radius: var(--radius-lg);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 
-/* ============================= */
-/* FORM (FIXED ALIGNMENT) */
-/* ============================= */
-
-.entry-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  padding: 1rem;
-  border-bottom: 1px solid var(--border);
-  background: #f9fafb;
+.summary-label {
+  font-size: 11px; font-weight: 700;
+  color: var(--text-muted); text-transform: uppercase;
+  letter-spacing: 0.5px; margin-bottom: 6px;
 }
 
-.entry-form select,
-.entry-form input {
-  height: 36px;
-  padding: 0 0.6rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-size: 0.85rem;
-  background: white;
-}
+.summary-value { font-size: 1.5rem; font-weight: 800; }
 
-.entry-form input[type="text"] {
-  flex: 1;
-  min-width: 180px;
-}
-
-.entry-form button {
-  height: 36px;
-  padding: 0 1rem;
-}
-
-/* ============================= */
-/* TABLE */
-/* ============================= */
-
-.table-responsive {
-  flex: 1;
-  overflow: auto;
-}
-
-.accounting-table {
+/* Table */
+.ledger-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.accounting-table th {
-  position: sticky;
-  top: 0;
-  background: #f1f5f9;
-  padding: 0.6rem 0.75rem;
-  font-size: 0.7rem;
-  font-weight: 700;
+.ledger-table th {
+  text-align: left;
+  padding: 10px 16px;
+  font-size: 10px; font-weight: 800;
   color: var(--text-muted);
-  border-bottom: 1px solid var(--border);
-}
-
-.accounting-table td {
-  padding: 0.65rem 0.75rem;
-  font-size: 0.85rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.accounting-table tr:hover {
-  background: #f8fafc;
-}
-
-/* Numbers alignment */
-.text-end {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-/* Debit (Paid) */
-td.text-end:nth-child(6) {
-  color: var(--danger);
-}
-
-/* Credit (Received) */
-td.text-end:nth-child(7) {
-  color: var(--success);
-}
-
-/* Footer */
-tfoot td {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--border);
   background: #f9fafb;
-  font-weight: 700;
 }
 
-/* ============================= */
-/* BUTTONS */
-/* ============================= */
+.ledger-table td {
+  padding: 12px 16px;
+  font-size: 13px; font-weight: 500;
+  color: var(--text-main);
+  border-bottom: 1px solid var(--border);
+}
 
-.btn-outline {
-  background: white;
-  border: 1px solid var(--border);
-  padding: 0.45rem 0.9rem;
-  border-radius: var(--radius-md);
-  font-size: 0.8rem;
+.text-right { text-align: right; font-variant-numeric: tabular-nums; }
+
+.party-name { font-weight: 700; }
+
+.clickable-row { cursor: pointer; transition: background 0.15s; }
+.clickable-row:hover { background: var(--accent-soft); }
+
+.btn-sm {
+  padding: 4px 10px;
+  font-size: 11px; font-weight: 700;
+  border-radius: 6px; border: none;
   cursor: pointer;
 }
+.btn-primary { background: var(--primary); color: white; }
 
-.btn-primary-pro {
-  background: var(--primary);
-  color: white;
-  border: none;
-  padding: 0.45rem 1rem;
-  border-radius: var(--radius-md);
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
+.empty-text {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 32px;
+  font-style: italic;
 }
 
-.btn-primary-pro:hover {
-  opacity: 0.9;
-}
-
-/* ============================= */
-/* STATES */
-/* ============================= */
-
-.error-box {
-  margin: 1rem;
-  padding: 0.75rem 1rem;
-  background: #fff1f2;
-  border: 1px solid #fecdd3;
-  color: #b91c1c;
-  border-radius: var(--radius-md);
-}
-
-.loading-state {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  font-size: 0.9rem;
-}
-
-/* Spinner */
-.spinner-sm {
-  width: 18px;
-  height: 18px;
-  border: 2px solid #eee;
-  border-top: 2px solid var(--primary);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin-right: 0.5rem;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
+.error-text { color: var(--danger); text-align: center; padding: 20px; }

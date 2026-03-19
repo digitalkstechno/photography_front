@@ -71,9 +71,17 @@
                           (click)="handleAction(action, row)"
                           [title]="action.label"
                           [hidden]="!isActionVisible(action, row)">
-                      <span *ngIf="action.label === 'Ledger'">📒</span>
-                      <span *ngIf="action.label === 'Book'">📸</span>
-                      <span *ngIf="action.label !== 'Ledger' && action.label !== 'Book'">⚡</span>
+                      <!-- Dynamic Icon -->
+                      <span *ngIf="action.icon">{{ action.icon }}</span>
+                      
+                      <!-- Default Icons for common labels if no icon provided -->
+                      <ng-container *ngIf="!action.icon">
+                        <span *ngIf="action.label === 'Ledger'">📒</span>
+                        <span *ngIf="action.label === 'Book'">📸</span>
+                        <span *ngIf="action.label === 'Edit'">✏️</span>
+                        <span *ngIf="action.label === 'Delete'">🗑️</span>
+                        <span *ngIf="action.label !== 'Ledger' && action.label !== 'Book' && action.label !== 'Edit' && action.label !== 'Delete'">⚡</span>
+                      </ng-container>
                   </button>
               </ng-container>
             </div>

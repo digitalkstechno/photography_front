@@ -11,11 +11,14 @@ export type EntityFieldType =
   | 'phone'
   | 'password'
   | 'file'
-  | 'image';
+  | 'image'
+  | 'array-key-value'
+  | 'line-items';
 
 export interface EntitySelectOption {
   label: string;
   value: any;
+  data?: any;
 }
 
 export interface EntityRelationConfig {
@@ -113,7 +116,7 @@ export interface EntityRowAction {
   label: string;
   icon?: string;
   class?: string;
-  onClick: (row: any, router: any) => void;
+  onClick: (row: any, router: any, reload: () => void) => void;
   /** Optional visibility check */
   isVisible?: (row: any) => boolean;
 }

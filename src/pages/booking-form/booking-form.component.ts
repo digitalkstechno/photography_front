@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../core/http/api.service';
 import { EntityService } from '../../core/entity/entity.service';
@@ -14,13 +14,20 @@ import { getEntityConfig } from '../../core/entity/entities';
   styleUrls: ['./booking-form.component.css']
 })
 export class BookingFormComponent implements OnInit {
-  bookingId?: number;
+  eventId?: string;
   isEdit = false;
   loading = false;
-  bookingForm: FormGroup;
-  
+  eventForm: FormGroup;
+
   customers: any[] = [];
-  photographers: any[] = [];
+  packagesList: any[] = [];
+
+  eventTypes = [
+    'WEDDING', 'HALDI', 'MEHNDI', 'SANGEET', 'RECEPTION',
+    'ENGAGEMENT', 'BIRTHDAY', 'CORPORATE', 'OTHER'
+  ];
+
+  statuses = ['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED'];
 
   constructor(
     private fb: FormBuilder,
@@ -29,137 +36,89 @@ export class BookingFormComponent implements OnInit {
     private api: ApiService,
     private entityService: EntityService
   ) {
-    this.bookingForm = this.fb.group({
-      customerId: [null, Validators.required],
-      quotationId: [null],
-      packageId: [null],
-      status: ['TENTATIVE', Validators.required],
+    this.eventForm = this.fb.group({
+      customer: [null, Validators.required],
+      eventType: ['WEDDING', Validators.required],
+      title: [''],
+      startDate: ['', Validators.required],
+      endDate: ['', Validators.required],
+      location: [''],
+      status: ['PENDING', Validators.required],
+      package: [null],
+      quotation: [null],
+      totalAmount: [0],
       notes: [''],
-      events: this.fb.array([])
+      overrideConflicts: [false]
     });
-  }
-
-  get eventControls() {
-    return (this.bookingForm.get('events') as FormArray).controls as FormGroup[];
   }
 
   async ngOnInit() {
     await this.loadLookups();
-    
+
     this.route.paramMap.subscribe(async params => {
       const id = params.get('id');
       if (id) {
-        this.bookingId = Number(id);
+        this.eventId = id;
         this.isEdit = true;
-        await this.loadBooking();
+        await this.loadEvent();
       } else {
         // Check for quotation conversion
         this.route.queryParamMap.subscribe(queryParams => {
-          const quoteId = queryParams.get('quote');
-          if (quoteId) {
-            this.loadQuotationForConversion(Number(quoteId));
-          } else {
-            this.addEvent(); 
+          const quotationId = queryParams.get('quotation');
+          if (quotationId) {
+            this.eventForm.patchValue({ quotation: quotationId });
           }
         });
       }
     });
   }
 
-  async loadQuotationForConversion(quoteId: number) {
-    this.api.get<any>(`/transactions/${quoteId}`).subscribe(quote => {
-      if (quote) {
-        this.bookingForm.patchValue({
-          customerId: quote.partyId,
-          quotationId: quote.id,
-          packageId: quote.packageId,
-          notes: `Converted from Quotation #${quote.id}. \n${quote.notes || ''}`
-        });
-        this.addEvent(); 
-      }
-    });
-  }
-
   async loadLookups() {
     try {
-      // Get Parties (Customers)
       const partyConfig = getEntityConfig('party')!;
-      const partiesResp = await this.entityService.list(partyConfig);
-      this.customers = Array.isArray(partiesResp) ? partiesResp : (partiesResp as any).data || [];
+      this.customers = await this.entityService.list(partyConfig);
 
-      // Get Packages
       const packageConfig = getEntityConfig('packages')!;
-      const packageResp = await this.entityService.list(packageConfig);
-      this.packagesList = Array.isArray(packageResp) ? packageResp : (packageResp as any).data || [];
-
-      // Get Photographers (Users) - Use the new /users endpoint
-      this.api.get<any[]>('/users').subscribe({
-        next: (users) => this.photographers = users,
-        error: () => {}
-      });
+      this.packagesList = await this.entityService.list(packageConfig);
     } catch (e) {}
   }
 
-  packagesList: any[] = [];
-
-  async loadBooking() {
-    if (!this.bookingId) return;
-    this.api.get<any>(`/bookings/${this.bookingId}`).subscribe(data => {
+  async loadEvent() {
+    if (!this.eventId) return;
+    this.api.get<any>(`/events/${this.eventId}`).subscribe(res => {
+      const data = res?.data || res;
       if (data) {
-        this.bookingForm.patchValue({
-          customerId: data.customerId,
-          quotationId: data.quotationId,
-          packageId: data.packageId,
+        this.eventForm.patchValue({
+          customer: data.customer?._id || data.customer,
+          eventType: data.eventType,
+          title: data.title,
+          startDate: data.startDate ? data.startDate.split('T')[0] : '',
+          endDate: data.endDate ? data.endDate.split('T')[0] : '',
+          location: data.location,
           status: data.status,
+          package: data.package?._id || data.package,
+          quotation: data.quotation?._id || data.quotation,
+          totalAmount: data.totalAmount,
           notes: data.notes
         });
-        
-        // Clear and reload events
-        const eventsArray = this.bookingForm.get('events') as FormArray;
-        while (eventsArray.length) eventsArray.removeAt(0);
-        
-        if (data.events && data.events.length) {
-          data.events.forEach((e: any) => {
-             const dateOnly = e.eventDate ? e.eventDate.split('T')[0] : '';
-             this.addEvent({
-                eventType: e.eventType,
-                eventDate: dateOnly,
-                location: e.location,
-                photographerId: e.photographerId,
-                notes: e.notes
-             });
-          });
-        }
       }
     });
   }
 
-  addEvent(initial?: any) {
-    const eventsArray = this.bookingForm.get('events') as FormArray;
-    eventsArray.push(this.fb.group({
-      eventType: [initial?.eventType || '', Validators.required],
-      eventDate: [initial?.eventDate || '', Validators.required],
-      location: [initial?.location || ''],
-      photographerId: [initial?.photographerId || null],
-      notes: [initial?.notes || ''],
-      overrideConflicts: [false]
-    }));
-  }
-
-  removeEvent(index: number) {
-    const eventsArray = this.bookingForm.get('events') as FormArray;
-    eventsArray.removeAt(index);
-  }
-
   async save() {
-    if (this.bookingForm.invalid) return;
-    
+    if (this.eventForm.invalid) return;
+
     this.loading = true;
-    const payload = this.bookingForm.value;
-    
-    const request = this.isEdit 
-      ? this.api.put(`/bookings/${this.bookingId}`, payload) // Need to implement status update or full update
-      : this.api.post('/bookings', payload);
+    const payload = { ...this.eventForm.value };
+
+    // Clean up null/empty fields
+    if (!payload.package) delete payload.package;
+    if (!payload.quotation) delete payload.quotation;
+    delete payload.overrideConflicts;
+
+    const request = this.isEdit
+      ? this.api.put(`/events/${this.eventId}`, payload)
+      : this.api.post('/events', payload);
 
     request.subscribe({
       next: () => {
@@ -169,9 +128,22 @@ export class BookingFormComponent implements OnInit {
       error: (err) => {
         this.loading = false;
         if (err.status === 409) {
-           alert(err.error?.message || "Double booking conflict detected!");
+          const override = confirm(
+            (err.error?.message || 'Date conflict detected!') +
+            '\n\nDo you want to override and book anyway?'
+          );
+          if (override) {
+            payload.overrideConflicts = true;
+            const retryReq = this.isEdit
+              ? this.api.put(`/events/${this.eventId}`, payload)
+              : this.api.post('/events', payload);
+            retryReq.subscribe({
+              next: () => this.router.navigate(['/bookings']),
+              error: () => alert('Failed to save event.')
+            });
+          }
         } else {
-           alert("Failed to save booking. " + (err.error?.message || ""));
+          alert('Failed to save event. ' + (err.error?.message || ''));
         }
       }
     });

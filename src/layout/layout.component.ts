@@ -25,12 +25,15 @@ export class LayoutComponent {
   get activeRouteLabel(): string {
     const url = this.router.url;
     if (url.includes('/dashboard')) return 'Dashboard';
+    if (url.includes('/calendar')) return 'Calendar';
     if (url.includes('/ledger')) return 'Ledger';
     if (url.includes('/reports')) return 'Reports';
-    
-    // Check if it's an entity route
-    const entityKey = url.split('/').pop() || '';
-    const entity = this.entities.find(e => e.key === entityKey);
+    if (url.includes('/settings')) return 'Settings';
+
+    // Check for entity route
+    const segments = url.split('/');
+    const entityKey = segments[segments.length - 1] || segments[segments.length - 2] || '';
+    const entity = this.entityConfigs.find(e => e.key === entityKey);
     if (entity) return entity.label;
 
     return 'Overview';

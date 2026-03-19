@@ -6,50 +6,43 @@
   border: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
-}
-
-.form-header {
-  padding: 1.25rem 1.5rem;
-  background: #fcfdfe;
-  border-bottom: 1px solid var(--border);
-}
-
-.form-header h2 {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--text-main);
+  max-width: none;
   margin: 0;
-}
-
-.form-header .subtitle {
-  font-size: 0.8125rem;
-  color: var(--text-muted);
-  margin-top: 0.25rem;
+  width: 100%;
 }
 
 .form-content {
-  padding: 2rem 1.5rem;
-}
-
-.accounting-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  padding: 2rem;
 }
 
 .fields-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(12, 1fr);
   gap: 1.5rem;
 }
 
-/* Full width fields */
+/* Base column spans based on entities.ts wrapperClass */
+.col-1 { grid-column: span 1; }
+.col-2 { grid-column: span 2; }
+.col-3 { grid-column: span 3; }
+.col-4 { grid-column: span 4; }
+.col-5 { grid-column: span 5; }
+.col-6 { grid-column: span 6; }
+.col-7 { grid-column: span 7; }
+.col-8 { grid-column: span 8; }
+.col-9 { grid-column: span 9; }
+.col-10 { grid-column: span 10; }
+.col-11 { grid-column: span 11; }
+.col-12 { grid-column: span 12; }
+
 app-input-renderer {
-  grid-column: span 1;
+  /* Default to full width if not specified, otherwise follows col class */
+  grid-column: span 6;
 }
 
-/* Specific field types or large text areas can be made full width */
-/* app-input-renderer[field.type='textarea'] { grid-column: span 2; } */
+app-input-renderer.col-12 {
+  grid-column: span 12;
+}
 
 .form-footer {
   display: flex;

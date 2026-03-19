@@ -97,7 +97,7 @@ form {
 .col-4,
 .col-6,
 .col-12 {
-  width: 100% !important;
+  width: 80% !important;
 }
 
 /* ─── Form Inputs ─── */

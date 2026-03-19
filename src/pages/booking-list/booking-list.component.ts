@@ -12,7 +12,7 @@ import { getEntityConfig } from '../../core/entity/entities';
   styleUrls: ['./booking-list.component.css']
 })
 export class BookingListComponent {
-  config = getEntityConfig('bookings')!;
+  config = getEntityConfig('events')!;
 
   constructor(private router: Router) {}
 

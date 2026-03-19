@@ -14,7 +14,8 @@
         <app-input-renderer
           *ngFor="let field of entity.fields"
           [field]="field"
-          [(model)]="model">
+          [(model)]="model"
+          (modelChange)="onFormChange()">
         </app-input-renderer>
       </div>
 

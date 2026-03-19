@@ -47,7 +47,75 @@ export class EntityFormPageComponent implements OnInit {
       this.editId = id;
       this.isEdit = true;
       this.loadRecord(id);
+    } else {
+      // Auto-populate form from query params (e.g. ?invoice=xxx&party=xxx)
+      this.applyQueryParams();
     }
+  }
+
+  /**
+   * Read query params and pre-fill matching form fields.
+   * Also fetches linked records (e.g. Invoice) to auto-fill related data (e.g. Customer)
+   */
+  private async applyQueryParams() {
+    const params = this.route.snapshot.queryParams;
+    if (!params || Object.keys(params).length === 0) return;
+
+    const model: any = {};
+    for (const [key, value] of Object.entries(params)) {
+      const field = this.entity.fields.find(f => f.name === key);
+      if (field && value) {
+        model[key] = value;
+
+        // AUTOMATION: If it's a relation (like invoice or quotation), fetch details to fill other fields
+        if (field.type === 'relation' && field.relation) {
+          try {
+            const config = getEntityConfig(field.relation.entity);
+            if (config) {
+              const relatedData = await this.entityService.getOne(config, value as string);
+              if (relatedData) {
+                // Auto-map common fields to the target entity
+                this.autoMapFields(relatedData, key);
+              }
+            }
+          } catch (err) {
+            console.warn(`Failed to auto-populate from ${key}:`, err);
+          }
+        }
+      }
+    }
+
+    this.model = { ...this.model, ...model };
+  }
+
+  /**
+   * Intelligently maps fields from a source (e.g. Invoice) to the target (e.g. Event)
+   */
+  private autoMapFields(source: any, sourceKey: string) {
+    const mapping: Record<string, string[]> = {
+      // If we carry over a customer, it usually maps directly
+      'customer': ['customer'],
+      // If source was an Invoice/Quotation, fill event's customer and amount
+      'invoice': ['customer', 'totalAmount:grandTotal'],
+      'quotation': ['customer', 'totalAmount:grandTotal'],
+      'event': ['customer']
+    };
+
+    const rules = mapping[sourceKey] || [];
+    const updates: any = {};
+
+    rules.forEach(rule => {
+      const [targetKey, sourceAttr] = rule.split(':');
+      const attrToFetch = sourceAttr || targetKey;
+      
+      // Only update if target exists in our current entity fields
+      if (this.entity.fields.find(f => f.name === targetKey)) {
+        const val = source[attrToFetch];
+        if (val) updates[targetKey] = val?._id || val;
+      }
+    });
+
+    this.model = { ...this.model, ...updates };
   }
 
   private async loadRecord(id: string) {

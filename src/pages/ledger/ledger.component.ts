@@ -6,29 +6,39 @@ import { ApiService } from '../../core/http/api.service';
 import { firstValueFrom } from 'rxjs';
 
 interface LedgerEntry {
-  id: number;
+  _id: string;
   date: string;
   description: string;
   amount: number;
-  type: 'DEBIT' | 'CREDIT';
-  category: string;
-  partyId: number;
+  type: 'IN' | 'OUT';
+  mode: string;
+  category?: string;
+  partyId: string;
   party: {
-    id: number;
+    _id: string;
     name: string;
   };
-  runningBalance?: number;
+  runningBalance: number;
 }
 
 interface Party {
-  id: number;
+  _id: string;
   name: string;
 }
 
+interface PartyBalance {
+  partyId: string;
+  partyName: string;
+  partyType: string;
+  totalCredit: number;
+  totalDebit: number;
+  balance: number;
+}
+
 interface NewEntry {
-  partyId: number | null;
+  partyId: string | null;
   amount: number | null;
-  type: 'DEBIT' | 'CREDIT';
+  type: 'IN' | 'OUT';
   category: string;
   description: string;
   date: string;
@@ -45,7 +55,9 @@ export class LedgerComponent implements OnInit {
 
   public entries: LedgerEntry[] = [];
   public parties: Party[] = [];
-  public selectedPartyId: number | null = null;
+  public balances: PartyBalance[] = [];
+  public party: Party | null = null;
+  public selectedPartyId: string | null = null;
 
   public isLoading = true;
   public error: string | null = null;
@@ -65,11 +77,11 @@ export class LedgerComponent implements OnInit {
     private api: ApiService,
     private route: ActivatedRoute,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
-      this.selectedPartyId = params['partyId'] ? Number(params['partyId']) : null;
+      this.selectedPartyId = params['partyId'] || null;
       this.loadData();
     });
   }
@@ -78,7 +90,7 @@ export class LedgerComponent implements OnInit {
     return {
       partyId: null,
       amount: null,
-      type: 'CREDIT',
+      type: 'IN',
       category: '',
       description: '',
       date: new Date().toISOString().substring(0, 10)
@@ -93,18 +105,23 @@ export class LedgerComponent implements OnInit {
       const partiesData = await firstValueFrom(this.api.get<Party[]>('/parties'));
       this.parties = partiesData || [];
 
-      const allEntries = await firstValueFrom(this.api.get<LedgerEntry[]>('/ledger'));
-      let entriesData = allEntries || [];
+      const response = await firstValueFrom(this.api.get<any>('/payments'));
+      let entriesData = response.data || [];
 
       // ✅ Sort by date (VERY IMPORTANT for running balance)
       entriesData = entriesData.sort(
-        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+        (a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime()
       );
 
       this.calculateAccounts(entriesData);
+      this.calculateBalances(entriesData);
+
+      this.party = this.selectedPartyId
+        ? this.parties.find(p => p._id === this.selectedPartyId) || null
+        : null;
 
       this.entries = this.selectedPartyId
-        ? entriesData.filter(e => e.partyId === this.selectedPartyId)
+        ? entriesData.filter((e: any) => (e.partyId || e.party?._id) === this.selectedPartyId)
         : entriesData;
 
       this.calculateSummaries();
@@ -124,17 +141,17 @@ export class LedgerComponent implements OnInit {
 
     const totalBalance = allEntries.reduce((acc, e) => {
       const amt = Number(e.amount) || 0;
-      return acc + (e.type === 'CREDIT' ? amt : -amt);
+      return acc + (e.type === 'IN' ? amt : -amt);
     }, 0);
 
     this.cashBalance = totalBalance;
     accountMap.set(null, { name: 'Cash in hand', balance: totalBalance });
 
     allEntries.forEach(entry => {
-      const partyId = entry.partyId;
+      const partyId = entry.partyId || (entry.party as any)?._id;
       const partyName = entry.party?.name || 'Unknown';
       const amt = Number(entry.amount) || 0;
-      const value = entry.type === 'CREDIT' ? amt : -amt;
+      const value = entry.type === 'IN' ? amt : -amt;
 
       if (!accountMap.has(partyId)) {
         accountMap.set(partyId, { name: partyName, balance: 0 });
@@ -152,11 +169,11 @@ export class LedgerComponent implements OnInit {
 
   calculateSummaries() {
     this.totalCredit = this.entries
-      .filter(e => e.type === 'CREDIT')
+      .filter(e => e.type === 'IN')
       .reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
 
     this.totalDebit = this.entries
-      .filter(e => e.type === 'DEBIT')
+      .filter(e => e.type === 'OUT')
       .reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
 
     this.netBalance = this.totalCredit - this.totalDebit;
@@ -167,7 +184,7 @@ export class LedgerComponent implements OnInit {
 
     this.entries.forEach(entry => {
       const amt = Number(entry.amount) || 0;
-      balance += entry.type === 'CREDIT' ? amt : -amt;
+      balance += entry.type === 'IN' ? amt : -amt;
       entry.runningBalance = balance;
     });
   }
@@ -182,12 +199,49 @@ export class LedgerComponent implements OnInit {
     this.selectedAccountName = acc?.name || 'Account';
   }
 
-  onAccountSelect(accountId: number | null) {
+  onAccountSelect(accountId: string | null) {
     this.newEntry.partyId = accountId;
 
     this.router.navigate(
       accountId ? ['/ledger', accountId] : ['/ledger']
     );
+  }
+
+  onPartySelect(partyId: string) {
+    this.router.navigate(['/ledger', partyId]);
+  }
+
+  goBack() {
+    this.router.navigate(['/ledger']);
+  }
+
+  private calculateBalances(allEntries: LedgerEntry[]) {
+    const map = new Map<number, PartyBalance>();
+
+    allEntries.forEach(entry => {
+      const pid = entry.partyId || (entry.party as any)?._id;
+      if (!map.has(pid)) {
+        map.set(pid, {
+          partyId: pid,
+          partyName: entry.party?.name || 'Unknown',
+          partyType: entry.category || '—',
+          totalCredit: 0,
+          totalDebit: 0,
+          balance: 0,
+        });
+      }
+
+      const row = map.get(pid)!;
+      const amt = Number(entry.amount) || 0;
+      if (entry.type === 'IN') {
+        row.totalCredit += amt;
+      } else {
+        row.totalDebit += amt;
+      }
+      row.balance = row.totalCredit - row.totalDebit;
+    });
+
+    this.balances = Array.from(map.values());
   }
 
   async addEntry() {
@@ -197,7 +251,7 @@ export class LedgerComponent implements OnInit {
     }
 
     try {
-      await firstValueFrom(this.api.post('/ledger', this.newEntry));
+      await firstValueFrom(this.api.post('/payments', this.newEntry));
       this.newEntry = this.getDefaultEntry();
       await this.loadData();
     } catch (err) {

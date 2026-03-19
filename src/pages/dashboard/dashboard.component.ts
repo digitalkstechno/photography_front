@@ -1,20 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { ApiService } from '../../core/http/api.service';
 import { firstValueFrom } from 'rxjs';
-
-interface LedgerSummary {
-  totalCredit: number;
-  totalDebit: number;
-  netBalance: number;
-}
-
-interface DashboardSummary {
-  totalInvoices: number;
-  totalPaid: number;
-  totalOutstanding: number;
-  ledgerSummary: LedgerSummary;
-}
 
 @Component({
   selector: 'app-dashboard',
@@ -25,36 +13,72 @@ interface DashboardSummary {
 })
 export class DashboardComponent implements OnInit {
 
-  public summary: DashboardSummary = {
+  public stats = {
+    totalEvents: 0,
+    confirmedEvents: 0,
+    pendingEvents: 0,
+    completedEvents: 0,
+    totalParties: 0,
+    totalQuotations: 0,
     totalInvoices: 0,
-    totalPaid: 0,
-    totalOutstanding: 0,
-    ledgerSummary: {
-      totalCredit: 0,
-      totalDebit: 0,
-      netBalance: 0
-    }
+    invoicesBilled: 0,
+    invoicesPaid: 0,
+    invoicesOutstanding: 0,
+    paymentsIn: 0,
+    paymentsOut: 0,
+    netBalance: 0
   };
 
+  public upcomingEvents: any[] = [];
   public isLoading = true;
   public error: string | null = null;
 
-  constructor(private api: ApiService) {}
+  constructor(
+    private api: ApiService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.loadSummary();
+    this.loadDashboard();
   }
 
-  async loadSummary(): Promise<void> {
+  async loadDashboard(): Promise<void> {
     try {
       this.isLoading = true;
       this.error = null;
 
-      const data = await firstValueFrom(
-        this.api.get<any>('/dashboard/summary')
-      );
+      const res = await firstValueFrom(this.api.get<any>('/dashboard/summary'));
+      const data = res?.data || res || {};
 
-      this.summary = this.mapSummary(data);
+      // Events
+      const events = data.events || {};
+      this.stats.totalEvents = events.total || 0;
+      this.stats.confirmedEvents = events.confirmed || 0;
+      this.stats.pendingEvents = events.pending || 0;
+      this.stats.completedEvents = events.completed || 0;
+
+      // Parties
+      this.stats.totalParties = data.parties || 0;
+
+      // Quotations
+      const quotations = data.quotations || {};
+      this.stats.totalQuotations = quotations.total || 0;
+
+      // Invoices
+      const invoices = data.invoices || {};
+      this.stats.totalInvoices = invoices.total || 0;
+      this.stats.invoicesBilled = invoices.totalBilled || 0;
+      this.stats.invoicesPaid = invoices.totalPaid || 0;
+      this.stats.invoicesOutstanding = invoices.outstanding || 0;
+
+      // Payments
+      const payments = data.payments || {};
+      this.stats.paymentsIn = payments.totalIn || 0;
+      this.stats.paymentsOut = payments.totalOut || 0;
+      this.stats.netBalance = payments.netBalance || 0;
+
+      // Upcoming events
+      this.upcomingEvents = data.upcomingEvents || [];
 
     } catch (err) {
       console.error(err);
@@ -64,25 +88,11 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  private mapSummary(data: any): DashboardSummary {
-    return {
-      totalInvoices: data?.totalSaleInvoices ?? 0,
-      totalPaid: data?.totalPaid ?? 0,
-      totalOutstanding: data?.totalOutstanding ?? 0,
-      ledgerSummary: {
-        totalCredit: data?.ledger?.totalCredit ?? 0,
-        totalDebit: data?.ledger?.totalDebit ?? 0,
-        netBalance: data?.ledger?.netBalance ?? 0
-      }
-    };
-  }
-
-  get collectionRate(): number {
-    if (!this.summary.totalInvoices || !this.summary.totalPaid) return 0;
-    return (this.summary.totalPaid / this.summary.totalInvoices) / 100;
+  navigateTo(path: string) {
+    this.router.navigate([path]);
   }
 
   refresh(): void {
-    this.loadSummary();
+    this.loadDashboard();
   }
 }

@@ -11,10 +11,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [
-    CommonModule, 
-    FullCalendarModule
-  ],
+  imports: [CommonModule, FullCalendarModule],
   template: `
     <div class="calendar-page container">
       <div class="card-premium card-header-black mb-5">
@@ -23,10 +20,9 @@ import { Router } from '@angular/router';
             <h1 class="text-white">Shoot Schedule</h1>
             <p class="text-muted-light">Real-time booking and studio availability overview</p>
           </div>
-          
           <div class="legend">
             <div class="legend-item"><span class="dot confirmed"></span> Confirmed</div>
-            <div class="legend-item"><span class="dot tentative"></span> Tentative</div>
+            <div class="legend-item"><span class="dot pending"></span> Pending</div>
             <div class="legend-item"><span class="dot completed"></span> Completed</div>
           </div>
         </div>
@@ -44,10 +40,13 @@ import { Router } from '@angular/router';
             </div>
             <div class="panel-body">
                 <p class="event-title-premium">{{ selectedEvent.title }}</p>
-                
                 <div class="info-row">
-                    <span class="label">Date</span>
+                    <span class="label">Start</span>
                     <span class="value">{{ selectedEvent.start | date:'fullDate' }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">End</span>
+                    <span class="value">{{ selectedEvent.end | date:'fullDate' }}</span>
                 </div>
                 <div class="info-row">
                     <span class="label">Status</span>
@@ -58,7 +57,7 @@ import { Router } from '@angular/router';
                     <span class="value">{{ selectedEvent.extendedProps?.location || 'N/A' }}</span>
                 </div>
                 <hr class="divider" />
-                <button class="btn-premium btn-primary w-100 mt-4" (click)="goToBooking(selectedEvent.extendedProps?.bookingId)">View Booking</button>
+                <button class="btn-premium btn-primary w-100 mt-4" (click)="goToEvent(selectedEvent.extendedProps?.eventId)">View Event</button>
             </div>
         </div>
       </div>
@@ -71,26 +70,25 @@ import { Router } from '@angular/router';
     .legend-item { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; }
     .dot { width: 7px; height: 7px; border-radius: 50%; }
     .dot.confirmed { background: var(--success); }
-    .dot.tentative { background: var(--danger); }
+    .dot.pending { background: #eab308; }
     .dot.completed { background: #3b82f6; }
 
     .main-layout { display: flex; gap: 24px; flex: 1; min-height: 0; }
     .calendar-container { flex: 1; padding: 20px; height: 100%; }
-    
+
     .side-panel { width: 300px; padding: 24px; animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-left: 3px solid var(--primary); }
     .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .panel-header h3 { margin: 0; font-size: 16px; font-weight: 800; letter-spacing: -0.5px; }
     .btn-close { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-light); }
-    
+
     .event-title-premium { font-size: 17px; font-weight: 800; color: var(--primary); margin-bottom: 20px; letter-spacing: -0.5px; line-height: 1.3; }
     .info-row { display: flex; flex-direction: column; gap: 3px; margin-bottom: 16px; }
     .info-row .label { font-size: 10px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; }
     .info-row .value { font-size: 13.5px; font-weight: 600; color: var(--text-main); }
-    
+
     .divider { border: 0; border-top: 2px solid var(--bg-app); margin: 20px 0; }
     .w-100 { width: 100%; }
 
-    /* FullCalendar specific overrides */
     ::ng-deep .fc { --fc-button-bg-color: #ffffff; --fc-button-text-color: #000; --fc-button-border-color: #e4e4e7; --fc-button-hover-bg-color: #f4f4f5; --fc-button-active-bg-color: #000; --fc-button-active-text-color: #fff; }
     ::ng-deep .fc .fc-toolbar-title { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.5px; }
     ::ng-deep .fc .fc-col-header-cell-cushion { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); padding: 10px 0; }
@@ -101,7 +99,6 @@ import { Router } from '@angular/router';
       to { transform: translateX(0); opacity: 1; }
     }
   `]
-
 })
 export class CalendarComponent implements OnInit {
   calendarOptions: CalendarOptions = {
@@ -126,7 +123,7 @@ export class CalendarComponent implements OnInit {
 
   colors: any = {
     CONFIRMED: '#22c55e',
-    TENTATIVE: '#eab308',
+    PENDING: '#eab308',
     COMPLETED: '#3b82f6',
     CANCELLED: '#ef4444'
   };
@@ -143,51 +140,39 @@ export class CalendarComponent implements OnInit {
   }
 
   loadEvents(start: string, end: string) {
-    this.api.get<{ bookingEvents: any[], availabilities: any[] }>(`/calendar/events?start=${start}&end=${end}`).subscribe(res => {
-      const shootEvents = res.bookingEvents.map(ev => ({
-        id: 'booking-' + ev.id,
-        start: ev.eventDate,
-        title: `📸 ${ev.eventType} - ${ev.booking.customer?.name}`,
-        backgroundColor: this.colors[ev.booking.status] || '#9ca3af',
-        borderColor: this.colors[ev.booking.status] || '#9ca3af',
+    this.api.get<any>(`/calendar/events`, { start, end }).subscribe(res => {
+      const data = res?.data || res;
+      const events = Array.isArray(data) ? data : [];
+
+      this.events = events.map((ev: any) => ({
+        id: ev._id,
+        start: ev.startDate,
+        end: ev.endDate,
+        title: `📸 ${ev.eventType} — ${ev.customer?.name || 'Unknown'}`,
+        backgroundColor: this.colors[ev.status] || '#9ca3af',
+        borderColor: this.colors[ev.status] || '#9ca3af',
         extendedProps: {
-          type: 'BOOKING',
-          bookingId: ev.bookingId,
-          status: ev.booking.status,
+          eventId: ev._id,
+          status: ev.status,
           location: ev.location,
-          customerName: ev.booking.customer?.name,
-          photographerName: ev.photographer?.name
+          customerName: ev.customer?.name
         }
       }));
 
-      const blockEvents = res.availabilities.map(av => ({
-        id: 'block-' + av.id,
-        start: av.date,
-        allDay: true,
-        title: `🚫 ${av.reason || 'Blocked'} ${av.user ? '(' + av.user.name + ')' : '(Studio)'}`,
-        backgroundColor: '#6b7280', // Grey
-        display: 'background', // Or 'block'
-        extendedProps: {
-          type: 'BLOCK',
-          reason: av.reason,
-          userName: av.user?.name
-        }
-      }));
-
-      this.events = [...shootEvents, ...blockEvents];
       this.calendarOptions = { ...this.calendarOptions, events: this.events };
     });
   }
 
   handleEventClick(arg: any) {
     this.selectedEvent = {
-        title: arg.event.title,
-        start: arg.event.start,
-        extendedProps: arg.event.extendedProps
+      title: arg.event.title,
+      start: arg.event.start,
+      end: arg.event.end,
+      extendedProps: arg.event.extendedProps
     };
   }
 
-  goToBooking(id: number) {
+  goToEvent(id: string) {
     this.router.navigate(['/bookings', id]);
   }
 }

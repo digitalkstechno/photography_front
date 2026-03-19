@@ -12,21 +12,26 @@
         <span class="m-text">Dashboard</span>
       </li>
 
-      <li class="menu-item" (click)="navigate('/ledger')" [class.active]="router.url.includes('/ledger')">
-        <span class="m-icon">📒</span>
-        <span class="m-text">Ledger</span>
-      </li>
-
       <!-- Dynamic Entity Links -->
       <ng-container *ngFor="let config of entityConfigs">
-        <li *ngIf="config.sidebar" 
-            class="menu-item" 
+        <li *ngIf="config.sidebar"
+            class="menu-item"
             (click)="navigate('/admin/' + config.key)"
             [class.active]="router.url.includes('/admin/' + config.key)">
           <span class="m-icon">{{ config.icon || '📦' }}</span>
           <span class="m-text">{{ config.label }}</span>
         </li>
       </ng-container>
+
+      <li class="menu-item" (click)="navigate('/calendar')" [class.active]="router.url.includes('/calendar')">
+        <span class="m-icon">📅</span>
+        <span class="m-text">Calendar</span>
+      </li>
+
+      <li class="menu-item" (click)="navigate('/ledger')" [class.active]="router.url.includes('/ledger')">
+        <span class="m-icon">📒</span>
+        <span class="m-text">Ledger</span>
+      </li>
 
       <li class="menu-item" (click)="navigate('/reports')" [class.active]="router.url.includes('/reports')">
         <span class="m-icon">📊</span>
@@ -52,10 +57,9 @@
       </div>
 
       <div class="topbar-right">
-        <div class="notification-bell">🔔</div>
         <div class="user-profile">
           <div class="avatar">AD</div>
-          <span class="user-name">Admin User</span>
+          <span class="user-name">Admin</span>
         </div>
       </div>
     </header>

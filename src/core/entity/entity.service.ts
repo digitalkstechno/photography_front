@@ -8,24 +8,39 @@ export class EntityService {
 
   constructor(private api: ApiService) {}
 
-  list(entity: EntityConfig, params?: any): Promise<any> {
+  /**
+   * Extract data from wrapped response { success, data } or return raw array
+   */
+  private unwrap(response: any): any {
+    if (response && typeof response === 'object' && 'data' in response) {
+      return response.data;
+    }
+    return response;
+  }
+
+  async list(entity: EntityConfig, params?: any): Promise<any> {
     const url = entity.listApi ?? entity.api;
-    return firstValueFrom(this.api.get<any>(url, params));
+    const res = await firstValueFrom(this.api.get<any>(url, params));
+    return this.unwrap(res);
   }
 
-  getOne(entity: EntityConfig, id: string): Promise<any> {
-    return firstValueFrom(this.api.get<any>(`${entity.api}/${id}`));
+  async getOne(entity: EntityConfig, id: string): Promise<any> {
+    const res = await firstValueFrom(this.api.get<any>(`${entity.api}/${id}`));
+    return this.unwrap(res);
   }
 
-  create(entity: EntityConfig, data: any): Promise<any> {
-    return firstValueFrom(this.api.post<any>(entity.api, data));
+  async create(entity: EntityConfig, data: any): Promise<any> {
+    const res = await firstValueFrom(this.api.post<any>(entity.api, data));
+    return this.unwrap(res);
   }
 
-  update(entity: EntityConfig, id: string, data: any): Promise<any> {
-    return firstValueFrom(this.api.put<any>(`${entity.api}/${id}`, data));
+  async update(entity: EntityConfig, id: string, data: any): Promise<any> {
+    const res = await firstValueFrom(this.api.put<any>(`${entity.api}/${id}`, data));
+    return this.unwrap(res);
   }
 
-  remove(entity: EntityConfig, id: string): Promise<any> {
-    return firstValueFrom(this.api.delete<any>(`${entity.api}/${id}`));
+  async remove(entity: EntityConfig, id: string): Promise<any> {
+    const res = await firstValueFrom(this.api.delete<any>(`${entity.api}/${id}`));
+    return this.unwrap(res);
   }
 }

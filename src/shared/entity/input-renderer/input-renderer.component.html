@@ -32,23 +32,48 @@
       [ngClass]="field.class || ''"
     ></textarea>
 
-    <!-- SELECT / RELATION -->
+    <!-- SELECT / RELATION (Single and Multi) -->
     <div class="select-wrapper" *ngIf="field.type === 'select' || field.type === 'relation'">
-      <select
-        [name]="field.name"
-        [(ngModel)]="model[field.name]"
-        (ngModelChange)="onModelChange()"
-        [required]="!!field.required"
-        [disabled]="!!field.disabled"
-        class="pro-select"
-        [ngClass]="field.class || ''"
-      >
-        <option [ngValue]="undefined">-- Select {{ field.label }} --</option>
-        <option *ngFor="let opt of field.options || []" [ngValue]="opt.value">
-          {{ opt.label }}
-        </option>
-      </select>
-      <span class="select-arrow">▼</span>
+      
+      <!-- Multi-select tags view -->
+      <div *ngIf="field.relation?.multiple" class="selected-tags-container">
+        <div *ngFor="let val of model[field.name] || []" class="selected-tag">
+          {{ getOptionLabel(val) }}
+          <button type="button" class="tag-remove" (click)="$event.stopPropagation(); removeItemSelected(val)">✕</button>
+        </div>
+        
+        <!-- Add new item dropdown -->
+        <select 
+          class="pro-select-sm" 
+          (change)="onMultiSelectChange($event)"
+          [disabled]="!!field.disabled"
+          style="width: auto; min-width: 150px; border-style: dashed; background: #fafafa;"
+        >
+          <option value="">+ Add {{ field.label }}...</option>
+          <ng-container *ngFor="let opt of field.options || []">
+            <option *ngIf="!isItemSelected(opt.value)" [value]="opt.value">{{ opt.label }}</option>
+          </ng-container>
+        </select>
+      </div>
+
+      <!-- Single select (original style) -->
+      <ng-container *ngIf="!field.relation?.multiple">
+        <select
+          [name]="field.name"
+          [(ngModel)]="model[field.name]"
+          (ngModelChange)="onModelChange()"
+          [required]="!!field.required"
+          [disabled]="!!field.disabled"
+          class="pro-select"
+          [ngClass]="field.class || ''"
+        >
+          <option [ngValue]="undefined">-- Select {{ field.label }} --</option>
+          <option *ngFor="let opt of field.options || []" [ngValue]="opt.value">
+            {{ opt.label }}
+          </option>
+        </select>
+        <span class="select-arrow">▼</span>
+      </ng-container>
     </div>
 
     <!-- BOOLEAN -->
@@ -65,6 +90,102 @@
         <span class="slider"></span>
       </label>
       <span class="toggle-label">{{ model[field.name] ? 'Enabled' : 'Disabled' }}</span>
+    </div>
+
+    <!-- ARRAY KEY VALUE (Custom Items) -->
+    <div *ngIf="field.type === 'array-key-value'" class="array-kv-container">
+      <div *ngFor="let item of model[field.name]; let i = index" class="array-kv-row">
+        <input 
+          type="text" 
+          [(ngModel)]="item.name" 
+          (ngModelChange)="onModelChange()" 
+          [name]="field.name + '_name_' + i" 
+          placeholder="Item Name" 
+          class="pro-input-sm" 
+          style="flex: 2" 
+        />
+        <input 
+          type="number" 
+          [(ngModel)]="item.price" 
+          (ngModelChange)="onModelChange()" 
+          [name]="field.name + '_price_' + i" 
+          placeholder="Price (₹)" 
+          class="pro-input-sm" 
+          style="flex: 1" 
+        />
+        <button type="button" class="btn-remove-row" style="padding: 0 8px;" (click)="removeArrayItem(i)">✕</button>
+      </div>
+      <button type="button" class="btn-add-row" (click)="addArrayItem()">+ Add {{ field.label || 'Item' }}</button>
+    </div>
+
+    <!-- LINE ITEMS (Quotations) - REPOLISHED -->
+    <div *ngIf="field.type === 'line-items'" class="line-items-container">
+      <table class="line-items-table">
+        <thead>
+          <tr>
+            <th class="th-source">Source</th>
+            <th class="th-service">Service</th>
+            <th class="th-days text-center">Days</th>
+            <th class="th-base text-right">Base Price</th>
+            <th class="th-quoted text-right">Quoted Price</th>
+            <th class="th-total text-right">Total</th>
+            <th class="th-action"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of model[field.name]; let i = index">
+            <td class="td-source">
+              <span class="source-badge" [class.badge-individual]="item.source === 'Individual'">
+                {{ item.source }}
+              </span>
+            </td>
+            <td class="td-service">
+              <span *ngIf="item.source !== 'Individual'" class="item-name-bold">
+                {{ getOptionLabel(item.service) }}
+              </span>
+              <select 
+                *ngIf="item.source === 'Individual'"
+                [(ngModel)]="item.service" 
+                (ngModelChange)="onLineItemChange(item)" 
+                [name]="field.name + '_service_' + i" 
+                class="pro-select-sm full-width"
+              >
+                <option [ngValue]="''">Pik Service</option>
+                <option *ngFor="let opt of field.options" [ngValue]="opt.value">{{ opt.label }}</option>
+              </select>
+            </td>
+            <td class="td-days">
+              <input 
+                type="number" 
+                [(ngModel)]="item.days" 
+                (ngModelChange)="onLineItemChange(item)" 
+                [name]="field.name + '_days_' + i" 
+                class="pro-input-sm text-center" 
+              />
+            </td>
+            <td class="td-base text-right text-muted">₹{{ item.basePrice || 0 }}</td>
+            <td class="td-quoted">
+              <input 
+                type="number" 
+                [(ngModel)]="item.pricePerDay" 
+                (ngModelChange)="onLineItemChange(item)" 
+                [name]="field.name + '_price_' + i" 
+                class="pro-input-sm text-right font-bold" 
+              />
+            </td>
+            <td class="td-total text-right currency-total">₹{{ item.total || 0 }}</td>
+            <td class="td-action">
+              <button type="button" class="btn-remove-row" (click)="removeLineItem(i)">✕</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <div class="table-actions">
+        <button type="button" class="btn-add-row" (click)="addLineItem()">
+          <span class="plus-icon">+</span> Add Custom Service
+        </button>
+      </div>
     </div>
   </div>
 
