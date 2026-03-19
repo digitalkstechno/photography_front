@@ -39,10 +39,17 @@
             <svg *ngIf="config.key === 'quotations'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
             </svg>
-            <svg *ngIf="config.key === 'invoices'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <svg *ngIf="config.key === 'invoices'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
             </svg>
-            <span *ngIf="config.key !== 'party' && config.key !== 'services' && config.key !== 'packages' && config.key !== 'events' && config.key !== 'quotations' && config.key !== 'invoices'">
+            <svg *ngIf="config.key === 'payments'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75m0 1.5v.75m0 1.5v.75m0 1.5V15m-1.5-1.5h.75m1.5 0h.75m1.5 0h.75m1.5 0h.75m1.5 0h.75m1.5 0h.75m-1.5 1.5h.75m-7.5 1.5h.75m6-3h.75m.75 0a2.25 2.25 0 0 1 2.25 2.25v.75m0 3a2.25 2.25 0 0 1-2.25 2.25H3.75a2.25 2.25 0 0 1-2.25-2.25v-15a2.25 2.25 0 0 1 2.25-2.25h15a2.25 2.25 0 0 1 2.25 2.25V6.75A2.25 2.25 0 0 1 18 9h-2.25a2.25 2.25 0 0 0-2.25 2.25v.75a2.25 2.25 0 0 0 2.25 2.25H18a2.25 2.25 0 0 1 2.25 2.25v.75a2.25 2.25 0 0 1-2.25 2.25h-1.5a2.25 2.25 0 0 1-2.25-2.25v-.75a2.25 2.25 0 0 1 2.25-2.25H18" />
+            </svg>
+            <svg *ngIf="config.key === 'freelancers'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 .621-.504 1.125-1.125 1.125H4.875c-.621 0-1.125-.504-1.125-1.125v-4.25m16.5 0a2.25 2.25 0 0 0-1.875-2.217 19.435 19.435 0 0 1-3.374-.614M20.25 14.15c.388.04.582.52.32.822a.75.75 0 0 1-1.173-.037l-.382-.466a.45.45 0 0 0-.66-.037l-.31.31a.45.45 0 0 1-.667-.006L16 13.5m3.96-3.04a11.34 11.34 0 0 1-2.283-.535l-.057-.016a3.375 3.375 0 0 0-3.397 1.199L13 12.5M20.25 14.15a4.5 4.5 0 0 0-4.5-4.5M10.5 7.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM9.375 3a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 21h16.5M4.5 3h15M4.5 3a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 18h15a2.25 2.25 0 0 0 2.25-2.25V5.25A2.25 2.25 0 0 0 19.5 3h-15Z" />
+            </svg>
+
+            <span *ngIf="config.key !== 'party' && config.key !== 'services' && config.key !== 'packages' && config.key !== 'events' && config.key !== 'quotations' && config.key !== 'invoices' && config.key !== 'payments' && config.key !== 'freelancers'">
               {{ config.icon || '📦' }}
             </span>
           </span>
