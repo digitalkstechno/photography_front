@@ -6,9 +6,6 @@ import { ReportsComponent } from '../pages/reports/reports.component';
 import { SettingsComponent } from '../pages/settings/settings.component';
 import { EntityFormPageComponent } from '../pages/entity-form-page/entity-form-page.component';
 import { EntityPageComponent } from '../pages/entity-page/entity-page.component';
-import { BookingListComponent } from '../pages/booking-list/booking-list.component';
-import { BookingFormComponent } from '../pages/booking-form/booking-form.component';
-import { BookingDetailComponent } from '../pages/booking-detail/booking-detail.component';
 import { CalendarComponent } from '../pages/calendar/calendar.component';
 import { LedgerComponent } from '../pages/ledger/ledger.component';
 
@@ -26,11 +23,6 @@ export const routes: Routes = [
       { path: 'admin/:entity/new', component: EntityFormPageComponent },
       { path: 'admin/:entity/edit/:id', component: EntityFormPageComponent },
 
-      // Events / Bookings
-      { path: 'bookings', component: BookingListComponent },
-      { path: 'bookings/new', component: BookingFormComponent },
-      { path: 'bookings/edit/:id', component: BookingFormComponent },
-      { path: 'bookings/:id', component: BookingDetailComponent },
 
       // Calendar
       { path: 'calendar', component: CalendarComponent },

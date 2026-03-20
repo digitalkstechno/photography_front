@@ -155,10 +155,10 @@ export const ENTITIES: Record<string, EntityConfig> = {
     sidebar: true
   },
 
-  // ── Events / Bookings ──
-  events: {
-    key: 'events',
-    label: 'Events',
+  // ── Bookings (formerly Events) ──
+  bookings: {
+    key: 'bookings',
+    label: 'Bookings',
     icon: '✨',
     api: '/events',
     idKey: '_id',
@@ -225,7 +225,26 @@ export const ENTITIES: Record<string, EntityConfig> = {
         wrapperClass: 'col-6',
       },
       { name: 'totalAmount', label: 'Total Amount (₹)', type: 'number', class: 'input', wrapperClass: 'col-6' },
+      {
+        name: 'assignments',
+        label: 'Team & Equipment Assignments',
+        type: 'team-assignments',
+        wrapperClass: 'col-12',
+      },
       { name: 'notes', label: 'Notes', type: 'textarea', class: 'textarea', wrapperClass: 'col-12' },
+    ],
+    filters: [
+      {
+        name: 'status',
+        label: 'Status',
+        type: 'select',
+        options: [
+          { label: 'Pending', value: 'PENDING' },
+          { label: 'Confirmed', value: 'CONFIRMED' },
+          { label: 'Completed', value: 'COMPLETED' },
+          { label: 'Cancelled', value: 'CANCELLED' },
+        ],
+      },
     ],
     columns: [
       { key: 'customer.name', label: 'Customer' },
@@ -400,10 +419,10 @@ export const ENTITIES: Record<string, EntityConfig> = {
           }
         },
         {
-          label: 'Create Event',
+          label: 'Create Booking',
           icon: '📸',
           class: 'btn-sm btn-primary',
-          onClick: (row, router) => router.navigate(['/admin/events/new'], { queryParams: { quotation: row._id } }),
+          onClick: (row, router) => router.navigate(['/admin/bookings/new'], { queryParams: { quotation: row._id } }),
           isVisible: (row: any) => row.status === 'ACCEPTED' || row.status === 'CONVERTED'
         },
         {
@@ -487,6 +506,20 @@ export const ENTITIES: Record<string, EntityConfig> = {
       { name: 'grandTotal', label: 'Grand Total (₹)', type: 'number', readonly: true, class: 'input', wrapperClass: 'col-4' },
       { name: 'notes', label: 'Notes', type: 'textarea', class: 'textarea', wrapperClass: 'col-12' },
     ],
+    filters: [
+      {
+        name: 'status',
+        label: 'Status',
+        type: 'select',
+        options: [
+          { label: 'Draft', value: 'DRAFT' },
+          { label: 'Sent', value: 'SENT' },
+          { label: 'Partially Paid', value: 'PARTIALLY_PAID' },
+          { label: 'Paid', value: 'PAID' },
+          { label: 'Cancelled', value: 'CANCELLED' },
+        ],
+      },
+    ],
     columns: [
       { key: 'invoiceNumber', label: 'Invoice #' },
       { key: 'customer.name', label: 'Customer' },
@@ -543,10 +576,10 @@ export const ENTITIES: Record<string, EntityConfig> = {
           }
         },
         {
-          label: 'Create Event',
+          label: 'Create Booking',
           icon: '📸',
           class: 'btn-sm btn-primary',
-          onClick: (row, router) => router.navigate(['/admin/events/new'], { queryParams: { invoice: row._id } }),
+          onClick: (row, router) => router.navigate(['/admin/bookings/new'], { queryParams: { invoice: row._id } }),
           isVisible: (row) => row.status !== 'CANCELLED'
         },
         {
@@ -628,9 +661,9 @@ export const ENTITIES: Record<string, EntityConfig> = {
       },
       {
         name: 'event',
-        label: 'Event (Optional)',
+        label: 'Booking (Optional)',
         type: 'relation',
-        relation: { entity: 'events', valueKey: '_id', labelKey: 'title' },
+        relation: { entity: 'bookings', valueKey: '_id', labelKey: 'title' },
         class: 'input',
         wrapperClass: 'col-6',
       },
@@ -658,9 +691,9 @@ export const ENTITIES: Record<string, EntityConfig> = {
     fields: [
       {
         name: 'event',
-        label: 'Event',
+        label: 'Booking',
         type: 'relation',
-        relation: { entity: 'events', valueKey: '_id', labelKey: 'title' },
+        relation: { entity: 'bookings', valueKey: '_id', labelKey: 'title' },
         required: true,
         class: 'input',
         wrapperClass: 'col-6',
@@ -722,6 +755,56 @@ export const ENTITIES: Record<string, EntityConfig> = {
     ],
     sidebar: false
   },
+
+  // ── Equipments ──
+  equipments: {
+    key: 'equipments',
+    label: 'Equipment',
+    icon: '📷',
+    api: '/equipments',
+    idKey: '_id',
+    fields: [
+      { name: 'name', label: 'Name', type: 'text', required: true, class: 'input', wrapperClass: 'col-6' },
+      {
+        name: 'category',
+        label: 'Category',
+        type: 'select',
+        options: [
+          { label: 'Camera', value: 'CAMERA' },
+          { label: 'Lens', value: 'LENS' },
+          { label: 'Drone', value: 'DRONE' },
+          { label: 'Lighting', value: 'LIGHTING' },
+          { label: 'Audio', value: 'AUDIO' },
+          { label: 'Other', value: 'OTHER' }
+        ],
+        required: true,
+        class: 'input',
+        wrapperClass: 'col-6',
+      },
+      { name: 'serialNumber', label: 'Serial Number', type: 'text', class: 'input', wrapperClass: 'col-6' },
+      {
+        name: 'condition',
+        label: 'Condition',
+        type: 'select',
+        options: [
+          { label: 'Excellent', value: 'EXCELLENT' },
+          { label: 'Good', value: 'GOOD' },
+          { label: 'Fair', value: 'FAIR' },
+          { label: 'Poor', value: 'POOR' }
+        ],
+        class: 'input',
+        wrapperClass: 'col-6',
+      },
+      { name: 'notes', label: 'Notes', type: 'textarea', class: 'textarea', wrapperClass: 'col-12' },
+    ],
+    columns: [
+      { key: 'name', label: 'Name' },
+      { key: 'category', label: 'Category' },
+      { key: 'condition', label: 'Condition' },
+      { key: 'serialNumber', label: 'Serial No.' }
+    ],
+    sidebar: true
+  }
 };
 
 

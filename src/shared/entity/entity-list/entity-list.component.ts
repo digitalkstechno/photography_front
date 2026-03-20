@@ -41,10 +41,11 @@ export class EntityListComponent implements OnChanges {
   };
 
   get addRoute() {
-    return `${this.baseRoute}/new`;
+    return this.entity?.customAddRoute || `${this.baseRoute}/new`;
   }
 
   getUpdateRoute = (row: any) => {
+    if (this.entity?.ui?.updateRoute) return this.entity.ui.updateRoute(row);
     const idKey = this.entity?.idKey ?? '_id';
     const id = row?.[idKey];
     return id ? `${this.baseRoute}/edit/${id}` : this.baseRoute;

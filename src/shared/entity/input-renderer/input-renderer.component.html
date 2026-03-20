@@ -187,6 +187,83 @@
         </button>
       </div>
     </div>
+
+    <!-- TEAM ASSIGNMENTS (Bookings) -->
+    <div *ngIf="field.type === 'team-assignments'" class="team-assignments-container" style="margin-top: 15px;">
+      <div class="table-actions" style="margin-bottom: 10px;" [style.color]="availabilityLoading ? 'var(--primary)' : 'var(--text-secondary)'">
+        <span *ngIf="availabilityLoading">Checking actual availability for your dates... ⏳</span>
+        <span class="text-danger" *ngIf="!model.startDate || !model.endDate" style="color: var(--danger)">
+          Please select Start Date and End Date first to check team conflicts block by block.
+        </span>
+      </div>
+
+      <div class="assignments-table-wrapper" *ngIf="model[field.name]?.length > 0" style="overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md);">
+        <table class="data-table" style="width: 100%; border-collapse: collapse; text-align: left;">
+          <thead style="background: var(--surface-light); font-size: 0.85rem; text-transform: uppercase;">
+            <tr>
+              <th style="padding: 10px; border-bottom: 1px solid var(--border);">Member Type</th>
+              <th style="padding: 10px; border-bottom: 1px solid var(--border);">Person</th>
+              <th style="padding: 10px; border-bottom: 1px solid var(--border);">Role</th>
+              <th style="padding: 10px; border-bottom: 1px solid var(--border);">Equipment</th>
+              <th style="padding: 10px; border-bottom: 1px solid var(--border); width: 40px;"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let assign of model[field.name]; let i = index">
+              <td style="padding: 10px; border-bottom: 1px solid var(--border);">
+                <select [(ngModel)]="assign.memberType" (change)="assign.personId = ''; onModelChange()" [name]="field.name + '_type_' + i" class="pro-select-sm" style="width: 100%">
+                  <option value="">-- Type --</option>
+                  <option value="USER">Internal Staff</option>
+                  <option value="FREELANCER">Freelancer</option>
+                </select>
+              </td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--border);">
+                <select [(ngModel)]="assign.personId" (ngModelChange)="onModelChange()" [name]="field.name + '_person_' + i" [disabled]="!assign.memberType" class="pro-select-sm" style="width: 100%" [style.border-color]="!assign.personId ? 'var(--danger)' : ''">
+                  <option value="">-- Person --</option>
+                  <ng-container *ngFor="let person of getAvailablePeople(assign.memberType)">
+                    <option [value]="person._id">
+                      {{ person.name }} 
+                      {{ !person.isAvailable ? ' (❌ Busy)' : ' (✅ Available)' }}
+                    </option>
+                  </ng-container>
+                </select>
+              </td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--border);">
+                <select [(ngModel)]="assign.role" (ngModelChange)="onModelChange()" [name]="field.name + '_role_' + i" class="pro-select-sm" style="width: 100%" [style.border-color]="!assign.role ? 'var(--danger)' : ''">
+                  <option value="">-- Role --</option>
+                  <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
+                </select>
+              </td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--border);">
+                <div class="equipment-multi-select" style="min-width: 200px">
+                  <div class="selected-eq-tags" style="display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 5px;" *ngIf="assign.equipmentIds?.length">
+                    <span class="eq-tag" *ngFor="let eqId of assign.equipmentIds" style="background: rgba(255, 229, 76, 0.2); color: var(--primary); padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; border: 1px solid var(--primary); display: inline-flex; align-items: center;">
+                      Gear...{{ eqId.substring(eqId.length - 4) }}
+                      <span (click)="toggleEquipment(i, eqId)" style="cursor: pointer; margin-left: 6px; color: var(--danger); font-weight: bold;">✕</span>
+                    </span>
+                  </div>
+                  <select #eqSelect class="pro-select-sm" style="width: 100%" (change)="toggleEquipment(i, eqSelect.value); eqSelect.value=''">
+                    <option value="">+ Add Equipment</option>
+                    <option *ngFor="let eq of availableEquipments" [value]="eq._id" [disabled]="!eq.isAvailable && !isEquipmentSelected(i, eq._id)">
+                      {{ eq.name }} ({{ eq.category }}) {{ !eq.isAvailable ? ' - ❌ Booked' : '' }}
+                    </option>
+                  </select>
+                </div>
+              </td>
+              <td class="td-action" style="padding: 10px; border-bottom: 1px solid var(--border); text-align: center;">
+                <button type="button" class="btn-remove-row" style="background: rgba(255,0,0,0.1); color: red; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer;" (click)="removeAssignment(i)">✕</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="table-actions" style="margin-top: 10px;">
+        <button type="button" class="btn-add-row" (click)="addAssignment()" style="background: none; border: 1px dashed var(--primary); padding: 6px 16px; border-radius: 20px; color: var(--primary); cursor: pointer; transition: 0.2s;">
+          <span class="plus-icon" style="font-weight: bold; margin-right: 4px;">+</span> Add Team Member
+        </button>
+      </div>
+    </div>
   </div>
 
   <div *ngIf="field.help" class="field-help">{{ field.help }}</div>

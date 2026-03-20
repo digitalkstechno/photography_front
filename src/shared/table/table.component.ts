@@ -1,17 +1,19 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { EntityColumn } from '../../core/entity/entity.types';
+import { EntityColumn, EntityTableFilter } from '../../core/entity/entity.types';
 
 @Component({
   selector: 'app-table',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
 })
 export class TableComponent implements OnInit, OnChanges {
   @Input() columns: EntityColumn[] = [];
+  @Input() filters?: EntityTableFilter[] = [];
   @Input() fetchFn!: (params: any) => Promise<any>;
   @Input() reloadTrigger?: any;
 
@@ -28,6 +30,8 @@ export class TableComponent implements OnInit, OnChanges {
   search = '';
   sortBy = '';
   sortOrder: 'asc' | 'desc' = 'asc';
+  
+  activeFilters: Record<string, any> = {};
 
   private requestId = 0; // 🔒 race-condition guard
 
@@ -59,6 +63,7 @@ export class TableComponent implements OnInit, OnChanges {
       search: this.search,
       sortBy: this.sortBy,
       sortOrder: this.sortOrder,
+      ...this.activeFilters
     }).then((res) => {
       if (currentRequest !== this.requestId) return; // ignore stale response
 
@@ -97,6 +102,16 @@ export class TableComponent implements OnInit, OnChanges {
 
   onSearch(event: Event) {
     this.search = (event.target as HTMLInputElement).value;
+    this.page = 1;
+    this.loadData();
+  }
+
+  onLimitChange() {
+    this.page = 1;
+    this.loadData();
+  }
+
+  onFilterChange() {
     this.page = 1;
     this.loadData();
   }

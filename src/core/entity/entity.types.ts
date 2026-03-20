@@ -13,7 +13,8 @@ export type EntityFieldType =
   | 'file'
   | 'image'
   | 'array-key-value'
-  | 'line-items';
+  | 'line-items'
+  | 'team-assignments';
 
 export interface EntitySelectOption {
   label: string;
@@ -94,6 +95,13 @@ export interface EntityField {
   help?: string;
 }
 
+export interface EntityTableFilter {
+  name: string;
+  label: string;
+  type: 'select' | 'date';
+  options?: EntitySelectOption[];
+}
+
 export interface EntityColumn {
   key: string;
 
@@ -151,11 +159,17 @@ export interface EntityConfig {
   /** Optional custom list endpoint */
   listApi?: string;
 
+  /** Optional override for the Add New button route */
+  customAddRoute?: string;
+
   /** Field definitions */
   fields: EntityField[];
 
   /** Table columns */
   columns?: EntityColumn[];
+
+  /** Custom Table Filters */
+  filters?: EntityTableFilter[];
 
   /** ID field */
   idKey?: string; // default _id
