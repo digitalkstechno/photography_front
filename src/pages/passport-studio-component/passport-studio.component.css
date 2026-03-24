@@ -1,0 +1,36 @@
+.studio {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr;
+  gap: 20px;
+  padding: 20px;
+  height: calc(100vh - 80px);
+  background: #f5f6fa;
+}
+
+/* sections */
+app-preview {
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+app-controls {
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+app-types {
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+app-generate {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}

@@ -1,0 +1,11 @@
+<div class="grid-panel">
+  <h3>Print Layout Preview</h3>
+  <div class="print-grid" *ngIf="croppedImage">
+    <div class="grid-item" *ngFor="let item of gridItems">
+      <img [src]="croppedImage" />
+    </div>
+  </div>
+  <div class="empty-state" *ngIf="!croppedImage">
+    <p>Upload a photo to see the print layout.</p>
+  </div>
+</div>

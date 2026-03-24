@@ -1,0 +1,29 @@
+<div class="studio">
+
+  <app-preview
+    [image]="image"
+    [zoom]="zoom"
+    [brightness]="brightness"
+    [contrast]="contrast"
+    [selectedType]="selectedType"
+    (imageLoaded)="onImageLoaded($event)"
+    (zoomChange)="zoom = $event"
+    (cropChange)="onCropChange($event)"
+  ></app-preview>
+
+  <app-grid-preview
+    [croppedImage]="croppedImage"
+  ></app-grid-preview>
+
+  <!-- <app-controls
+    (change)="onControlsChange($event)"
+  ></app-controls> -->
+
+  <app-types
+    [types]="photoTypes"
+    (select)="onTypeSelect($event)"
+  ></app-types>
+
+</div>
+
+<app-generate (generate)="generate()"></app-generate>

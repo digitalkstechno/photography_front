@@ -1,0 +1,11 @@
+<div class="types-container">
+  <div *ngFor="let t of types"
+       (click)="choose(t)"
+       [class.active]="selected === t"
+       class="type-card"
+       [class.priority]="t.isPriority">
+    <div class="type-name">{{ t.name }}</div>
+    <div class="type-size">{{ t.width_mm }} × {{ t.height_mm }} mm</div>
+    <div class="type-category" *ngIf="t.category">{{ t.category }}</div>
+  </div>
+</div>

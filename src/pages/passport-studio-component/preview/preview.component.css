@@ -1,0 +1,13 @@
+canvas {
+  width: 100%;
+  height: auto;
+  max-height: 500px;
+  border: 2px dashed #dcdde1;
+  border-radius: 8px;
+  background: #fafafa;
+  cursor: grab;
+}
+
+input[type="file"] {
+  margin-top: 10px;
+}

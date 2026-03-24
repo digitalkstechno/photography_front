@@ -9,6 +9,7 @@ import { EntityPageComponent } from '../pages/entity-page/entity-page.component'
 import { CalendarComponent } from '../pages/calendar/calendar.component';
 import { LedgerComponent } from '../pages/ledger/ledger.component';
 import { AuthGuard } from '../core/auth/auth.guard.ts.service';
+import { PassportStudioComponent } from '../pages/passport-studio-component/passport-studio.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -16,7 +17,6 @@ export const routes: Routes = [
   {
     path: '',
     component: LayoutComponent,
-    canActivate:[AuthGuard],
     children: [
       { path: 'dashboard', component: DashboardComponent },
 
@@ -24,7 +24,12 @@ export const routes: Routes = [
       { path: 'admin/:entity', component: EntityPageComponent },
       { path: 'admin/:entity/new', component: EntityFormPageComponent },
       { path: 'admin/:entity/edit/:id', component: EntityFormPageComponent },
-
+      {
+        path: 'photoEditor',
+        loadComponent: () =>
+          import('../pages/passport-studio-component/passport-studio.component')
+            .then(m => m.PassportStudioComponent)
+      },
 
       // Calendar
       { path: 'calendar', component: CalendarComponent },
