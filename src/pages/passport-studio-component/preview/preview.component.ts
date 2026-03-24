@@ -94,21 +94,27 @@ export class PreviewComponent implements OnInit {
 
     const headTop = box.y;
     const headBottom = chin.y;
-    const headHeight = headBottom - headTop;
+    const faceBoxHeight = headBottom - headTop;
+    const trueHeadHeight = faceBoxHeight * 1.35;
 
-    const [minHR, maxHR] = this.selectedType?.head_ratio || [0.60, 0.80];
+    const [minHR, maxHR] = this.selectedType?.head_ratio || [0.60, 0.70];
     const [minEye, maxEye] = this.selectedType?.eye_position || [0.50, 0.70];
 
-    // Target the absolute center of the valid bounds to be safe
-    const headPercent = (minHR + maxHR) / 2;
-    const eyePercent = (minEye + maxEye) / 2;
+    // Target a comfortable 65% natural frame ratio (with fallbacks if strictly governed)
+    let targetHead = 0.65;
+    if (targetHead < minHR) targetHead = minHR;
+    if (targetHead > maxHR) targetHead = maxHR;
+
+    let targetEye = 0.58; // Roughly 58% up from the bottom chin-line
+    if (targetEye < minEye) targetEye = minEye;
+    if (targetEye > maxEye) targetEye = maxEye;
     
     const ratio = this.selectedType && this.selectedType.height_mm ? this.selectedType.width_mm / this.selectedType.height_mm : 35/45;
     const cropH = 200 / ratio;
 
-    this.zoom = (cropH * headPercent) / headHeight;
+    this.zoom = (cropH * targetHead) / trueHeadHeight;
     this.offsetX = this.zoom * (this.image.width / 2 - (box.x + box.width/2));
-    this.offsetY = this.zoom * (this.image.height / 2 - avgEyeY) + cropH * (0.5 - eyePercent);
+    this.offsetY = this.zoom * (this.image.height / 2 - avgEyeY) + cropH * (0.5 - targetEye);
 
     this.zoomChange.emit(this.zoom);
     this.scheduleRender();
@@ -235,13 +241,14 @@ export class PreviewComponent implements OnInit {
       const box = this.cachedDetection.alignedRect.box;
       const landmarks = this.cachedDetection.landmarks;
       const chin = landmarks.getJawOutline()[8];
-      const headHeight = chin.y - box.y;
+      const faceBoxHeight = chin.y - box.y;
+      const trueHeadHeight = faceBoxHeight * 1.35;
       
       const leftEye = landmarks.getLeftEye();
       const rightEye = landmarks.getRightEye();
       const avgEyeY = (leftEye.reduce((s:number, p:any) => s + p.y, 0)/leftEye.length + rightEye.reduce((s:number, p:any) => s + p.y, 0)/rightEye.length) / 2;
 
-      const currentHeadRatio = (headHeight * this.zoom) / cropH;
+      const currentHeadRatio = (trueHeadHeight * this.zoom) / cropH;
       
       const eyeTopY = (drawY + avgEyeY * this.zoom) - cropY;
       const eyeDistFromBottom = cropH - eyeTopY;
