@@ -91,6 +91,7 @@ export class PreviewComponent implements OnInit {
     const leftEye = landmarks.getLeftEye();
     const rightEye = landmarks.getRightEye();
     const avgEyeY = (leftEye.reduce((s: number, p: any) => s + p.y, 0)/leftEye.length + rightEye.reduce((s: number, p: any) => s + p.y, 0)/rightEye.length) / 2;
+    const avgEyeX = (leftEye.reduce((s: number, p: any) => s + p.x, 0)/leftEye.length + rightEye.reduce((s: number, p: any) => s + p.x, 0)/rightEye.length) / 2;
 
     const headTop = box.y;
     const headBottom = chin.y;
@@ -113,7 +114,7 @@ export class PreviewComponent implements OnInit {
     const cropH = 200 / ratio;
 
     this.zoom = (cropH * targetHead) / trueHeadHeight;
-    this.offsetX = this.zoom * (this.image.width / 2 - (box.x + box.width/2));
+    this.offsetX = this.zoom * (this.image.width / 2 - avgEyeX);
     this.offsetY = this.zoom * (this.image.height / 2 - avgEyeY) + cropH * (0.5 - targetEye);
 
     this.zoomChange.emit(this.zoom);
@@ -247,6 +248,7 @@ export class PreviewComponent implements OnInit {
       const leftEye = landmarks.getLeftEye();
       const rightEye = landmarks.getRightEye();
       const avgEyeY = (leftEye.reduce((s:number, p:any) => s + p.y, 0)/leftEye.length + rightEye.reduce((s:number, p:any) => s + p.y, 0)/rightEye.length) / 2;
+      const avgEyeX = (leftEye.reduce((s:number, p:any) => s + p.x, 0)/leftEye.length + rightEye.reduce((s:number, p:any) => s + p.x, 0)/rightEye.length) / 2;
 
       const currentHeadRatio = (trueHeadHeight * this.zoom) / cropH;
       
@@ -254,9 +256,13 @@ export class PreviewComponent implements OnInit {
       const eyeDistFromBottom = cropH - eyeTopY;
       const currentEyeRatio = eyeDistFromBottom / cropH;
 
+      const currentFaceCenterX = (canvas.width / 2 - (this.image.width * this.zoom) / 2 + this.offsetX) + avgEyeX * this.zoom;
+      const centerDeviation = Math.abs(canvas.width / 2 - currentFaceCenterX);
+      
       const [minHR, maxHR] = this.selectedType?.head_ratio || [0.6, 0.8];
       const [minEye, maxEye] = this.selectedType?.eye_position || [0.5, 0.7];
 
+      if (centerDeviation > cropW * 0.05) { valid = false; reasons.push(`Face is off-center (must be horizontally aligned)`); }
       if (currentHeadRatio < minHR) { valid = false; reasons.push(`Face too small (needs ${Math.round(minHR*100)}%)`); }
       if (currentHeadRatio > maxHR) { valid = false; reasons.push(`Face too large (max ${Math.round(maxHR*100)}%)`); }
       if (currentEyeRatio < minEye) { valid = false; reasons.push(`Eyes too low (needs ${Math.round(minEye*100)}% from bottom)`); }
@@ -291,7 +297,7 @@ export class PreviewComponent implements OnInit {
       
       ctx.strokeStyle = strokeColor === 'rgba(0, 255, 0, 0.8)' ? 'rgba(0,255,0,0.5)' : 'rgba(255,0,0,0.5)';
       ctx.lineWidth = 1;
-      ctx.setLineDash([2, 2]);
+      ctx.setLineDash([2, 4]); // lighter dashed styling
       
       ctx.beginPath();
       ctx.moveTo(cropX, minEyeY);
@@ -301,6 +307,12 @@ export class PreviewComponent implements OnInit {
       ctx.beginPath();
       ctx.moveTo(cropX, maxEyeY);
       ctx.lineTo(cropX + cropW, maxEyeY);
+      ctx.stroke();
+
+      // Draw Center Vertical line (Nose Stencil)
+      ctx.beginPath();
+      ctx.moveTo(canvas.width / 2, cropY);
+      ctx.lineTo(canvas.width / 2, cropY + cropH);
       ctx.stroke();
       ctx.setLineDash([]);
 
