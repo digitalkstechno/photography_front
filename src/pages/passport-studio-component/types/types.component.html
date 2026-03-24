@@ -1,11 +1,9 @@
 <div class="types-container">
-  <div *ngFor="let t of types"
-       (click)="choose(t)"
-       [class.active]="selected === t"
-       class="type-card"
-       [class.priority]="t.isPriority">
-    <div class="type-name">{{ t.name }}</div>
-    <div class="type-size">{{ t.width_mm }} × {{ t.height_mm }} mm</div>
-    <div class="type-category" *ngIf="t.category">{{ t.category }}</div>
-  </div>
+  <label class="dropdown-label">Select Document Type:</label>
+  <select [(ngModel)]="selected" (ngModelChange)="choose($event)" class="type-dropdown">
+    <option [ngValue]="null" disabled selected>-- Select Nationality & Size --</option>
+    <option *ngFor="let t of types" [ngValue]="t">
+      {{ t.name }} ({{ t.width_mm }} × {{ t.height_mm }} mm)
+    </option>
+  </select>
 </div>

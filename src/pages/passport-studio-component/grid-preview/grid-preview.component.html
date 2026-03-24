@@ -1,6 +1,6 @@
 <div class="grid-panel">
   <h3>Print Layout Preview</h3>
-  <div class="print-grid" *ngIf="croppedImage">
+  <div class="print-grid" *ngIf="croppedImage" [ngStyle]="gridStyle">
     <div class="grid-item" *ngFor="let item of gridItems">
       <img [src]="croppedImage" />
     </div>

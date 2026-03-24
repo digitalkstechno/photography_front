@@ -1,10 +1,11 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-types',
   standalone: true,
-  imports: [CommonModule], // ✅ FIX
+  imports: [CommonModule, FormsModule], // ✅ FIX
   templateUrl: './types.component.html',
   styleUrls: ['./types.component.css']
 })

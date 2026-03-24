@@ -11,6 +11,15 @@ import { CommonModule } from '@angular/common';
 export class GridPreviewComponent {
   @Input() croppedImage: string | null = null;
   @Input() paperType: string = 'A4';
+  @Input() layout: { cols: number, rows: number } = { cols: 4, rows: 2 };
 
-  gridItems = Array(8).fill(0);
+  get gridItems() {
+    return Array(this.layout.cols * this.layout.rows).fill(0);
+  }
+
+  get gridStyle() {
+    return {
+      'grid-template-columns': `repeat(${this.layout.cols}, 1fr)`
+    };
+  }
 }

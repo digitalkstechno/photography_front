@@ -7,6 +7,43 @@
   background: #f5f6fa;
 }
 
+.left-section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.validation-badge {
+  background: white;
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-left: 4px solid #3b82f6;
+}
+
+.validation-badge.valid {
+  border-left-color: #22c55e;
+  background-color: #f0fdf4;
+}
+
+.validation-badge.invalid {
+  border-left-color: #ef4444;
+  background-color: #fef2f2;
+}
+
+.v-title {
+  font-weight: 600;
+  font-size: 15px;
+  color: #1e293b;
+}
+
+.v-reasons {
+  margin: 8px 0 0 0;
+  padding-left: 20px;
+  font-size: 13px;
+  color: #ef4444;
+}
+
 /* sections */
 app-preview {
   background: white;
@@ -33,4 +70,41 @@ app-generate {
   position: fixed;
   bottom: 20px;
   right: 20px;
+}
+
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+.layouts-container {
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.layout-card {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.1s ease-in-out;
+  margin-bottom: 10px;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.layout-card:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.layout-card.active {
+  border-color: #3b82f6;
+  background: #eff6ff;
+  box-shadow: 0 0 0 1px #3b82f6;
 }

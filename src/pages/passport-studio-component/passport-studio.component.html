@@ -1,28 +1,52 @@
 <div class="studio">
 
-  <app-preview
-    [image]="image"
-    [zoom]="zoom"
-    [brightness]="brightness"
-    [contrast]="contrast"
-    [selectedType]="selectedType"
-    (imageLoaded)="onImageLoaded($event)"
-    (zoomChange)="zoom = $event"
-    (cropChange)="onCropChange($event)"
-  ></app-preview>
+  <div class="left-section">
+    <div *ngIf="image" class="validation-badge" [class.valid]="validationStatus.valid" [class.invalid]="!validationStatus.valid">
+      <div class="v-title">{{ validationStatus.valid ? '✅ Compliant' : '❌ Non-Compliant' }}</div>
+      <ul class="v-reasons" *ngIf="!validationStatus.valid">
+        <li *ngFor="let reason of validationStatus.reasons">{{ reason }}</li>
+      </ul>
+    </div>
+
+    <app-preview
+      [image]="image"
+      [zoom]="zoom"
+      [brightness]="brightness"
+      [contrast]="contrast"
+      [selectedType]="selectedType"
+      (imageLoaded)="onImageLoaded($event)"
+      (zoomChange)="zoom = $event"
+      (cropChange)="onCropChange($event)"
+      (validationChange)="onValidationChange($event)"
+    ></app-preview>
+  </div>
 
   <app-grid-preview
     [croppedImage]="croppedImage"
+    [layout]="selectedLayout"
   ></app-grid-preview>
 
   <!-- <app-controls
     (change)="onControlsChange($event)"
   ></app-controls> -->
 
-  <app-types
-    [types]="photoTypes"
-    (select)="onTypeSelect($event)"
-  ></app-types>
+  <div class="side-panel">
+    <app-types
+      [types]="photoTypes"
+      (select)="onTypeSelect($event)"
+    ></app-types>
+
+    <div class="layouts-container">
+      <h3 style="margin-bottom: 15px; font-size: 16px; color: #333;">Print Layout</h3>
+      <div 
+        *ngFor="let l of layouts" 
+        (click)="onLayoutSelect(l)" 
+        [class.active]="selectedLayout === l" 
+        class="layout-card">
+        {{ l.label }}
+      </div>
+    </div>
+  </div>
 
 </div>
 
