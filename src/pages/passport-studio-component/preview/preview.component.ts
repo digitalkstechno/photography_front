@@ -38,6 +38,7 @@ export class PreviewComponent implements OnInit {
   
   modelsLoaded = false;
   cachedDetection: any = null;
+  rotation = 0;
 
   async ngOnInit() {
     const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
@@ -90,8 +91,19 @@ export class PreviewComponent implements OnInit {
 
     const leftEye = landmarks.getLeftEye();
     const rightEye = landmarks.getRightEye();
-    const avgEyeY = (leftEye.reduce((s: number, p: any) => s + p.y, 0)/leftEye.length + rightEye.reduce((s: number, p: any) => s + p.y, 0)/rightEye.length) / 2;
-    const avgEyeX = (leftEye.reduce((s: number, p: any) => s + p.x, 0)/leftEye.length + rightEye.reduce((s: number, p: any) => s + p.x, 0)/rightEye.length) / 2;
+
+    const leftEyeX = leftEye.reduce((s:number, p:any) => s + p.x, 0) / leftEye.length;
+    const leftEyeY = leftEye.reduce((s:number, p:any) => s + p.y, 0) / leftEye.length;
+    const rightEyeX = rightEye.reduce((s:number, p:any) => s + p.x, 0) / rightEye.length;
+    const rightEyeY = rightEye.reduce((s:number, p:any) => s + p.y, 0) / rightEye.length;
+    
+    const avgEyeY = (leftEyeY + rightEyeY) / 2;
+    const avgEyeX = (leftEyeX + rightEyeX) / 2;
+
+    // Head Tilt Rotation (Auto-Level)
+    const dx = rightEyeX - leftEyeX;
+    const dy = rightEyeY - leftEyeY;
+    this.rotation = Math.atan2(dy, dx); // Angle the system needs to counter-rotate
 
     const headTop = box.y;
     const headBottom = chin.y;
@@ -137,7 +149,65 @@ export class PreviewComponent implements OnInit {
 
   onMouseUp() {
     this.isDragging = false;
+    this.enforceCompliance();
     this.exportCrop();
+  }
+
+  enforceCompliance() {
+    if (!this.cachedDetection || !this.selectedType || !this.image) return;
+
+    const ratio = this.selectedType.height_mm ? this.selectedType.width_mm / this.selectedType.height_mm : 35/45;
+    const cropW = 200;
+    const cropH = cropW / ratio;
+    
+    // Test if we are out of bounds, and forcefully snap us inside
+    const box = this.cachedDetection.alignedRect.box;
+    const landmarks = this.cachedDetection.landmarks;
+    const chin = landmarks.getJawOutline()[8];
+    const faceBoxHeight = chin.y - box.y;
+    const trueHeadHeight = faceBoxHeight * 1.35;
+    
+    const leftEye = landmarks.getLeftEye();
+    const rightEye = landmarks.getRightEye();
+    const avgEyeY = (leftEye.reduce((s:number, p:any) => s + p.y, 0)/leftEye.length + rightEye.reduce((s:number, p:any) => s + p.y, 0)/rightEye.length) / 2;
+    const avgEyeX = (leftEye.reduce((s:number, p:any) => s + p.x, 0)/leftEye.length + rightEye.reduce((s:number, p:any) => s + p.x, 0)/rightEye.length) / 2;
+
+    const [minHR, maxHR] = this.selectedType.head_ratio || [0.6, 0.8];
+    const [minEye, maxEye] = this.selectedType.eye_position || [0.5, 0.7];
+
+    // Enforce Zoom
+    let currentHeadRatio = (trueHeadHeight * this.zoom) / cropH;
+    if (currentHeadRatio < minHR) this.zoom = (cropH * minHR) / trueHeadHeight;
+    if (currentHeadRatio > maxHR) this.zoom = (cropH * maxHR) / trueHeadHeight;
+
+    // Enforce Center Alignment
+    const canvas = this.canvasRef.nativeElement;
+    const currentFaceCenterX = (canvas.width / 2 - (this.image.width * this.zoom) / 2 + this.offsetX) + avgEyeX * this.zoom;
+    const maxDeviationX = cropW * 0.05; // maximum 5% leeway horizontally
+    
+    if (currentFaceCenterX < canvas.width / 2 - maxDeviationX) {
+      this.offsetX += (canvas.width / 2 - maxDeviationX) - currentFaceCenterX;
+    } else if (currentFaceCenterX > canvas.width / 2 + maxDeviationX) {
+      this.offsetX -= currentFaceCenterX - (canvas.width / 2 + maxDeviationX);
+    }
+
+    // Enforce Eyes Height
+    const drawY = canvas.height / 2 - (this.image.height * this.zoom) / 2 + this.offsetY;
+    const cropY = canvas.height / 2 - cropH / 2;
+    const eyeTopY = (drawY + avgEyeY * this.zoom) - cropY;
+    const currentEyeRatio = (cropH - eyeTopY) / cropH;
+
+    if (currentEyeRatio < minEye) {
+      // Must lift the face UP (decrease offsetY)
+      const targetEyeTopY = cropH - (minEye * cropH);
+      this.offsetY += targetEyeTopY - eyeTopY;
+    } else if (currentEyeRatio > maxEye) {
+      // Must push the face DOWN (increase offsetY)
+      const targetEyeTopY = cropH - (maxEye * cropH);
+      this.offsetY += targetEyeTopY - eyeTopY;
+    }
+    
+    this.scheduleRender();
   }
 
   ngOnChanges(changes: any) {
@@ -182,6 +252,17 @@ export class PreviewComponent implements OnInit {
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
+    // Save state for rotation during export
+    ctx.save();
+    
+    // Translate to center of image drawing coordinates to rotate around the geometric center
+    const cx = (imgX - cropX) * scale + (imgW * scale) / 2;
+    const cy = (imgY - cropY) * scale + (imgH * scale) / 2;
+    
+    ctx.translate(cx, cy);
+    ctx.rotate(-this.rotation);
+    ctx.translate(-cx, -cy);
+
     ctx.drawImage(
       this.image, 
       (imgX - cropX) * scale, 
@@ -189,6 +270,8 @@ export class PreviewComponent implements OnInit {
       imgW * scale, 
       imgH * scale
     );
+
+    ctx.restore();
 
     this.cropChange.emit(canvas.toDataURL('image/jpeg', 0.9));
   }
@@ -218,8 +301,15 @@ export class PreviewComponent implements OnInit {
     const x = (canvas.width - w) / 2 + this.offsetX;
     const y = (canvas.height - h) / 2 + this.offsetY;
 
+    ctx.save();
+    // Rotate canvas around image center for preview
+    ctx.translate(x + w / 2, y + h / 2);
+    ctx.rotate(-this.rotation);
+    ctx.translate(-(x + w / 2), -(y + h / 2));
+
     ctx.filter = `brightness(${this.brightness}%) contrast(${this.contrast}%)`;
     ctx.drawImage(this.image, x, y, w, h);
+    ctx.restore();
 
     // dynamic crop
     const ratio = this.selectedType && this.selectedType.height_mm
