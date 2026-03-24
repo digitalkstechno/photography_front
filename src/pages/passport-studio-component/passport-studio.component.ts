@@ -7,6 +7,7 @@ import { ControlsComponent } from './controls/controls.component';
 import { PreviewComponent } from './preview/preview.component';
 import { GenerateComponent } from './generate/generate.component';
 import { GridPreviewComponent } from './grid-preview/grid-preview.component';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-passport-studio',
@@ -64,7 +65,7 @@ export class PassportStudioComponent {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/api/prints/generate', {
+      const response = await fetch(`${environment.apiUrl}/prints/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
