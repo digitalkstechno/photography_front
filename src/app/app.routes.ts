@@ -8,6 +8,7 @@ import { EntityFormPageComponent } from '../pages/entity-form-page/entity-form-p
 import { EntityPageComponent } from '../pages/entity-page/entity-page.component';
 import { CalendarComponent } from '../pages/calendar/calendar.component';
 import { LedgerComponent } from '../pages/ledger/ledger.component';
+import { AuthGuard } from '../core/auth/auth.guard.ts.service';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -15,6 +16,7 @@ export const routes: Routes = [
   {
     path: '',
     component: LayoutComponent,
+    canActivate:[AuthGuard],
     children: [
       { path: 'dashboard', component: DashboardComponent },
 
