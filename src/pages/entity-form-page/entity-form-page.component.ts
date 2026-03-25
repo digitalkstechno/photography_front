@@ -121,7 +121,12 @@ export class EntityFormPageComponent implements OnInit {
   private async loadRecord(id: string) {
     try {
       this.loading = true;
-      const record = await this.entityService.getOne(this.entity, id);
+      let record = await this.entityService.getOne(this.entity, id);
+      
+      // Sanitization: Ensure all relation fields (and line-item services) are ID strings
+      // This prevents identity mismatch issues in dropdowns when editing existing records
+      record = this.sanitizeRecord(record);
+      
       // Flatten nested object for form binding (e.g. items[0].price)
       this.model = flattenObject(record);
     } catch (err) {
@@ -129,6 +134,37 @@ export class EntityFormPageComponent implements OnInit {
     } finally {
       this.loading = false;
     }
+  }
+
+  /**
+   * Converts populated relation objects (e.g. { _id: '...', name: '...' })
+   * into simple ID strings for form binding.
+   */
+  private sanitizeRecord(record: any): any {
+    const sanitized = { ...record };
+    
+    this.entity.fields.forEach(field => {
+      // 1. Relations (Single and Multiple)
+      if (field.type === 'relation' && sanitized[field.name]) {
+        if (field.relation?.multiple && Array.isArray(sanitized[field.name])) {
+          sanitized[field.name] = sanitized[field.name].map((val: any) => val?._id || val);
+        } else if (typeof sanitized[field.name] === 'object') {
+          sanitized[field.name] = sanitized[field.name]._id || sanitized[field.name];
+        }
+      }
+      
+      // 2. Line items relations (e.g. service inside items array)
+      if (field.type === 'line-items' && Array.isArray(sanitized[field.name])) {
+        sanitized[field.name] = sanitized[field.name].map((item: any) => ({
+          ...item,
+          service: (item.service && typeof item.service === 'object') 
+            ? item.service._id 
+            : item.service
+        }));
+      }
+    });
+    
+    return sanitized;
   }
 
   save = async (data: any) => {

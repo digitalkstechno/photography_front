@@ -51,7 +51,10 @@ export class EntityFormComponent {
       if (this.model.packages && !Array.isArray(this.model.packages)) {
         this.model.packages = [this.model.packages];
       }
-      if (this.entity.key === 'quotations') {
+      
+      // Only sync items on init if it's a NEW quotation. 
+      // For existing ones, trust the items loaded from the database.
+      if (this.entity.key === 'quotations' && !this.model._id) {
         this.syncQuotationItems();
       }
       this.calculateQuotationTotals();
@@ -90,6 +93,11 @@ export class EntityFormComponent {
             this.model.totalAmount = data.grandTotal || data.totalAmount;
           }
         }
+
+        // Explicitly sync items when packages or services are changed
+        if (this.entity.key === 'quotations' && (field === 'packages' || field === 'services')) {
+          this.syncQuotationItems();
+        }
       }
     }
 
@@ -102,9 +110,6 @@ export class EntityFormComponent {
     }
     
     if (this.entity?.key === 'quotations' || this.entity?.key === 'invoices') {
-      if (this.entity.key === 'quotations') {
-        this.syncQuotationItems();
-      }
       this.calculateQuotationTotals();
     }
 
@@ -177,11 +182,10 @@ export class EntityFormComponent {
     const items = this.model.items || [];
     const total = items.reduce((sum: number, item: any) => sum + (item.total || 0), 0);
     this.model.totalAmount = Math.round(total);
-    this.model.finalAmount = Math.round(total - (this.model.discount || 0));
+    this.model.finalAmount = Math.max(0, Math.round(total - (this.model.discount || 0)));
     
-    if (this.model.taxRate !== undefined) {
-      this.model.tax = Math.round(this.model.finalAmount * (this.model.taxRate / 100));
-    }
+    const rate = (this.model.taxRate !== undefined && this.model.taxRate !== null) ? this.model.taxRate : 0;
+    this.model.tax = Math.round(this.model.finalAmount * (rate / 100));
     
     this.model.grandTotal = Math.round(this.model.finalAmount + (this.model.tax || 0));
   }
