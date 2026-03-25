@@ -60,6 +60,33 @@ export class EntityFormComponent {
 
   onFieldChange(field: string, value: any) {
     this.model[field] = value;
+
+    // Auto-fill logic for linked entities
+    const fieldConfig = this.entity.fields.find(f => f.name === field);
+    if (fieldConfig?.type === 'relation' && value) {
+      const selectedOption = fieldConfig.options?.find(o => o.value === value);
+      const data = selectedOption?.data;
+
+      if (data) {
+        if (this.entity.key === 'invoices' && field === 'quotation') {
+          // Auto-fill Invoice from Quotation
+          if (data.customer) this.model.customer = data.customer._id || data.customer;
+          if (data.items) this.model.items = JSON.parse(JSON.stringify(data.items));
+          if (data.discount !== undefined) this.model.discount = data.discount;
+          if (data.taxRate !== undefined) this.model.taxRate = data.taxRate;
+          if (data.tax !== undefined) this.model.tax = data.tax;
+          if (data.notes) this.model.notes = data.notes;
+          if (data.event) this.model.event = data.event._id || data.event;
+        } else if (this.entity.key === 'bookings' && field === 'invoice') {
+          // Auto-fill Booking from Invoice
+          if (data.customer) this.model.customer = data.customer._id || data.customer;
+          if (data.grandTotal !== undefined || data.totalAmount !== undefined) {
+            this.model.totalAmount = data.grandTotal || data.totalAmount;
+          }
+        }
+      }
+    }
+
     this.onFormChange();
   }
 
@@ -145,6 +172,11 @@ export class EntityFormComponent {
     const total = items.reduce((sum: number, item: any) => sum + (item.total || 0), 0);
     this.model.totalAmount = Math.round(total);
     this.model.finalAmount = Math.round(total - (this.model.discount || 0));
+    
+    if (this.model.taxRate !== undefined) {
+      this.model.tax = Math.round(this.model.finalAmount * (this.model.taxRate / 100));
+    }
+    
     this.model.grandTotal = Math.round(this.model.finalAmount + (this.model.tax || 0));
   }
 

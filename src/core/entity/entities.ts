@@ -333,7 +333,8 @@ export const ENTITIES: Record<string, EntityConfig> = {
         wrapperClass: 'col-4',
       },
       { name: 'discount', label: 'Discount (₹)', type: 'number', class: 'input', wrapperClass: 'col-4' },
-      { name: 'tax', label: 'Tax (₹)', type: 'number', class: 'input', wrapperClass: 'col-4' },
+      { name: 'taxRate', label: 'Tax (%)', type: 'number', defaultValue: 18, class: 'input', wrapperClass: 'col-4' },
+      { name: 'tax', label: 'Tax Amount (₹)', type: 'number', readonly: true, class: 'input', wrapperClass: 'col-4' },
       { name: 'validUntil', label: 'Valid Until', type: 'date', class: 'input', wrapperClass: 'col-4' },
       { name: 'totalAmount', label: 'Total Amount (₹)', type: 'number', readonly: true, class: 'input', wrapperClass: 'col-4' },
       { name: 'finalAmount', label: 'Final Amount (₹)', type: 'number', readonly: true, class: 'input', wrapperClass: 'col-4' },
@@ -472,9 +473,9 @@ export const ENTITIES: Record<string, EntityConfig> = {
         label: 'Linked Quotation',
         type: 'relation',
         relation: { entity: 'quotations', valueKey: '_id', labelKey: 'quotationNumber' },
-        readonly: true,
         class: 'input',
         wrapperClass: 'col-6',
+        help: 'Selecting a quotation will auto-fill items, customer, and other details.'
       },
       {
         name: 'items',
@@ -485,11 +486,20 @@ export const ENTITIES: Record<string, EntityConfig> = {
         wrapperClass: 'col-12',
       },
       {
+        name: 'event',
+        label: 'Booking (Event)',
+        type: 'relation',
+        relation: { entity: 'bookings', valueKey: '_id', labelKey: 'title' },
+        required: true,
+        class: 'input',
+        wrapperClass: 'col-6',
+      },
+      {
         name: 'status',
         label: 'Status',
         type: 'select',
         options: [
-          { label: 'Draft', value: 'DRAFT' },
+          { label: 'Pending', value: 'PENDING' },
           { label: 'Sent', value: 'SENT' },
           { label: 'Partially Paid', value: 'PARTIALLY_PAID' },
           { label: 'Paid', value: 'PAID' },
@@ -499,7 +509,8 @@ export const ENTITIES: Record<string, EntityConfig> = {
         wrapperClass: 'col-4',
       },
       { name: 'discount', label: 'Discount (₹)', type: 'number', class: 'input', wrapperClass: 'col-4' },
-      { name: 'tax', label: 'Tax (₹)', type: 'number', class: 'input', wrapperClass: 'col-4' },
+      { name: 'taxRate', label: 'Tax (%)', type: 'number', defaultValue: 18, class: 'input', wrapperClass: 'col-4' },
+      { name: 'tax', label: 'Tax Amount (₹)', type: 'number', readonly: true, class: 'input', wrapperClass: 'col-4' },
       { name: 'dueDate', label: 'Due Date', type: 'date', class: 'input', wrapperClass: 'col-4' },
       { name: 'totalAmount', label: 'Total Amount (₹)', type: 'number', readonly: true, class: 'input', wrapperClass: 'col-4' },
       { name: 'finalAmount', label: 'Final Amount (₹)', type: 'number', readonly: true, class: 'input', wrapperClass: 'col-4' },
@@ -535,7 +546,7 @@ export const ENTITIES: Record<string, EntityConfig> = {
           label: 'Mark as Sent',
           icon: '📩',
           class: 'btn-sm btn-info',
-          isVisible: (row: any) => row.status === 'DRAFT',
+          isVisible: (row: any) => row.status === 'PENDING',
           onClick: (row, router, reload) => {
             const token = localStorage.getItem('token');
             fetch(`${environment.apiUrl}/invoices/${row._id}`, {

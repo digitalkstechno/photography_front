@@ -16,6 +16,7 @@ export class InputRendererComponent implements DoCheck {
   @Input() field!: EntityField;
   @Input() model: any = {};
   @Output() modelChange = new EventEmitter<any>();
+  @Output() valueChange = new EventEmitter<{ field: string, value: any }>();
 
   // --- Team Assignments State ---
   lastStartDate = '';
@@ -113,6 +114,7 @@ export class InputRendererComponent implements DoCheck {
 
   onModelChange() {
     this.modelChange.emit(this.model);
+    this.valueChange.emit({ field: this.field.name, value: this.model[this.field.name] });
   }
 
   addArrayItem() {
