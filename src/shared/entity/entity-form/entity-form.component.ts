@@ -71,7 +71,13 @@ export class EntityFormComponent {
         if (this.entity.key === 'invoices' && field === 'quotation') {
           // Auto-fill Invoice from Quotation
           if (data.customer) this.model.customer = data.customer._id || data.customer;
-          if (data.items) this.model.items = JSON.parse(JSON.stringify(data.items));
+          if (data.items) {
+            // Extract only IDs for services to ensure they match dropdown options (identity check)
+            this.model.items = data.items.map((item: any) => ({
+              ...item,
+              service: item.service?._id || item.service
+            }));
+          }
           if (data.discount !== undefined) this.model.discount = data.discount;
           if (data.taxRate !== undefined) this.model.taxRate = data.taxRate;
           if (data.tax !== undefined) this.model.tax = data.tax;
