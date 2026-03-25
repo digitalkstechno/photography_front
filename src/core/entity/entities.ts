@@ -224,6 +224,15 @@ export const ENTITIES: Record<string, EntityConfig> = {
         class: 'input',
         wrapperClass: 'col-6',
       },
+      {
+        name: 'invoice',
+        label: 'Linked Invoice',
+        type: 'relation',
+        relation: { entity: 'invoices', valueKey: '_id', labelKey: 'invoiceNumber' },
+        class: 'input',
+        wrapperClass: 'col-6',
+        help: 'Selecting an invoice will auto-fill customer and total amount.'
+      },
       { name: 'totalAmount', label: 'Total Amount (₹)', type: 'number', class: 'input', wrapperClass: 'col-6' },
       {
         name: 'assignments',
@@ -263,6 +272,13 @@ export const ENTITIES: Record<string, EntityConfig> = {
           class: 'btn-sm btn-primary',
           onClick: (row, router) => router.navigate(['/admin/jobs/new'], { queryParams: { event: row._id } }),
           isVisible: (row) => row.status === 'CONFIRMED'
+        },
+        {
+          label: 'Create Invoice',
+          icon: '🧾',
+          class: 'btn-sm btn-info',
+          isVisible: (row: any) => !row.invoice,
+          onClick: (row, router) => router.navigate(['/admin/invoices/new'], { queryParams: { event: row._id } })
         }
       ]
     }
@@ -498,6 +514,7 @@ export const ENTITIES: Record<string, EntityConfig> = {
         name: 'status',
         label: 'Status',
         type: 'select',
+        defaultValue: 'PENDING',
         options: [
           { label: 'Pending', value: 'PENDING' },
           { label: 'Sent', value: 'SENT' },
@@ -509,6 +526,7 @@ export const ENTITIES: Record<string, EntityConfig> = {
         wrapperClass: 'col-4',
       },
       { name: 'discount', label: 'Discount (₹)', type: 'number', class: 'input', wrapperClass: 'col-4' },
+      { name: 'extraCharges', label: 'Extra Charges (₹)', type: 'number', defaultValue: 0, class: 'input', wrapperClass: 'col-4' },
       { name: 'taxRate', label: 'Tax (%)', type: 'number', defaultValue: 18, class: 'input', wrapperClass: 'col-4' },
       { name: 'tax', label: 'Tax Amount (₹)', type: 'number', readonly: true, class: 'input', wrapperClass: 'col-4' },
       { name: 'dueDate', label: 'Due Date', type: 'date', class: 'input', wrapperClass: 'col-4' },
@@ -605,11 +623,12 @@ export const ENTITIES: Record<string, EntityConfig> = {
           icon: '🗑️',
           class: 'btn-sm btn-danger',
           onClick: (row, router, reload) => {
-            if (!confirm('Are you sure you want to delete this invoice?')) return;
+            if (!confirm('Are you sure you want to delete this invoice? (Soft Delete)')) return;
             const token = localStorage.getItem('token');
             fetch(`${environment.apiUrl}/invoices/${row._id}`, {
-              method: 'DELETE',
-              headers: { 'Authorization': `Bearer ${token}` }
+              method: 'PATCH',
+              headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ isDeleted: true })
             }).then(() => reload());
           }
         }

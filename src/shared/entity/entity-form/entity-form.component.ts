@@ -187,7 +187,8 @@ export class EntityFormComponent {
     const rate = (this.model.taxRate !== undefined && this.model.taxRate !== null) ? this.model.taxRate : 0;
     this.model.tax = Math.round(this.model.finalAmount * (rate / 100));
     
-    this.model.grandTotal = Math.round(this.model.finalAmount + (this.model.tax || 0));
+    const extra = (this.model.extraCharges || 0);
+    this.model.grandTotal = Math.round(this.model.finalAmount + (this.model.tax || 0) + extra);
   }
 
   private calculatePackagePrice() {
