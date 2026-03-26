@@ -167,6 +167,24 @@ export class InputRendererComponent implements DoCheck {
     return opt ? opt.label : value || 'Unknown';
   }
 
+  getFilteredOptions(): any[] {
+    if (!this.field.options) return [];
+
+    if (this.field.name === 'invoice' && this.field.relation?.entity === 'invoices') {
+      const selectedPerson = this.model.customer || this.model.party;
+      if (selectedPerson) {
+        return this.field.options.filter(opt => {
+          const invoiceData = opt.data;
+          const invoiceCustomer = invoiceData?.customer?._id || invoiceData?.customer;
+          // Only show invoice if customer matches or if invoice has no customer
+          return !invoiceCustomer || invoiceCustomer === selectedPerson;
+        });
+      }
+    }
+
+    return this.field.options;
+  }
+
   // --- Better Multi-Select ---
   isItemSelected(value: any): boolean {
     const arr = this.model[this.field.name];

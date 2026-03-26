@@ -50,7 +50,7 @@
           style="width: auto; min-width: 150px; border-style: dashed; background: #fafafa;"
         >
           <option value="">+ Add {{ field.label }}...</option>
-          <ng-container *ngFor="let opt of field.options || []">
+          <ng-container *ngFor="let opt of getFilteredOptions()">
             <option *ngIf="!isItemSelected(opt.value)" [value]="opt.value">{{ opt.label }}</option>
           </ng-container>
         </select>
@@ -68,7 +68,7 @@
           [ngClass]="field.class || ''"
         >
           <option [ngValue]="undefined">-- Select {{ field.label }} --</option>
-          <option *ngFor="let opt of field.options || []" [ngValue]="opt.value">
+          <option *ngFor="let opt of getFilteredOptions()" [ngValue]="opt.value">
             {{ opt.label }}
           </option>
         </select>

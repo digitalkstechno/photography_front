@@ -1,5 +1,6 @@
 import { EntityConfig } from './entity.types';
 import { environment } from '../../../environments/environment';
+import { GLOBAL_STATUS_OPTIONS } from '../constants/status.constants';
 
 export const ENTITIES: Record<string, EntityConfig> = {
 
@@ -207,12 +208,7 @@ export const ENTITIES: Record<string, EntityConfig> = {
         name: 'status',
         label: 'Status',
         type: 'select',
-        options: [
-          { label: 'Pending', value: 'PENDING' },
-          { label: 'Confirmed', value: 'CONFIRMED' },
-          { label: 'Completed', value: 'COMPLETED' },
-          { label: 'Cancelled', value: 'CANCELLED' },
-        ],
+        options: GLOBAL_STATUS_OPTIONS,
         class: 'input',
         wrapperClass: 'col-6',
       },
@@ -247,12 +243,7 @@ export const ENTITIES: Record<string, EntityConfig> = {
         name: 'status',
         label: 'Status',
         type: 'select',
-        options: [
-          { label: 'Pending', value: 'PENDING' },
-          { label: 'Confirmed', value: 'CONFIRMED' },
-          { label: 'Completed', value: 'COMPLETED' },
-          { label: 'Cancelled', value: 'CANCELLED' },
-        ],
+        options: GLOBAL_STATUS_OPTIONS,
       },
     ],
     columns: [
@@ -339,12 +330,7 @@ export const ENTITIES: Record<string, EntityConfig> = {
         name: 'status',
         label: 'Status',
         type: 'select',
-        options: [
-          { label: 'Draft', value: 'DRAFT' },
-          { label: 'Sent', value: 'SENT' },
-          { label: 'Accepted', value: 'ACCEPTED' },
-          { label: 'Rejected', value: 'REJECTED' },
-        ],
+        options: GLOBAL_STATUS_OPTIONS,
         class: 'input',
         wrapperClass: 'col-4',
       },
@@ -506,7 +492,6 @@ export const ENTITIES: Record<string, EntityConfig> = {
         label: 'Booking (Event)',
         type: 'relation',
         relation: { entity: 'bookings', valueKey: '_id', labelKey: 'title' },
-        required: true,
         class: 'input',
         wrapperClass: 'col-6',
       },
@@ -515,13 +500,7 @@ export const ENTITIES: Record<string, EntityConfig> = {
         label: 'Status',
         type: 'select',
         defaultValue: 'PENDING',
-        options: [
-          { label: 'Pending', value: 'PENDING' },
-          { label: 'Sent', value: 'SENT' },
-          { label: 'Partially Paid', value: 'PARTIALLY_PAID' },
-          { label: 'Paid', value: 'PAID' },
-          { label: 'Cancelled', value: 'CANCELLED' },
-        ],
+        options: GLOBAL_STATUS_OPTIONS,
         class: 'input',
         wrapperClass: 'col-4',
       },
@@ -540,13 +519,7 @@ export const ENTITIES: Record<string, EntityConfig> = {
         name: 'status',
         label: 'Status',
         type: 'select',
-        options: [
-          { label: 'Draft', value: 'DRAFT' },
-          { label: 'Sent', value: 'SENT' },
-          { label: 'Partially Paid', value: 'PARTIALLY_PAID' },
-          { label: 'Paid', value: 'PAID' },
-          { label: 'Cancelled', value: 'CANCELLED' },
-        ],
+        options: GLOBAL_STATUS_OPTIONS,
       },
     ],
     columns: [
@@ -732,12 +705,7 @@ export const ENTITIES: Record<string, EntityConfig> = {
         name: 'status',
         label: 'Status',
         type: 'select',
-        options: [
-          { label: 'Pending', value: 'PENDING' },
-          { label: 'In Progress', value: 'IN_PROGRESS' },
-          { label: 'Completed', value: 'COMPLETED' },
-          { label: 'Cancelled', value: 'CANCELLED' },
-        ],
+        options: GLOBAL_STATUS_OPTIONS,
         class: 'input',
         wrapperClass: 'col-6',
       },

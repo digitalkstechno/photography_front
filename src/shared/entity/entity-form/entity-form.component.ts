@@ -92,6 +92,15 @@ export class EntityFormComponent {
           if (data.grandTotal !== undefined || data.totalAmount !== undefined) {
             this.model.totalAmount = data.grandTotal || data.totalAmount;
           }
+        } else if (this.entity.key === 'payments' && field === 'invoice') {
+          // Auto-fill Payment from Invoice
+          if (data.customer) this.model.party = data.customer._id || data.customer;
+          if (data.grandTotal !== undefined) {
+            const grandTotal = data.grandTotal || 0;
+            const paidAmount = data.paidAmount || 0;
+            const pending = grandTotal - paidAmount;
+            this.model.amount = pending > 0 ? pending : grandTotal;
+          }
         }
 
         // Explicitly sync items when packages or services are changed
