@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { ENTITIES } from '../core/entity/entities';
 
 @Component({
   selector: 'app-layout',
@@ -12,14 +11,33 @@ import { ENTITIES } from '../core/entity/entities';
 })
 export class LayoutComponent {
 
-  constructor(public router: Router) {}
+  expandedGroups: Record<string, boolean> = {
+    'Overview': true,
+    'Sales': false,
+    'Clients & Work': false,
+    'Operations': false,
+    'Analytics': false
+  };
 
-  get entityConfigs() {
-    return Object.values(ENTITIES);
+  constructor(public router: Router) {
+    this.autoExpandActiveGroup();
   }
 
-  get entities() {
-    return this.entityConfigs.filter(e => e.sidebar !== false);
+  toggleGroup(groupLabel: string) {
+    this.expandedGroups[groupLabel] = !this.expandedGroups[groupLabel];
+  }
+
+  isGroupActive(paths: string[]): boolean {
+    return paths.some(p => this.router.url.includes(p));
+  }
+
+  autoExpandActiveGroup() {
+    const url = this.router.url;
+    if (url.includes('/dashboard') || url.includes('/calendar')) this.expandedGroups['Overview'] = true;
+    if (url.includes('/admin/bookings') || url.includes('/admin/quotations') || url.includes('/admin/invoices') || url.includes('/admin/payments')) this.expandedGroups['Sales'] = true;
+    if (url.includes('/admin/party') || url.includes('/admin/services') || url.includes('/admin/packages') || url.includes('/admin/freelancers')) this.expandedGroups['Clients & Work'] = true;
+    if (url.includes('/admin/equipments') || url.includes('/ledger')) this.expandedGroups['Operations'] = true;
+    if (url.includes('/reports')) this.expandedGroups['Analytics'] = true;
   }
 
   get activeRouteLabel(): string {
@@ -30,12 +48,23 @@ export class LayoutComponent {
     if (url.includes('/reports')) return 'Reports';
     if (url.includes('/settings')) return 'Settings';
 
-    // Check for entity route
     const segments = url.split('/');
     const entityKey = segments[segments.length - 1] || segments[segments.length - 2] || '';
-    const entity = this.entityConfigs.find(e => e.key === entityKey);
-    if (entity) return entity.label;
+    
+    // Quick mapping for display labels
+    const routeLabels: Record<string, string> = {
+      'party': 'Parties',
+      'services': 'Services',
+      'packages': 'Packages',
+      'freelancers': 'Freelancers',
+      'bookings': 'Bookings',
+      'quotations': 'Quotations',
+      'invoices': 'Invoices',
+      'payments': 'Payments',
+      'equipments': 'Equipment'
+    };
 
+    if (routeLabels[entityKey]) return routeLabels[entityKey];
     return 'Overview';
   }
 

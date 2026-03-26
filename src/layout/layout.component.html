@@ -1,5 +1,4 @@
 <div class="dashboard-container">
-  <!-- Professional Sidebar -->
   <aside class="sidebar">
     <div class="logo-container">
       <div class="logo-icon">P</div>
@@ -7,92 +6,130 @@
     </div>
 
     <ul class="menu">
-      <li class="menu-item" (click)="navigate('/dashboard')" [class.active]="router.url.includes('/dashboard')">
-        <span class="m-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-          </svg>
-        </span>
-        <span class="m-text">Dashboard</span>
-      </li>
-
-
-
-      <!-- Dynamic Entity Links -->
-      <ng-container *ngFor="let config of entityConfigs">
-        <li *ngIf="config.sidebar"
-            class="menu-item"
-            (click)="navigate('/admin/' + config.key)"
-            [class.active]="router.url.includes('/admin/' + config.key)">
+      <!-- OVERVIEW GROUP -->
+      <div class="menu-group">
+        <div class="group-header" (click)="toggleGroup('Overview')" [class.active-group]="isGroupActive(['/dashboard', '/calendar'])">
           <span class="m-icon">
-            <!-- Heroicons based on entity key -->
-            <svg *ngIf="config.key === 'party'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
-            </svg>
-            <svg *ngIf="config.key === 'services'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
-            </svg>
-            <svg *ngIf="config.key === 'packages'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" />
-            </svg>
-            <svg *ngIf="config.key === 'bookings'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-18 0h18M6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Zm3-3h.008v.008h-.008V15Zm0 3h.008v.008h-.008V18Zm3-3h.008v.008h-.008V15Zm0 3h.008v.008h-.008V18Zm3-3h.008v.008h-.008V15Zm0 3h.008v.008h-.008V18Zm3-3h.008v.008h-.008V15Zm0 3h.008v.008h-.008V18Z" />
-            </svg>
-            <svg *ngIf="config.key === 'quotations'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-            </svg>
-            <svg *ngIf="config.key === 'invoices'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
-            </svg>
-            <svg *ngIf="config.key === 'payments'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75m0 1.5v.75m0 1.5v.75m0 1.5V15m-1.5-1.5h.75m1.5 0h.75m1.5 0h.75m1.5 0h.75m1.5 0h.75m1.5 0h.75m-1.5 1.5h.75m-7.5 1.5h.75m6-3h.75m.75 0a2.25 2.25 0 0 1 2.25 2.25v.75m0 3a2.25 2.25 0 0 1-2.25 2.25H3.75a2.25 2.25 0 0 1-2.25-2.25v-15a2.25 2.25 0 0 1 2.25-2.25h15a2.25 2.25 0 0 1 2.25 2.25V6.75A2.25 2.25 0 0 1 18 9h-2.25a2.25 2.25 0 0 0-2.25 2.25v.75a2.25 2.25 0 0 0 2.25 2.25H18a2.25 2.25 0 0 1 2.25 2.25v.75a2.25 2.25 0 0 1-2.25 2.25h-1.5a2.25 2.25 0 0 1-2.25-2.25v-.75a2.25 2.25 0 0 1 2.25-2.25H18" />
-            </svg>
-            <svg *ngIf="config.key === 'freelancers'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 .621-.504 1.125-1.125 1.125H4.875c-.621 0-1.125-.504-1.125-1.125v-4.25m16.5 0a2.25 2.25 0 0 0-1.875-2.217 19.435 19.435 0 0 1-3.374-.614M20.25 14.15c.388.04.582.52.32.822a.75.75 0 0 1-1.173-.037l-.382-.466a.45.45 0 0 0-.66-.037l-.31.31a.45.45 0 0 1-.667-.006L16 13.5m3.96-3.04a11.34 11.34 0 0 1-2.283-.535l-.057-.016a3.375 3.375 0 0 0-3.397 1.199L13 12.5M20.25 14.15a4.5 4.5 0 0 0-4.5-4.5M10.5 7.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM9.375 3a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 21h16.5M4.5 3h15M4.5 3a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 18h15a2.25 2.25 0 0 0 2.25-2.25V5.25A2.25 2.25 0 0 0 19.5 3h-15Z" />
-            </svg>
-
-            <span *ngIf="config.key !== 'party' && config.key !== 'services' && config.key !== 'packages' && config.key !== 'bookings' && config.key !== 'quotations' && config.key !== 'invoices' && config.key !== 'payments' && config.key !== 'freelancers'">
-              {{ config.icon || '📦' }}
-            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>
           </span>
-          <span class="m-text">{{ config.label }}</span>
-        </li>
-      </ng-container>
+          <span class="m-text" style="flex: 1;">Overview</span>
+          <span class="m-caret">
+            <svg *ngIf="expandedGroups['Overview']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+            <svg *ngIf="!expandedGroups['Overview']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+          </span>
+        </div>
+        <div class="group-items" *ngIf="expandedGroups['Overview']">
+          <li class="menu-item" (click)="navigate('/dashboard')" [class.active]="router.url.includes('/dashboard')">
+            <span class="dot-indicator"></span><span class="m-text">Dashboard</span>
+          </li>
+          <li class="menu-item" (click)="navigate('/calendar')" [class.active]="router.url.includes('/calendar')">
+            <span class="dot-indicator"></span><span class="m-text">Calendar</span>
+          </li>
+        </div>
+      </div>
 
-      <li class="menu-item" (click)="navigate('/calendar')" [class.active]="router.url.includes('/calendar')">
-        <span class="m-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-18 0h18M6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Zm3-3h.008v.008h-.008V15Zm0 3h.008v.008h-.008V18Zm3-3h.008v.008h-.008V15Zm0 3h.008v.008h-.008V18Zm3-3h.008v.008h-.008V15Zm0 3h.008v.008h-.008V18Zm3-3h.008v.008h-.008V15Zm0 3h.008v.008h-.008V18Z" />
-          </svg>
-        </span>
-        <span class="m-text">Calendar</span>
-      </li>
+      <!-- SALES GROUP -->
+      <div class="menu-group">
+        <div class="group-header" (click)="toggleGroup('Sales')" [class.active-group]="isGroupActive(['/admin/bookings', '/admin/quotations', '/admin/invoices', '/admin/payments'])">
+          <span class="m-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </span>
+          <span class="m-text" style="flex: 1;">Sales</span>
+          <span class="m-caret">
+            <svg *ngIf="expandedGroups['Sales']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+            <svg *ngIf="!expandedGroups['Sales']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+          </span>
+        </div>
+        <div class="group-items" *ngIf="expandedGroups['Sales']">
+          <li class="menu-item" (click)="navigate('/admin/bookings')" [class.active]="router.url.includes('/admin/bookings')">
+            <span class="dot-indicator"></span><span class="m-text">Bookings</span>
+          </li>
+          <li class="menu-item" (click)="navigate('/admin/quotations')" [class.active]="router.url.includes('/admin/quotations')">
+            <span class="dot-indicator"></span><span class="m-text">Quotations</span>
+          </li>
+          <li class="menu-item" (click)="navigate('/admin/invoices')" [class.active]="router.url.includes('/admin/invoices')">
+            <span class="dot-indicator"></span><span class="m-text">Invoices</span>
+          </li>
+          <li class="menu-item" (click)="navigate('/admin/payments')" [class.active]="router.url.includes('/admin/payments')">
+            <span class="dot-indicator"></span><span class="m-text">Payments</span>
+          </li>
+        </div>
+      </div>
 
-      <li class="menu-item" (click)="navigate('/ledger')" [class.active]="router.url.includes('/ledger')">
-        <span class="m-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-16.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-16.25v14.25" />
-          </svg>
-        </span>
-        <span class="m-text">Ledger</span>
-      </li>
+      <!-- CLIENTS & WORK GROUP -->
+      <div class="menu-group">
+        <div class="group-header" (click)="toggleGroup('Clients & Work')" [class.active-group]="isGroupActive(['/admin/party', '/admin/services', '/admin/packages', '/admin/freelancers'])">
+          <span class="m-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg>
+          </span>
+          <span class="m-text" style="flex: 1;">Clients &amp; Work</span>
+          <span class="m-caret">
+            <svg *ngIf="expandedGroups['Clients & Work']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+            <svg *ngIf="!expandedGroups['Clients & Work']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+          </span>
+        </div>
+        <div class="group-items" *ngIf="expandedGroups['Clients & Work']">
+          <li class="menu-item" (click)="navigate('/admin/party')" [class.active]="router.url.includes('/admin/party')">
+            <span class="dot-indicator"></span><span class="m-text">Parties</span>
+          </li>
+          <li class="menu-item" (click)="navigate('/admin/services')" [class.active]="router.url.includes('/admin/services')">
+            <span class="dot-indicator"></span><span class="m-text">Services</span>
+          </li>
+          <li class="menu-item" (click)="navigate('/admin/packages')" [class.active]="router.url.includes('/admin/packages')">
+            <span class="dot-indicator"></span><span class="m-text">Packages</span>
+          </li>
+          <li class="menu-item" (click)="navigate('/admin/freelancers')" [class.active]="router.url.includes('/admin/freelancers')">
+            <span class="dot-indicator"></span><span class="m-text">Freelancers</span>
+          </li>
+        </div>
+      </div>
 
-      <li class="menu-item" (click)="navigate('/reports')" [class.active]="router.url.includes('/reports')">
-        <span class="m-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V19.875c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
-          </svg>
-        </span>
-        <span class="m-text">Reports</span>
-      </li>
+      <!-- OPERATIONS GROUP -->
+      <div class="menu-group">
+        <div class="group-header" (click)="toggleGroup('Operations')" [class.active-group]="isGroupActive(['/admin/equipments', '/ledger'])">
+          <span class="m-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.559.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.894.149c-.424.07-.764.383-.929.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.398.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.272-.806.108-1.204-.165-.397-.506-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738a1.125 1.125 0 0 1 .12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
+          </span>
+          <span class="m-text" style="flex: 1;">Operations</span>
+          <span class="m-caret">
+            <svg *ngIf="expandedGroups['Operations']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+            <svg *ngIf="!expandedGroups['Operations']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+          </span>
+        </div>
+        <div class="group-items" *ngIf="expandedGroups['Operations']">
+          <li class="menu-item" (click)="navigate('/admin/equipments')" [class.active]="router.url.includes('/admin/equipments')">
+            <span class="dot-indicator"></span><span class="m-text">Equipment</span>
+          </li>
+          <li class="menu-item" (click)="navigate('/ledger')" [class.active]="router.url.includes('/ledger')">
+            <span class="dot-indicator"></span><span class="m-text">Ledger</span>
+          </li>
+        </div>
+      </div>
+
+      <!-- ANALYTICS GROUP -->
+      <div class="menu-group">
+        <div class="group-header" (click)="toggleGroup('Analytics')" [class.active-group]="isGroupActive(['/reports'])">
+          <span class="m-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V19.875c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg>
+          </span>
+          <span class="m-text" style="flex: 1;">Analytics</span>
+          <span class="m-caret">
+            <svg *ngIf="expandedGroups['Analytics']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+            <svg *ngIf="!expandedGroups['Analytics']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+          </span>
+        </div>
+        <div class="group-items" *ngIf="expandedGroups['Analytics']">
+          <li class="menu-item" (click)="navigate('/reports')" [class.active]="router.url.includes('/reports')">
+            <span class="dot-indicator"></span><span class="m-text">Reports</span>
+          </li>
+        </div>
+      </div>
     </ul>
 
     <div class="menu-footer">
       <li class="menu-item logout-btn" (click)="logout()">
         <span class="m-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
-          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" /></svg>
         </span>
         <span class="m-text">Logout</span>
       </li>

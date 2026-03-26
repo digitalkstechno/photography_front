@@ -48,18 +48,75 @@
   margin: 0;
   flex: 1;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
-.menu-item {
+.menu-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.group-header {
   padding: 0.875rem 1.5rem;
   display: flex;
   align-items: center;
   gap: 0.875rem;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  color: #cbd5e1; /* Brighter Slate for visibility */
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  user-select: none;
+}
+
+.group-header:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.group-header.active-group {
+  color: #e2e8f0;
+}
+
+.m-caret {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+.group-items {
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.2); /* Slightly darker bg for nested items */
+  padding-bottom: 0.5rem;
+}
+
+.menu-item {
+  padding: 0.6rem 1.5rem 0.6rem 2.875rem; /* Indented for nested appearance */
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #cbd5e1;
   font-weight: 500;
   font-size: 0.9rem;
+  border-left: 3px solid transparent;
+}
+
+.dot-indicator {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #475569;
+  transition: all 0.2s ease;
 }
 
 .m-icon {
@@ -77,18 +134,25 @@
   stroke: currentColor;
 }
 
-
 .menu-item:hover {
   background: rgba(255, 255, 255, 0.04);
   color: #fff;
 }
 
-.menu-item.active {
-  background: var(--primary); /* Vibrant highlight */
-  color: #fff;
-  font-weight: 600;
+.menu-item:hover .dot-indicator {
+  background: #cbd5e1;
 }
 
+.menu-item.active {
+  background: var(--primary);
+  color: #fff;
+  font-weight: 600;
+  border-left-color: #fff;
+}
+
+.menu-item.active .dot-indicator {
+  background: #fff;
+}
 
 .menu-footer {
   border-top: 1px solid var(--border);
