@@ -270,3 +270,75 @@ form {
   text-align: center;
   padding: 32px;
 }
+
+/* ───────────────────────────────────────────────────────────────────
+   GLOBAL UI STANDARDIZATION (Added from local components)
+   ─────────────────────────────────────────────────────────────────── */
+
+/* Layout & Cards */
+.entity-page-wrapper { padding: 1.5rem 2rem; background: var(--bg-app); min-height: 100%; }
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.page-header h1 { font-size: 1.5rem; font-weight: 700; color: var(--text-main); margin: 0; }
+.page-header .subtitle { font-size: 0.875rem; color: var(--text-muted); margin-top: 0.25rem; }
+.header-right { display: flex; gap: 0.75rem; }
+.page-content { background: white; border-radius: var(--radius-md); border: 1px solid var(--border); box-shadow: var(--shadow-sm); overflow: hidden; }
+.section-card { padding: 0; }
+
+/* Form Structures */
+.pro-form-container { display: flex; flex-direction: column; background: white; border-radius: var(--radius-md); border: 1px solid var(--border); box-shadow: var(--shadow-sm); overflow: hidden; max-width: none; margin: 0; width: 100%; }
+.form-header { padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); background: #f8fafc; }
+.form-header h2 { font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin: 0; }
+.form-header .subtitle { font-size: 0.875rem; color: var(--text-muted); margin-top: 0.25rem; }
+.form-content { padding: 2rem; }
+.form-footer { display: flex; justify-content: flex-end; gap: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--border); margin-top: 1rem; }
+
+/* Grid System */
+.fields-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem; }
+.col-1 { grid-column: span 1 !important; } .col-2 { grid-column: span 2 !important; } .col-3 { grid-column: span 3 !important; } .col-4 { grid-column: span 4 !important; } .col-5 { grid-column: span 5 !important; } .col-6 { grid-column: span 6 !important; } .col-7 { grid-column: span 7 !important; } .col-8 { grid-column: span 8 !important; } .col-9 { grid-column: span 9 !important; } .col-10 { grid-column: span 10 !important; } .col-11 { grid-column: span 11 !important; } .col-12 { grid-column: span 12 !important; }
+app-input-renderer { grid-column: span 6; }
+@media (max-width: 768px) { .fields-grid { grid-template-columns: 1fr; } app-input-renderer { grid-column: span 1 !important; } }
+
+/* Global Buttons Setup */
+.btn-primary-pro, .btn-primary-pro-sm { background: var(--primary); color: white; border: none; padding: 0.6rem 1.25rem; border-radius: var(--radius-md); font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.btn-primary-pro:hover, .btn-primary-pro-sm:hover { background: var(--primary-hover); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); transform: translateY(-1px); }
+.btn-primary-pro-sm { padding: 0.45rem 1rem; font-size: 0.75rem; }
+
+.btn-outline, .btn-outline-sm { background: white; border: 1px solid var(--border); color: var(--text-main); padding: 0.6rem 1.25rem; border-radius: var(--radius-md); font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.btn-outline:hover, .btn-outline-sm:hover { background: #f8fafc; border-color: var(--text-muted); }
+.btn-outline-sm { padding: 0.4rem 0.75rem; font-size: 0.75rem; }
+
+.btn-icon-link { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.1rem; padding: 0.25rem; border-radius: var(--radius-sm); transition: all 0.23s; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; }
+.btn-icon-link:hover { background: #f1f5f9; color: var(--primary); }
+
+/* Global Tables */
+.pro-table-wrapper { display: flex; flex-direction: column; background: white; }
+.table-controls { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); }
+.search-box { position: relative; display: flex; align-items: center; flex: 1; max-width: 320px; }
+.search-box .icon { position: absolute; left: 0.75rem; color: var(--text-light); font-size: 0.9rem; }
+.search-input { width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 0.875rem; transition: border-color 0.2s; }
+.search-input:focus { outline: none; border-color: var(--primary); }
+.controls-right { display: flex; gap: 0.75rem; }
+.table-responsive { width: 100%; overflow-x: auto; }
+.accounting-table { width: 100%; border-collapse: collapse; }
+.accounting-table th { background: #f8fafc; padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); border-bottom: 1px solid var(--border); white-space: nowrap; }
+.accounting-table th.sortable { cursor: pointer; user-select: none; }
+.accounting-table th.sortable:hover { background: #f1f5f9; }
+.th-content { display: flex; align-items: center; gap: 0.5rem; }
+.sort-icon { font-size: 0.7rem; opacity: 0.4; }
+.accounting-table td { padding: 0.875rem 1rem; font-size: 0.875rem; border-bottom: 1px solid var(--border); color: var(--text-main); }
+.accounting-table tr:hover { background: #fcfdfe; }
+
+.table-footer { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; background: #f9fafb; border-top: 1px solid var(--border); }
+.footer-info { font-size: 0.8125rem; color: var(--text-muted); }
+.pagination { display: flex; align-items: center; gap: 1.25rem; }
+.page-indicator { font-size: 0.8125rem; color: var(--text-main); }
+.btn-page { background: white; border: 1px solid var(--border); padding: 0.35rem 0.75rem; border-radius: var(--radius-sm); font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.btn-page:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
+.btn-page:disabled { opacity: 0.5; cursor: default; }
+
+/* Global Badges / Pills */
+.badge-pill { padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; }
+.badge-pill.success { background: #dcfce7; color: #166534; }
+.badge-pill.danger { background: #fee2e2; color: #991b1b; }
+.badge-pill.warning { background: #fef3c7; color: #b45309; }
+.badge-pill.info { background: #e0f2fe; color: #0369a1; }

@@ -1,5 +1,5 @@
 <div class="pro-table-wrapper">
-  
+
   <!-- Search and Actions Bar -->
   <div class="table-controls">
     <div class="search-box">
@@ -23,12 +23,12 @@
     </div>
 
     <div class="controls-right">
-      <button class="btn-outline-sm">
+      <!-- <button class="btn-outline-sm">
         <span class="icon">📥</span> Export
       </button>
       <button *ngIf="addRoute" (click)="goToAdd()" class="btn-primary-pro-sm">
         + Add New
-      </button>
+      </button> -->
     </div>
   </div>
 
@@ -51,13 +51,13 @@
         <tr *ngFor="let row of data">
           <td *ngFor="let col of columns">
              <div [ngSwitch]="col.format">
-                <span *ngSwitchCase="'boolean'" 
-                      class="badge-pill" 
+                <span *ngSwitchCase="'boolean'"
+                      class="badge-pill"
                       [class.success]="getValue(row, col.key)"
                       [class.danger]="!getValue(row, col.key)">
                   {{ displayValue(row, col) }}
                 </span>
-                
+
                 <span *ngSwitchCase="'currency'" class="font-medium">
                   {{ displayValue(row, col) }}
                 </span>
@@ -74,16 +74,16 @@
               <button *ngIf="updateRoute" (click)="goToUpdate(row)" class="btn-icon-link" title="Edit">
                 ✎
               </button>
-              
+
               <ng-container *ngIf="rowActions">
-                  <button *ngFor="let action of rowActions" 
+                  <button *ngFor="let action of rowActions"
                           [class]="'btn-icon-link ' + (action.class || '')"
                           (click)="handleAction(action, row)"
                           [title]="action.label"
                           [hidden]="!isActionVisible(action, row)">
                       <!-- Dynamic Icon -->
                       <span *ngIf="action.icon">{{ action.icon }}</span>
-                      
+
                       <!-- Default Icons for common labels if no icon provided -->
                       <ng-container *ngIf="!action.icon">
                         <span *ngIf="action.label === 'Ledger'">📒</span>
@@ -112,7 +112,7 @@
   <div class="table-footer">
     <div class="footer-info">
       Showing <b>{{ data.length }}</b> of <b>{{ total }}</b> entries
-      
+
       <span class="limit-selector ms-3">
         <label>Per page: </label>
         <select class="form-select-sm limit-select" [(ngModel)]="limit" (change)="onLimitChange()">

@@ -1,5 +1,5 @@
-<div class="entity-page-wrapper" *ngIf="entity">
-  
+<div class="entity-page-wrapper container" *ngIf="entity">
+
   <div class="page-header">
     <div class="header-left">
       <h1>{{ entity.label }}</h1>
@@ -12,9 +12,9 @@
 
   <div class="page-content">
     <div class="section-card">
-      <app-entity-list 
-        [entity]="entity" 
-        [baseRoute]="'/admin/' + entity.key" 
+      <app-entity-list
+        [entity]="entity"
+        [baseRoute]="'/admin/' + entity.key"
         (editRecord)="onEdit($event)">
       </app-entity-list>
     </div>
