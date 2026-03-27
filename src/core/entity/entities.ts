@@ -181,29 +181,10 @@ export const ENTITIES: Record<string, EntityConfig> = {
         class: 'input',
         wrapperClass: 'col-6',
       },
-      {
-        name: 'eventType',
-        label: 'Event Type',
-        type: 'select',
-        options: [
-          { label: 'Wedding', value: 'WEDDING' },
-          { label: 'Haldi', value: 'HALDI' },
-          { label: 'Mehndi', value: 'MEHNDI' },
-          { label: 'Sangeet', value: 'SANGEET' },
-          { label: 'Reception', value: 'RECEPTION' },
-          { label: 'Engagement', value: 'ENGAGEMENT' },
-          { label: 'Birthday', value: 'BIRTHDAY' },
-          { label: 'Corporate', value: 'CORPORATE' },
-          { label: 'Other', value: 'OTHER' },
-        ],
-        required: true,
-        class: 'input',
-        wrapperClass: 'col-6',
-      },
+
       { name: 'title', label: 'Title', type: 'text', class: 'input', wrapperClass: 'col-12' },
       { name: 'startDate', label: 'Start Date', type: 'date', required: true, class: 'input', wrapperClass: 'col-6' },
       { name: 'endDate', label: 'End Date', type: 'date', required: true, class: 'input', wrapperClass: 'col-6' },
-      { name: 'location', label: 'Location', type: 'text', class: 'input', wrapperClass: 'col-12' },
       {
         name: 'status',
         label: 'Status',
@@ -212,30 +193,7 @@ export const ENTITIES: Record<string, EntityConfig> = {
         class: 'input',
         wrapperClass: 'col-6',
       },
-      {
-        name: 'package',
-        label: 'Package',
-        type: 'relation',
-        relation: { entity: 'packages', valueKey: '_id', labelKey: 'name' },
-        class: 'input',
-        wrapperClass: 'col-6',
-      },
-      {
-        name: 'invoice',
-        label: 'Linked Invoice',
-        type: 'relation',
-        relation: { entity: 'invoices', valueKey: '_id', labelKey: 'invoiceNumber' },
-        class: 'input',
-        wrapperClass: 'col-6',
-        help: 'Selecting an invoice will auto-fill customer and total amount.'
-      },
-      { name: 'totalAmount', label: 'Total Amount (₹)', type: 'number', class: 'input', wrapperClass: 'col-6' },
-      {
-        name: 'assignments',
-        label: 'Team & Equipment Assignments',
-        type: 'team-assignments',
-        wrapperClass: 'col-12',
-      },
+      { name: 'totalAmount', label: 'Total Amount (₹)', type: 'number', class: 'input', wrapperClass: 'col-6' },   
       { name: 'notes', label: 'Notes', type: 'textarea', class: 'textarea', wrapperClass: 'col-12' },
     ],
     filters: [
@@ -248,10 +206,9 @@ export const ENTITIES: Record<string, EntityConfig> = {
     ],
     columns: [
       { key: 'customer.name', label: 'Customer' },
-      { key: 'eventType', label: 'Type' },
+
       { key: 'startDate', label: 'Start', format: 'date' },
       { key: 'endDate', label: 'End', format: 'date' },
-      { key: 'location', label: 'Location' },
       { key: 'status', label: 'Status' },
       { key: 'invoice.invoiceNumber', label: 'Invoice' },
     ],
@@ -299,15 +256,6 @@ export const ENTITIES: Record<string, EntityConfig> = {
         required: true,
         class: 'input',
         wrapperClass: 'col-6',
-      },
-      {
-        name: 'packages',
-        label: 'Select Packages (Auto-populates items)',
-        type: 'relation',
-        relation: { entity: 'packages', valueKey: '_id', labelKey: 'name', multiple: true },
-        class: 'input',
-        wrapperClass: 'col-6',
-        help: 'All services from selected packages will be added below.'
       },
       {
         name: 'services',
@@ -712,7 +660,7 @@ export const ENTITIES: Record<string, EntityConfig> = {
       { name: 'notes', label: 'Notes', type: 'textarea', class: 'textarea', wrapperClass: 'col-12' },
     ],
     columns: [
-      { key: 'event.eventType', label: 'Event' },
+      { key: 'event.title', label: 'Event' },
       { key: 'status', label: 'Status' },
       { key: 'totalCost', label: 'Total Cost (₹)' },
       { key: 'createdAt', label: 'Created', format: 'date' },

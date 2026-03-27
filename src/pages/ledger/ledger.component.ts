@@ -98,6 +98,7 @@ export class LedgerComponent implements OnInit {
   }
 
   async loadData() {
+    debugger
     this.isLoading = true;
     this.error = null;
 
@@ -117,7 +118,9 @@ export class LedgerComponent implements OnInit {
       this.calculateBalances(entriesData);
 
       this.party = this.selectedPartyId
-        ? this.parties.find(p => p._id === this.selectedPartyId) || null
+        ? (Array.isArray(this.parties)
+          ? this.parties.find(p => p._id === this.selectedPartyId)
+          : null) || null
         : null;
 
       this.entries = this.selectedPartyId
@@ -208,6 +211,7 @@ export class LedgerComponent implements OnInit {
   }
 
   onPartySelect(partyId: string) {
+    debugger
     this.router.navigate(['/ledger', partyId]);
   }
 

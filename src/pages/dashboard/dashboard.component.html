@@ -91,7 +91,7 @@
       <thead>
         <tr>
           <th>Customer</th>
-          <th>Type</th>
+
           <th>Date</th>
           <th>Location</th>
           <th>Invoice</th>
@@ -101,7 +101,7 @@
       <tbody>
         <tr *ngFor="let ev of upcomingEvents" (click)="navigateTo('/admin/events/edit/' + ev._id)" class="clickable-row">
           <td>{{ ev.customer?.name || 'N/A' }}</td>
-          <td>{{ ev.eventType }}</td>
+
           <td>{{ ev.startDate | date:'mediumDate' }}</td>
           <td>{{ ev.location || '—' }}</td>
           <td>{{ ev.invoice?.invoiceNumber || '—' }}</td>
