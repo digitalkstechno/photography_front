@@ -148,7 +148,7 @@ export class CalendarComponent implements OnInit {
         id: ev._id,
         start: ev.startDate,
         end: ev.endDate,
-        title: `📸 ${ev.eventType} — ${ev.customer?.name || 'Unknown'}`,
+        title: `📸 ${ev.title || 'Booking'} — ${ev.customer?.name || 'Unknown'}`,
         backgroundColor: this.colors[ev.status] || '#9ca3af',
         borderColor: this.colors[ev.status] || '#9ca3af',
         extendedProps: {
