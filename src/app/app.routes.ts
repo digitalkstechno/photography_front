@@ -10,6 +10,8 @@ import { CalendarComponent } from '../pages/calendar/calendar.component';
 import { LedgerComponent } from '../pages/ledger/ledger.component';
 import { AuthGuard } from '../core/auth/auth.guard.ts.service';
 import { PassportStudioComponent } from '../pages/passport-studio-component/passport-studio.component';
+import { QuotationFormComponent } from '../pages/quotation-form/quotation-form.component';
+import { QuotationListComponent } from '../pages/quotation-list/quotation-list.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -20,7 +22,13 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: DashboardComponent },
 
+      // Quotations Management
+      { path: 'admin/quotations', component: QuotationListComponent },
+      { path: 'admin/quotations/new', component: QuotationFormComponent },
+      { path: 'admin/quotations/edit/:id', component: QuotationFormComponent },
+
       // Entity CRUD (generic)
+
       { path: 'admin/:entity', component: EntityPageComponent },
       { path: 'admin/:entity/new', component: EntityFormPageComponent },
       { path: 'admin/:entity/edit/:id', component: EntityFormPageComponent },

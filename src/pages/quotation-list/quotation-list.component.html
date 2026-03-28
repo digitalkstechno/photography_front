@@ -1,0 +1,119 @@
+<div class="entity-page-wrapper">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="title-group">
+      <h1>Quotations</h1>
+      <p class="subtitle">Manage and track your smart quotations</p>
+    </div>
+    <div class="header-right">
+      <button class="btn-primary-pro" routerLink="/admin/quotations/new">+ New Quotation</button>
+    </div>
+  </div>
+
+  <!-- TABLE CARD -->
+  <div class="page-content">
+    <div class="pro-table-wrapper">
+
+      <!-- Table Controls -->
+      <div class="table-controls">
+        <div class="search-box">
+          <span class="icon">🔍</span>
+          <input type="text" class="search-input" placeholder="Search by number or customer..."
+            [(ngModel)]="searchQuery" (input)="onSearchChange()">
+        </div>
+        <div class="controls-right">
+          <button class="btn-outline-sm" (click)="fetchQuotations()" [disabled]="loading">
+            {{ loading ? 'Refreshing...' : '🔄 Refresh' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Table Content -->
+      <div class="table-responsive">
+        <table class="accounting-table">
+          <thead>
+            <tr>
+              <th class="sortable">QUOTATION #</th>
+              <th>CUSTOMER</th>
+              <th class="sortable">DATE</th>
+              <th>VALID UNTIL</th>
+              <th>TOTAL</th>
+              <th>STATUS</th>
+              <th style="text-align:right">ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let q of quotations">
+              <td style="font-weight:700; color:var(--primary)">{{ q.quotationNumber }}</td>
+              <td>
+                <div style="font-weight:600">{{ q.customer?.name || 'N/A' }}</div>
+                <div style="font-size:11px; color:var(--text-muted)">{{ q.customer?.phone }}</div>
+              </td>
+              <td>{{ q.createdAt | date:'mediumDate' }}</td>
+              <td [style.color]="q.validUntil ? (q.validUntil < Date.now() ? 'var(--danger)' : 'inherit') : 'inherit'">
+                {{ q.validUntil ? (q.validUntil | date:'mediumDate') : '—' }}
+              </td>
+              <td style="font-weight:700">₹{{ q.grandTotal | number:'1.2-2' }}</td>
+              <td>
+                <span class="badge-pill" [ngClass]="{
+                  'info': q.status === 'DRAFT',
+                  'warning': q.status === 'SENT',
+                  'success': q.status === 'ACCEPTED',
+                  'danger': q.status === 'REJECTED'
+                }">{{ q.status }}</span>
+              </td>
+              <td style="text-align:right">
+                <div style="display:flex; justify-content:flex-end; gap:8px">
+                  <button type="button" class="btn-icon-link" (click)="printPdf(q._id)" title="Print PDF">📄</button>
+                  <button type="button" class="btn-icon-link" (click)="convertToInvoice(q._id)"
+                    *ngIf="q.status !== 'CONVERTED'" title="Convert to Invoice">🧾</button>
+                  <button type="button" class="btn-icon-link" [routerLink]="['/admin/quotations/edit', q._id]"
+                    title="Edit">✏️</button>
+                  <button type="button" class="btn-icon-link" style="color:var(--danger)"
+                    (click)="deleteQuotation(q._id)" title="Delete">🗑️</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Loading State -->
+            <tr *ngIf="loading && quotations.length === 0">
+              <td colspan="7" style="text-align:center; padding:3rem; color:var(--text-muted)">
+                Fetching quotations...
+              </td>
+            </tr>
+
+            <!-- Empty State -->
+            <tr *ngIf="!loading && quotations.length === 0">
+              <td colspan="7" style="text-align:center; padding:4rem; color:var(--text-muted)">
+                <div style="font-size:32px; margin-bottom:1rem">📭</div>
+                <div style="font-weight:600; font-size:16px">No quotations found</div>
+                <p>Try creating a new one or adjusting your search.</p>
+                <button class="btn-outline-sm" style="margin-top:1rem" routerLink="/admin/quotations/new">+ Create
+                  New</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="table-footer" *ngIf="totalItems > 0">
+        <div class="footer-info">
+          Showing <strong>{{ quotations.length }}</strong> of {{ totalItems }} records
+        </div>
+        <div class="pagination">
+          <span class="page-indicator">Page {{ currentPage }} of {{ totalPages }}</span>
+          <div style="display:flex; gap:6px">
+            <button class="btn-page" [disabled]="currentPage === 1"
+              (click)="currentPage = currentPage - 1; fetchQuotations()">Prev</button>
+            <button class="btn-page" [disabled]="currentPage >= totalPages"
+              (click)="currentPage = currentPage + 1; fetchQuotations()">Next</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

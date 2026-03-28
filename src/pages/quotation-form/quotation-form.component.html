@@ -1,0 +1,234 @@
+<div class="entity-page-wrapper">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="title-group">
+      <h1>{{ isEditMode ? 'Edit' : 'New' }} Quotation</h1>
+      <p class="subtitle">{{ isEditMode ? 'Update quotation details' : 'Create a new quotation for photographic services' }}</p>
+    </div>
+    <div class="header-right">
+      <!-- Workflow Actions (Visible in Edit Mode) -->
+      <ng-container *ngIf="isEditMode">
+        <button class="btn-outline" (click)="printPdf()">Print PDF</button>
+        <button class="btn-primary-pro" (click)="convertToInvoice()" *ngIf="quotationForm.get('status')?.value !== 'CONVERTED'">
+          Convert to Invoice
+        </button>
+      </ng-container>
+      
+      <button class="btn-outline" routerLink="/admin/quotations">Cancel</button>
+      <button class="btn-primary-pro" (click)="save()" [disabled]="loading">
+        {{ loading ? 'Saving...' : (isEditMode ? 'Update' : 'Save') }}
+      </button>
+    </div>
+  </div>
+
+  <!-- FORM CARD -->
+  <div class="pro-form-container" *ngIf="!loading || isEditMode">
+
+    <div class="form-header">
+      <div>
+        <h2>Quotation Details</h2>
+        <p class="subtitle">Enter the required information for this quotation</p>
+      </div>
+    </div>
+
+    <div class="form-content">
+      <form [formGroup]="quotationForm">
+
+        <!-- ROW 1: Number & Customer -->
+        <div class="fields-grid">
+          <div class="col-6 form-field">
+            <label>Quotation #</label>
+            <input class="input" formControlName="quotationNumber" placeholder="Auto-generated">
+          </div>
+
+          <div class="col-6 form-field">
+            <label>Customer <span class="text-danger">*</span></label>
+            <select class="input" formControlName="customer">
+              <option value="">-- Select Customer --</option>
+              <option *ngFor="let c of customers" [value]="c._id">{{ c.name }}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- ROW 2: Selectors & Items Table -->
+        <div class="fields-grid mt-4 items-start">
+
+          <!-- Left: Selectors -->
+          <div class="col-6">
+            <div class="form-field">
+              <label>Select Services</label>
+              
+              <!-- Chips -->
+              <div class="chip-area" *ngIf="selectedServices.length || selectedPackages.length">
+                <span class="chip chip-service" *ngFor="let s of selectedServices">
+                  {{ s.name }}
+                  <button type="button" class="chip-remove" (click)="removeServiceChip(s._id)">×</button>
+                </span>
+                <span class="chip chip-package" *ngFor="let p of selectedPackages">
+                  📦 {{ p.name }}
+                  <button type="button" class="chip-remove" (click)="removePackageChip(p._id)">×</button>
+                </span>
+              </div>
+
+              <select class="input" (change)="onServiceSelect($event)">
+                <option value="">+ Add Services...</option>
+                <option *ngFor="let s of services" [value]="s._id" [disabled]="selectedServiceIds.includes(s._id)">
+                  {{ s.name }} — ₹{{ s.pricePerDay }}/day
+                </option>
+              </select>
+            </div>
+
+            <div class="form-field mt-3">
+              <label>Add Package</label>
+              <select class="input" (change)="onPackageSelect($event)">
+                <option value="">-- Select Package --</option>
+                <option *ngFor="let p of packages" [value]="p._id" [disabled]="selectedPackageIds.includes(p._id)">
+                  {{ p.name }} — ₹{{ p.price }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Right: Items Table -->
+          <div class="col-6">
+            <label class="badge-black" style="padding:4px 8px; border-radius:4px; font-size:10px;">QUOTATION ITEMS</label>
+            
+            <div class="table-responsive mt-2 page-content">
+              <table class="accounting-table">
+                <thead>
+                  <tr>
+                    <th>SOURCE</th>
+                    <th>SERVICE</th>
+                    <th class="text-center">DAYS</th>
+                    <th class="text-right">TOTAL</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody formArrayName="items">
+                  <tr *ngFor="let item of items.controls; let i = index" [formGroupName]="i">
+                    <td>
+                      <span class="badge-pill" [ngClass]="{
+                        'info': item.get('source')?.value === 'Individual',
+                        'warning': item.get('source')?.value === 'Package',
+                        'success': item.get('source')?.value === 'Custom'
+                      }">{{ item.get('source')?.value }}</span>
+                    </td>
+                    <td>
+                      <input class="input" style="border:none; background:transparent; padding:0;" formControlName="name">
+                    </td>
+                    <td class="w-60">
+                      <input type="number" class="input text-center" formControlName="days">
+                    </td>
+                    <td class="text-right" style="font-weight:600">
+                      ₹{{ item.get('total')?.value | number:'1.0-0' }}
+                    </td>
+                    <td class="text-right">
+                      <button type="button" class="btn-icon-link text-danger" (click)="removeItem(i)">🗑️</button>
+                    </td>
+                  </tr>
+                  <tr *ngIf="items.length === 0">
+                    <td colspan="5" class="text-center" style="padding:2rem; color:var(--text-muted)">
+                      Select a service or package to begin.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <button type="button" class="btn-outline-sm mt-3 dashed-border" (click)="addCustomItem()">
+              + Add Custom Item
+            </button>
+          </div>
+        </div>
+
+        <!-- ROW 3: Status & Discount -->
+        <div class="fields-grid mt-4">
+          <div class="col-6 form-field">
+            <label>Status</label>
+            <select class="input" formControlName="status">
+              <option value="DRAFT">Draft</option>
+              <option value="SENT">Sent</option>
+              <option value="ACCEPTED">Accepted</option>
+              <option value="REJECTED">Rejected</option>
+            </select>
+          </div>
+
+          <div class="col-6 form-field">
+            <label>Discount</label>
+            <div style="display:flex; gap:8px;">
+              <select class="input w-80" formControlName="discountType">
+                <option value="flat">₹</option>
+                <option value="percent">%</option>
+              </select>
+              <input type="number" class="input flex-1" formControlName="discount" placeholder="0">
+            </div>
+          </div>
+        </div>
+
+        <!-- ROW 4: Tax & Valid Until -->
+        <div class="fields-grid mt-3">
+          <div class="col-6 form-field">
+            <label>Tax (%)</label>
+            <input type="number" class="input" formControlName="taxPercent">
+          </div>
+          <div class="col-6 form-field">
+            <label>Valid Until</label>
+            <input type="date" class="input" formControlName="validUntil">
+          </div>
+        </div>
+
+        <!-- ROW 5: Notes & Summary -->
+        <div class="fields-grid mt-5">
+          <!-- Notes -->
+          <div class="col-6">
+            <div class="form-field">
+              <label>Internal Booking Memo</label>
+              <textarea class="textarea" formControlName="notes" rows="4"></textarea>
+            </div>
+            <div class="form-field mt-3">
+              <label>Terms & Conditions (Visible on PDF)</label>
+              <textarea class="textarea" formControlName="terms" rows="4"></textarea>
+            </div>
+          </div>
+
+          <!-- Billing Card -->
+          <div class="col-6">
+            <div class="billing-summary-card">
+              <div class="summary-item">
+                <span class="summary-label">Subtotal</span>
+                <span class="summary-value">₹{{ quotationForm.get('subtotal')?.value | number:'1.2-2' }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Discount</span>
+                <span class="summary-value text-danger">-₹{{ quotationForm.get('discountAmount')?.value | number:'1.2-2' }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Tax (GST)</span>
+                <span class="summary-value">+₹{{ quotationForm.get('taxAmount')?.value | number:'1.2-2' }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="total-label">Grand Total</span>
+                <span class="total-value">₹{{ quotationForm.get('grandTotal')?.value | number:'1.2-2' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="form-footer mt-5">
+          <button type="button" class="btn-outline" routerLink="/admin/quotations">Cancel</button>
+          <button type="button" class="btn-primary-pro" (click)="save()" [disabled]="loading">
+            {{ loading ? 'Saving...' : (isEditMode ? 'Update' : 'Save') }}
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <div class="loading-text" *ngIf="loading && !isEditMode">
+    Preparing Smart Quotation Form...
+  </div>
+
+</div>
