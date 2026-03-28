@@ -9,9 +9,24 @@
     <div class="header-right">
       <!-- Workflow Actions (Visible in Edit Mode) -->
       <ng-container *ngIf="isEditMode">
-        <button class="btn-outline" (click)="printPdf()">Print PDF</button>
-        <button class="btn-primary-pro" (click)="convertToInvoice()" *ngIf="quotationForm.get('status')?.value !== 'CONVERTED'">
-          Convert to Invoice
+        <button class="btn-outline" (click)="printPdf()">🖨️ Print PDF</button>
+        
+        <!-- Status progression buttons -->
+        <button class="btn-outline" 
+          *ngIf="quotationForm.get('status')?.value === 'DRAFT'"
+          (click)="changeStatus('SENT')" [disabled]="loading">
+          📤 Mark as Sent
+        </button>
+        <button class="btn-outline" 
+          *ngIf="quotationForm.get('status')?.value === 'SENT'"
+          (click)="changeStatus('ACCEPTED')" [disabled]="loading">
+          ✅ Mark as Accepted
+        </button>
+
+        <!-- Convert to Invoice - show if not yet converted -->
+        <button class="btn-primary-pro" (click)="convertToInvoice()" [disabled]="loading"
+          *ngIf="quotationForm.get('status')?.value !== 'CONVERTED'">
+          🧾 Convert to Invoice
         </button>
       </ng-container>
       

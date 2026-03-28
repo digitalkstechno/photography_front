@@ -307,7 +307,7 @@ export const ENTITIES: Record<string, EntityConfig> = {
           label: 'Mark as Accepted',
           icon: '✅',
           class: 'btn-sm btn-info',
-          isVisible: (row: any) => row.status !== 'ACCEPTED' && row.status !== 'REJECTED' && row.status !== 'CONVERTED',
+          isVisible: (row: any) => row.status === 'SENT',
           onClick: (row, router, reload) => {
             if (!confirm('Mark this quotation as accepted?')) return;
             const token = localStorage.getItem('token');
@@ -315,7 +315,10 @@ export const ENTITIES: Record<string, EntityConfig> = {
               method: 'PUT',
               headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
               body: JSON.stringify({ status: 'ACCEPTED' })
-            }).then(() => reload());
+            }).then(r => r.json()).then(res => {
+              if (!res.success) alert(res.message || 'Error');
+              else reload();
+            });
           }
         },
         {
@@ -347,13 +350,14 @@ export const ENTITIES: Record<string, EntityConfig> = {
           }
         },
         {
-          label: 'Create Invoice',
+          label: 'Convert to Invoice',
           icon: '💰',
           class: 'btn-sm btn-primary',
-          isVisible: (row: any) => row.status !== 'ACCEPTED',
+          isVisible: (row: any) => row.status !== 'CONVERTED' && row.status !== 'REJECTED',
           onClick: (row, router) => {
+            if (!confirm('Convert this quotation to an Invoice?')) return;
             const token = localStorage.getItem('token');
-            fetch(`${environment.apiUrl}/invoices/from-quotation/${row._id}`, {
+            fetch(`${environment.apiUrl}/quotations/${row._id}/convert`, {
               method: 'POST',
               headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
             })
@@ -458,7 +462,7 @@ export const ENTITIES: Record<string, EntityConfig> = {
       { name: 'tax', label: 'Tax Amount (₹)', type: 'number', readonly: true, class: 'input', wrapperClass: 'col-4' },
       { name: 'dueDate', label: 'Due Date', type: 'date', class: 'input', wrapperClass: 'col-4' },
       { name: 'totalAmount', label: 'Total Amount (₹)', type: 'number', readonly: true, class: 'input', wrapperClass: 'col-4' },
-      { name: 'finalAmount', label: 'Final Amount (₹)', type: 'number', readonly: true, class: 'input', wrapperClass: 'col-4' },
+      { name: 'paidAmount', label: 'Paid Amount (₹)', type: 'number', readonly: true, class: 'input', wrapperClass: 'col-4' },
       { name: 'grandTotal', label: 'Grand Total (₹)', type: 'number', readonly: true, class: 'input', wrapperClass: 'col-4' },
       { name: 'notes', label: 'Notes', type: 'textarea', class: 'textarea', wrapperClass: 'col-12' },
     ],

@@ -43,16 +43,19 @@ export class QuotationListComponent implements OnInit {
 
     this.http.get<any>(this.apiUrl, { params }).subscribe({
       next: (res) => {
-        // Handle paginated response structure
-        const result = res.data?.data || res.data || [];
-        this.quotations = Array.isArray(result) ? result : [];
-        
-        // Update pagination meta if available
-        if (res.data?.pagination) {
-          this.totalPages = res.data.pagination.pages;
-          this.totalItems = res.data.pagination.total;
+        // API returns { success, data: { data: [...], total, page, limit } }
+        const payload = res.data;
+        if (payload && Array.isArray(payload.data)) {
+          this.quotations = payload.data;
+          this.totalItems = payload.total || 0;
+          this.totalPages = Math.ceil(this.totalItems / this.limit) || 1;
+        } else if (Array.isArray(payload)) {
+          this.quotations = payload;
+          this.totalPages = 1;
+        } else {
+          this.quotations = [];
+          this.totalPages = 1;
         }
-        
         this.loading = false;
       },
       error: (err) => {
@@ -80,8 +83,25 @@ export class QuotationListComponent implements OnInit {
     });
   }
 
-  printPdf(id: string): void {
-    window.open(`${this.apiUrl}/${id}/pdf`, '_blank');
+  async printPdf(id: string): Promise<void> {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${this.apiUrl}/${id}/pdf`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) { alert('PDF generation failed'); return; }
+      const blob = await res.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = `Quotation_${id}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(blobUrl);
+    } catch {
+      alert('Error generating PDF');
+    }
   }
 
   convertToInvoice(id: string): void {

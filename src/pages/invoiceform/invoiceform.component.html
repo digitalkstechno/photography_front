@@ -1,0 +1,226 @@
+<div class="entity-page-wrapper">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="title-group">
+      <div style="display:flex; align-items:center; gap:12px">
+        <button class="btn-outline-sm" routerLink="/admin/invoices">⬅ Cancel</button>
+        <h1>{{ isEditMode ? 'Edit Invoice' : 'Create Direct Invoice' }}</h1>
+      </div>
+      <p class="subtitle">Enter billing details below to generate a professional invoice</p>
+    </div>
+    <div class="header-right">
+      <button class="btn-primary-pro" (click)="save()" [disabled]="loading">
+        {{ loading ? 'Saving...' : (isEditMode ? 'Update Invoice' : 'Generate Invoice') }}
+      </button>
+    </div>
+  </div>
+
+  <form [formGroup]="invoiceForm" class="fields-grid mt-5">
+
+    <!-- LEFT COLUMN: MAIN INFO -->
+    <div class="col-8">
+      <div class="pro-form-container">
+        <div class="form-header">
+          <h2>Client & Items</h2>
+          <p class="subtitle">Select a customer and add services/packages</p>
+        </div>
+        
+        <div class="form-content">
+          <!-- Customer Selection -->
+          <div class="form-field">
+            <label>CUSTOMER</label>
+            <select class="input" formControlName="customer">
+              <option value="">-- Select Customer --</option>
+              <option *ngFor="let c of customers" [value]="c._id">{{ c.name }} ({{ c.phone }})</option>
+            </select>
+          </div>
+
+          <!-- Selection Helpers -->
+          <div class="fields-grid mt-4">
+            <div class="col-6">
+              <div class="form-field">
+                <label>QUICK ADD SERVICE</label>
+                <select class="input" (change)="onServiceSelect($event)">
+                  <option value="">-- Select Service --</option>
+                  <option *ngFor="let s of services" [value]="s._id">
+                    {{ s.name }} (₹{{ s.pricePerDay }})
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-field">
+                <label>QUICK ADD PACKAGE</label>
+                <select class="input" (change)="onPackageSelect($event)">
+                  <option value="">-- Select Package --</option>
+                  <option *ngFor="let p of packages" [value]="p._id">{{ p.name }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chips Display -->
+          <div class="chip-area mt-2" *ngIf="selectedServiceIds.length || selectedPackageIds.length">
+            <div class="chip chip-service" *ngFor="let s of selectedServices">
+              {{ s.name }}
+              <button type="button" class="chip-remove" (click)="removeServiceChip(s._id)">×</button>
+            </div>
+            <div class="chip chip-package" *ngFor="let p of selectedPackages">
+              {{ p.name }}
+              <button type="button" class="chip-remove" (click)="removePackageChip(p._id)">×</button>
+            </div>
+          </div>
+
+          <!-- Line Items Table -->
+          <div class="pro-table-wrapper mt-5 dashed-border">
+            <table class="accounting-table">
+              <thead>
+                <tr>
+                  <th>SERVICE / DESCRIPTION</th>
+                  <th width="80">DAYS</th>
+                  <th width="120">RATE / DAY</th>
+                  <th width="120">FIXED / QUOTED</th>
+                  <th width="120" style="text-align:right">TOTAL</th>
+                  <th width="40"></th>
+                </tr>
+              </thead>
+              <tbody formArrayName="items">
+                <tr *ngFor="let item of items.controls; let i = index" [formGroupName]="i">
+                  <td>
+                    <input type="text" class="input no-border" formControlName="name" placeholder="Service or Description..." required>
+                  </td>
+                  <td>
+                    <input type="number" class="input no-border" formControlName="days">
+                  </td>
+                  <td>
+                    <input type="number" class="input no-border" formControlName="pricePerDay" placeholder="0">
+                  </td>
+                  <td>
+                    <input type="number" class="input no-border" formControlName="quotedPrice" placeholder="Override">
+                  </td>
+                  <td style="text-align:right; font-weight:700">
+                    ₹{{ item.get('total')?.value | number:'1.2-2' }}
+                  </td>
+                  <td>
+                    <button type="button" class="btn-icon-link" (click)="removeItem(i)" style="color:var(--danger)">×</button>
+                  </td>
+                </tr>
+                <tr *ngIf="items.length === 0">
+                  <td colspan="6" style="text-align:center; padding:2rem; color:var(--text-muted)">
+                    No items added. Use the selectors above or <a href="javascript:void(0)" (click)="addCustomItem()">add a custom row</a>.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="padding:12px; border-top:1px solid var(--border)">
+              <button type="button" class="btn-outline-sm" (click)="addCustomItem()">+ Add Row Manually</button>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="form-field mt-5">
+            <label>NOTES & TERMS</label>
+            <textarea class="textarea" formControlName="notes" placeholder="Internal notes or terms for the client..."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: FINANCIALS -->
+    <div class="col-4">
+      <div class="pro-form-container">
+        <div class="form-header">
+          <h2>Summary</h2>
+        </div>
+        
+        <div class="form-content">
+          <div class="form-field">
+            <label>STATUS</label>
+            <select class="input" formControlName="status">
+              <option value="PENDING">Pending Payment</option>
+              <option value="PARTIAL">Partial Payment</option>
+              <option value="PAID">Fully Paid</option>
+              <option value="OVERDUE">Overdue</option>
+              <option value="CANCELLED">Cancelled</option>
+            </select>
+          </div>
+
+          <div class="form-field mt-4">
+            <label>DUE DATE</label>
+            <input type="date" class="input" formControlName="dueDate">
+          </div>
+
+          <div class="billing-summary-card">
+            <div class="summary-item">
+              <span class="summary-label">Subtotal</span>
+              <span class="summary-value">₹{{ invoiceForm.get('subtotal')?.value | number:'1.2-2' }}</span>
+            </div>
+
+            <div class="fields-grid mt-3">
+              <div class="col-12">
+                <div class="form-field">
+                  <label>DISCOUNT (₹ / %)</label>
+                  <div style="display:flex; gap:6px">
+                    <input type="number" class="input" formControlName="discount" style="flex:1">
+                    <select class="input" formControlName="discountType" style="width:100px">
+                      <option value="flat">₹ Flat</option>
+                      <option value="percent">% Perc</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="summary-item">
+              <span class="summary-label">Discount Amount</span>
+              <span class="summary-value" style="color:var(--danger)">-₹{{ invoiceForm.get('discountAmount')?.value | number:'1.2-2' }}</span>
+            </div>
+
+            <div class="form-field mt-3">
+              <label>EXTRA CHARGES (₹)</label>
+              <input type="number" class="input" formControlName="extraCharges">
+            </div>
+
+            <div class="form-field mt-3">
+              <label>TAX PERCENT (%)</label>
+              <input type="number" class="input" formControlName="taxPercent">
+            </div>
+
+            <div class="summary-item">
+              <span class="summary-label">Tax Amount</span>
+              <span class="summary-value">₹{{ invoiceForm.get('taxAmount')?.value | number:'1.2-2' }}</span>
+            </div>
+
+            <div class="summary-item highlight">
+              <span class="total-label">Grand Total</span>
+              <span class="total-value">₹{{ invoiceForm.get('grandTotal')?.value | number:'1.2-2' }}</span>
+            </div>
+
+            <hr style="border:none; border-top:1px solid var(--border); margin:1.5rem 0">
+
+            <div class="form-field">
+              <label>AMOUNT PAID (₹)</label>
+              <input type="number" class="input" formControlName="paidAmount">
+            </div>
+
+            <div class="summary-item highlight mt-3">
+              <span class="summary-label" style="color:var(--danger)">BALANCE DUE</span>
+              <span class="summary-value" style="font-size:1.25rem; color:var(--danger)">
+                ₹{{ invoiceForm.get('dueAmount')?.value | number:'1.2-2' }}
+              </span>
+            </div>
+          </div>
+
+          <div class="form-footer mt-5">
+            <button type="button" class="btn-primary-pro" style="width:100%" (click)="save()" [disabled]="loading">
+              {{ loading ? 'Processing...' : (isEditMode ? 'Save Changes' : 'Confirm & Generate') }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </form>
+
+</div>

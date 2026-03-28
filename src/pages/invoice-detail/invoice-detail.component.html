@@ -1,65 +1,148 @@
-<div class="invoice-detail-wrapper container" *ngIf="!loading; else loadingTpl">
-  <ng-container *ngIf="!error && invoice; else errorTpl">
+<div class="entity-page-wrapper">
+
+  <!-- ACTIONS -->
+  <div class="page-header no-print">
+    <div class="title-group">
+      <div style="display:flex; align-items:center; gap:12px">
+        <button class="btn-outline-sm" routerLink="/admin/invoices">⬅ Back</button>
+        <h1>Invoice Details</h1>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="btn-outline-sm" (click)="print()">🖨️ Print</button>
+      <button class="btn-primary-pro-sm" [routerLink]="['/admin/invoices/edit', invoice?._id]">✏️ Edit</button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-text">
+    Generating invoice view...
+  </div>
+
+  <div *ngIf="invoice && !loading" class="invoice-container">
     
-    <div class="card-premium card-header-black">
-      <div class="header-inner">
-        <div class="title-group">
-          <h2 class="text-white">Invoice #{{ invoice.id }}</h2>
-          <p class="text-muted-light">Financial record for {{ invoice.party?.name }}</p>
-        </div>
-        <div class="header-actions">
-           <button class="btn-premium btn-secondary-light" (click)="addPayment()">+ Add Payment</button>
+    <!-- INVOICE HEADER -->
+    <div class="invoice-header">
+      <div class="company-brand">
+        <div class="logo-placeholder">📸</div>
+        <div class="company-details">
+          <h2>Photography Studio</h2>
+          <p>Professional Photography & Videography</p>
+          <p>GSTIN: 27AAAAA0000A1Z5</p>
         </div>
       </div>
-
-      <div class="p-5">
-        <div class="grid-2col mb-5">
-          <div class="detail-section">
-             <div class="section-tag">Billed Items</div>
-             <div class="info-card p-0 overflow-hidden">
-                <table class="compact-table">
-                  <thead>
-                    <tr>
-                      <th>Service</th>
-                      <th>Qty</th>
-                      <th>Price</th>
-                      <th>Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let line of invoice.items || []">
-                      <td>{{ line.item?.name }}</td>
-                      <td>{{ line.quantity }}</td>
-                      <td>₹{{ line.price }}</td>
-                      <td><b>₹{{ line.total }}</b></td>
-                    </tr>
-                  </tbody>
-                </table>
-             </div>
-          </div>
-
-          <div class="detail-section">
-            <div class="section-tag">Summary</div>
-            <div class="info-card">
-               <div class="row-info"><span class="label">Grand Total</span> <span class="value text-primary">₹{{ invoice.total }}</span></div>
-               <div class="row-info"><span class="label">Collected</span> <span class="value text-success">₹{{ totalPaid }}</span></div>
-               <div class="row-info"><span class="label">Outstanding</span> <span class="value text-danger">₹{{ balance }}</span></div>
-            </div>
-          </div>
+      <div class="invoice-meta">
+        <div class="invoice-title">INVOICE</div>
+        <div class="meta-row">
+          <span class="label">Number:</span>
+          <span class="value">{{ invoice.invoiceNumber }}</span>
+        </div>
+        <div class="meta-row">
+          <span class="label">Date:</span>
+          <span class="value">{{ invoice.createdAt | date:'dd MMM yyyy' }}</span>
+        </div>
+        <div class="meta-row status-meta">
+          <span class="label">Status:</span>
+          <span class="badge-pill" [ngClass]="{
+            'success': invoice.status === 'PAID',
+            'warning': invoice.status === 'PARTIAL',
+            'info': invoice.status === 'PENDING',
+            'danger': invoice.status === 'OVERDUE'
+          }">{{ invoice.status }}</span>
         </div>
       </div>
     </div>
-  </ng-container>
+
+    <!-- BILLING DETAILS -->
+    <div class="billing-grid">
+      <div class="bill-to">
+        <div class="section-label">BILL TO</div>
+        <div class="customer-name">{{ invoice.customer?.name || 'Customer' }}</div>
+        <div class="customer-info" *ngIf="invoice.customer?.phone">📞 {{ invoice.customer?.phone }}</div>
+        <div class="customer-info" *ngIf="invoice.customer?.email">📧 {{ invoice.customer?.email }}</div>
+        <div class="customer-address" *ngIf="invoice.customer?.address">
+          📍 {{ invoice.customer?.address }}
+        </div>
+      </div>
+      <div class="payment-due">
+        <div class="section-label">PAYMENT DUE</div>
+        <div class="due-amount">₹{{ invoice.dueAmount | number:'1.2-2' }}</div>
+        <div class="due-date" *ngIf="invoice.dueDate">BY {{ invoice.dueDate | date:'dd MMM yyyy' }}</div>
+      </div>
+    </div>
+
+    <!-- ITEMS TABLE -->
+    <div class="invoice-items-wrapper">
+      <table class="invoice-items-table">
+        <thead>
+          <tr>
+            <th width="50%">Description / Service</th>
+            <th width="10%" style="text-align:center">Days</th>
+            <th width="20%" style="text-align:right">Rate / Day</th>
+            <th width="20%" style="text-align:right">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of invoice.items">
+            <td>
+              <div class="item-desc">{{ item.description || item.name || item.service?.name || 'Service' }}</div>
+              <div class="item-service" *ngIf="item.service?.name && (item.description || item.name)">Category: {{ item.service?.name }}</div>
+            </td>
+            <td style="text-align:center">{{ item.days }}</td>
+            <td style="text-align:right">₹{{ item.pricePerDay | number:'1.2-2' }}</td>
+            <td style="text-align:right; font-weight:600">₹{{ item.total | number:'1.2-2' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SUMMARY SECTION -->
+    <div class="summary-section">
+      <div class="notes-area">
+        <div class="section-label">NOTES</div>
+        <p class="notes-text" *ngIf="invoice.notes">{{ invoice.notes }}</p>
+        <p class="notes-text" *ngIf="!invoice.notes">No additional notes provided.</p>
+      </div>
+      <div class="totals-area">
+        <div class="total-row">
+          <span>Subtotal</span>
+          <span>₹{{ invoice.totalAmount | number:'1.2-2' }}</span>
+        </div>
+        <div class="total-row" *ngIf="invoice.discountAmount > 0">
+          <span>Discount</span>
+          <span style="color:var(--danger)">-₹{{ invoice.discountAmount | number:'1.2-2' }}</span>
+        </div>
+        <div class="total-row" *ngIf="invoice.extraCharges > 0">
+          <span>Extra Charges</span>
+          <span>₹{{ invoice.extraCharges | number:'1.2-2' }}</span>
+        </div>
+        <div class="total-row highlight">
+          <span>Tax ({{ invoice.taxPercent }}%)</span>
+          <span>₹{{ invoice.taxAmount | number:'1.2-2' }}</span>
+        </div>
+        <div class="total-row grand-total">
+          <span>Grand Total</span>
+          <span>₹{{ invoice.grandTotal | number:'1.2-2' }}</span>
+        </div>
+        <div class="total-row payment">
+          <span>Amount Paid</span>
+          <span style="color:var(--success)">₹{{ invoice.paidAmount | number:'1.2-2' }}</span>
+        </div>
+        <div class="total-row outstanding">
+          <span>Balance Due</span>
+          <span>₹{{ invoice.dueAmount | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="invoice-footer">
+      <div class="thanks">Thank you for choosing our photography services!</div>
+      <div class="terms">
+        <p>Terms: Please pay by the due date mentioned above.</p>
+        <p>This is a computer-generated invoice and doesn't require a physical signature.</p>
+      </div>
+    </div>
+
+  </div>
+
 </div>
-
-<ng-template #loadingTpl>
-  <div class="loading-wrapper">
-    <p class="loading-text">Fetching invoice details...</p>
-  </div>
-</ng-template>
-
-<ng-template #errorTpl>
-  <div class="error mt-5">
-    {{ error }}
-  </div>
-</ng-template>

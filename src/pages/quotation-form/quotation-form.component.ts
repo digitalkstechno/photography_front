@@ -451,6 +451,22 @@ export class QuotationFormComponent implements OnInit {
     window.URL.revokeObjectURL(blobUrl);
   }
 
+  async changeStatus(newStatus: string) {
+    if (!this.quotationId) return;
+    const labels: Record<string, string> = { SENT: 'Mark as Sent', ACCEPTED: 'Mark as Accepted' };
+    if (!confirm(`${labels[newStatus] || newStatus}? This action follows the workflow order.`)) return;
+
+    try {
+      this.loading = true;
+      await firstValueFrom(this.api.put(`/quotations/${this.quotationId}`, { status: newStatus }));
+      this.quotationForm.patchValue({ status: newStatus }, { emitEvent: false });
+    } catch (err: any) {
+      alert('Error: ' + (err?.error?.message || 'Unknown error'));
+    } finally {
+      this.loading = false;
+    }
+  }
+
   async convertToInvoice() {
     if (!this.quotationId) return;
     if (!confirm('Convert this quotation to a professional Invoice?')) return;
