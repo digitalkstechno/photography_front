@@ -1,0 +1,121 @@
+<div class="entity-page-wrapper">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="title-group">
+      <div style="display:flex; align-items:center; gap:12px">
+        <button class="btn-outline-sm" routerLink="/admin/bookings">⬅ Back</button>
+        <h1>Manage Team Assignments</h1>
+      </div>
+      <p class="subtitle" *ngIf="booking">Booking: <strong>{{ booking.title }}</strong> | Client: {{ booking.customer?.name }}</p>
+      <div class="mt-2" *ngIf="!booking && confirmedBookings.length">
+        <label style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;">SELECT BOOKING</label>
+        <select class="input-sm" formControlName="event" style="min-width: 300px;">
+          <option value="">-- Choose Confirmed Booking --</option>
+          <option *ngFor="let b of confirmedBookings" [value]="b._id">{{ b.title }} ({{ b.customer?.name }})</option>
+        </select>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="btn-primary-pro" (click)="save()" [disabled]="saving">
+        {{ saving ? 'Saving...' : 'Confirm Assignments' }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-text">Loading assignment data...</div>
+
+  <form [formGroup]="form" *ngIf="!loading" class="mt-5">
+    
+    <div class="pro-form-container">
+      <div class="form-header">
+        <h2>Assigned Personnel</h2>
+        <p class="subtitle">Assign Staff or Freelancers to specific roles and track costs.</p>
+      </div>
+
+      <div class="form-content">
+        
+        <div class="pro-table-wrapper dashed-border">
+          <table class="accounting-table">
+            <thead>
+              <tr>
+                <th>PERSONNEL NAME (STAFF/CREW)</th>
+                <th width="180">ASSIGNED ROLE</th>
+                <th width="140">CHARGE / DAY</th>
+                <th width="100">DAYS</th>
+                <th width="160" style="text-align:right">ROW TOTAL</th>
+                <th width="50"></th>
+              </tr>
+            </thead>
+            <tbody formArrayName="assignedUsers">
+              <tr *ngFor="let item of assignedUsers.controls; let i = index" [formGroupName]="i">
+                <td>
+                  <select class="input no-border" formControlName="personId">
+                    <option value="">-- Select Member --</option>
+                    <option *ngFor="let p of allPersonnel" [value]="p._id">{{ p.displayName }}</option>
+                  </select>
+                </td>
+                <td>
+                  <select class="input no-border" formControlName="role">
+                    <option value="">-- Select Role --</option>
+                    <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
+                  </select>
+                </td>
+                <td>
+                  <input type="number" class="input no-border" formControlName="chargePerDay">
+                </td>
+                <td>
+                  <input type="number" class="input no-border" formControlName="days">
+                </td>
+                <td style="text-align:right; font-weight:700">
+                  ₹{{ item.get('totalCharge')?.value | number:'1.2-2' }}
+                </td>
+                <td>
+                  <button type="button" class="btn-icon-link" (click)="removeAssignment(i)" style="color:var(--danger)">×</button>
+                </td>
+              </tr>
+              <tr *ngIf="assignedUsers.length === 0">
+                <td colspan="6" style="text-align:center; padding:3rem; color:var(--text-muted)">
+                   No personnel assigned yet. <a (click)="addAssignment()">Add someone now</a>.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="padding:15px; border-top:1px solid var(--border)">
+            <button type="button" class="btn-outline-sm" (click)="addAssignment()">+ Add New Personnel</button>
+          </div>
+        </div>
+
+        <!-- FOOTER SUMMARY -->
+        <div class="fields-grid mt-5">
+          <div class="col-8">
+            <div class="form-field">
+              <label>INTERNAL NOTES</label>
+              <textarea class="textarea" formControlName="notes" placeholder="Any specific instructions for the team..."></textarea>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="cost-summary-card">
+              <div class="summary-item">
+                <span>Status</span>
+                <select class="input-sm" formControlName="status">
+                  <option value="PENDING">Pending Approval</option>
+                  <option value="CONFIRMED">Confirmed</option>
+                  <option value="COMPLETED">Completed</option>
+                </select>
+              </div>
+              <div class="summary-item total-cost-row">
+                <span class="label">Total Job Cost</span>
+                <span class="value">₹{{ form.get('totalCost')?.value | number:'1.2-2' }}</span>
+              </div>
+              <p class="summary-hint">Includes internal staff cost and freelancer payouts.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </form>
+
+</div>

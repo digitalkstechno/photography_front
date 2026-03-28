@@ -1,0 +1,89 @@
+.pro-table-wrapper {
+  background: white;
+  border-radius: var(--radius-md);
+  margin-top: 2rem;
+  overflow: hidden;
+}
+
+.accounting-table th {
+  background: #f8fafc;
+  padding: 1.25rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--border);
+}
+
+.accounting-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--bg-app);
+  vertical-align: middle;
+}
+
+.cost-summary-card {
+  background: #f8fafc;
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  border: 1px solid var(--border);
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.summary-item .label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.total-cost-row {
+  margin-top: 1rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid var(--border);
+}
+
+.total-cost-row .label {
+  font-size: 1rem;
+  color: var(--text-main);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.total-cost-row .value {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: var(--primary);
+}
+
+.summary-hint {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  font-style: italic;
+  margin: 0;
+}
+
+.dashed-border {
+  border: 1px dashed var(--border);
+}
+
+/* Row Hover */
+tr:hover td {
+  background-color: #fcfdfe;
+}
+
+.input-sm {
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  font-size: 0.85rem;
+  font-weight: 600;
+  outline: none;
+}

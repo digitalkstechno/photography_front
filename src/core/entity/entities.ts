@@ -222,6 +222,13 @@ export const ENTITIES: Record<string, EntityConfig> = {
           isVisible: (row) => row.status === 'CONFIRMED'
         },
         {
+          label: 'Assign Team',
+          icon: '👥',
+          class: 'btn-sm btn-primary',
+          onClick: (row, router) => router.navigate(['/admin/bookings', row._id, 'assign']),
+          isVisible: (row) => row.status === 'CONFIRMED' || row.status === 'PARTIAL' || row.status === 'PAID'
+        },
+        {
           label: 'Create Invoice',
           icon: '🧾',
           class: 'btn-sm btn-info',
@@ -664,12 +671,22 @@ export const ENTITIES: Record<string, EntityConfig> = {
       { name: 'notes', label: 'Notes', type: 'textarea', class: 'textarea', wrapperClass: 'col-12' },
     ],
     columns: [
-      { key: 'event.title', label: 'Event' },
+      { key: 'event.title', label: 'Booking' },
+      { key: 'event.startDate', label: 'Start Date', format: 'date' },
       { key: 'status', label: 'Status' },
-      { key: 'totalCost', label: 'Total Cost (₹)' },
-      { key: 'createdAt', label: 'Created', format: 'date' },
+      { key: 'totalCost', label: 'Payout Total (₹)' },
     ],
-    sidebar: false
+    sidebar: true,
+    ui: {
+      rowActions: [
+        {
+          label: 'Manage Team',
+          icon: '👥',
+          class: 'btn-sm btn-primary',
+          onClick: (row, router) => router.navigate(['/admin/bookings', row.event?._id || row.event, 'assign']),
+        }
+      ]
+    }
   },
 
   // ── Team (Users) ──

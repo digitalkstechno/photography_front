@@ -14,7 +14,8 @@ export class LayoutComponent {
   expandedGroups: Record<string, boolean> = {
     'Overview': true,
     'Sales': false,
-    'Clients & Work': false,
+    'Team & Crew': false,
+    'Master Setup': false,
     'Operations': false,
     'Analytics': false
   };
@@ -35,7 +36,8 @@ export class LayoutComponent {
     const url = this.router.url;
     if (url.includes('/dashboard') || url.includes('/calendar')) this.expandedGroups['Overview'] = true;
     if (url.includes('/admin/bookings') || url.includes('/admin/quotations') || url.includes('/admin/invoices') || url.includes('/admin/payments')) this.expandedGroups['Sales'] = true;
-    if (url.includes('/admin/party') || url.includes('/admin/services') || url.includes('/admin/packages') || url.includes('/admin/freelancers')) this.expandedGroups['Clients & Work'] = true;
+    if (url.includes('/admin/jobs') || url.includes('/admin/team') || url.includes('/admin/freelancers')) this.expandedGroups['Team & Crew'] = true;
+    if (url.includes('/admin/party') || url.includes('/admin/services') || url.includes('/admin/packages')) this.expandedGroups['Master Setup'] = true;
     if (url.includes('/admin/equipments') || url.includes('/ledger')) this.expandedGroups['Operations'] = true;
     if (url.includes('/reports')) this.expandedGroups['Analytics'] = true;
   }
@@ -61,7 +63,9 @@ export class LayoutComponent {
       'quotations': 'Quotations',
       'invoices': 'Invoices',
       'payments': 'Payments',
-      'equipments': 'Equipment'
+      'equipments': 'Equipment',
+      'team': 'Team',
+      'jobs': 'Job Assignments'
     };
 
     if (routeLabels[entityKey]) return routeLabels[entityKey];
