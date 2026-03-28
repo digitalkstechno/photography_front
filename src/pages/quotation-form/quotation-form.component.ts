@@ -426,7 +426,7 @@ export class QuotationFormComponent implements OnInit {
   async printPdf() {
     if (!this.quotationId) return;
 
-    const token = localStorage.getItem('token'); // or your auth service
+    const token = localStorage.getItem('token');
 
     const res = await fetch(
       `${environment.apiUrl}/quotations/${this.quotationId}/pdf`,
@@ -438,9 +438,17 @@ export class QuotationFormComponent implements OnInit {
     );
 
     const blob = await res.blob();
-    const url = window.URL.createObjectURL(blob);
+    const blobUrl = window.URL.createObjectURL(blob);
 
-    window.open(url);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = `QT_${this.quotationForm.get('quotationNumber')?.value || this.quotationId}.pdf`; 
+    document.body.appendChild(a);
+    a.click();
+
+    // cleanup
+    a.remove();
+    window.URL.revokeObjectURL(blobUrl);
   }
 
   async convertToInvoice() {
