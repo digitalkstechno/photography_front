@@ -15,6 +15,7 @@ import { firstValueFrom } from 'rxjs';
 export class InputRendererComponent implements DoCheck {
   @Input() field!: EntityField;
   @Input() model: any = {};
+  @Input() error: string | null = null;
   @Output() modelChange = new EventEmitter<any>();
   @Output() valueChange = new EventEmitter<{ field: string, value: any }>();
 

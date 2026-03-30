@@ -4,6 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../core/http/api.service';
 import { firstValueFrom } from 'rxjs';
+import { EntityConfig } from '../../core/entity/entity.types';
+import { getEntityConfig } from '../../core/entity/entities';
+import { FilterPanelComponent } from '../../shared/filter-panel/filter-panel.component';
 
 interface LedgerEntry {
   _id: string;
@@ -47,7 +50,7 @@ interface NewEntry {
 @Component({
   selector: 'app-ledger',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, FilterPanelComponent],
   templateUrl: './ledger.component.html',
   styleUrls: ['./ledger.component.css']
 })
@@ -70,6 +73,32 @@ export class LedgerComponent implements OnInit {
 
   public cashBalance = 0;
   public selectedAccountName = 'All Accounts';
+
+  // Advanced Filtering
+  public isFilterOpen = false;
+  public activeFilters: any = {};
+  public entity: EntityConfig = {
+    key: 'ledger',
+    label: 'Ledger',
+    idKey: '_id',
+    fields: [],
+    columns: [],
+    sidebar: true,
+    api: '/payments',
+    filters: [
+      { name: 'dateFrom', label: 'From Date', type: 'date' },
+      { name: 'dateTo', label: 'To Date', type: 'date' },
+      {
+        name: 'type',
+        label: 'Type',
+        type: 'select',
+        options: [
+          { label: 'Payment In', value: 'IN' },
+          { label: 'Payment Out', value: 'OUT' }
+        ]
+      }
+    ]
+  };
 
   public newEntry: NewEntry = this.getDefaultEntry();
 
@@ -116,6 +145,19 @@ export class LedgerComponent implements OnInit {
 
       this.calculateAccounts(entriesData);
       this.calculateBalances(entriesData);
+
+      // ✅ Apply Sidebar Filters (Manual since ledger has complex local logic)
+      if (this.activeFilters.dateFrom) {
+        const from = new Date(this.activeFilters.dateFrom).getTime();
+        entriesData = entriesData.filter((e: any) => new Date(e.date).getTime() >= from);
+      }
+      if (this.activeFilters.dateTo) {
+        const to = new Date(this.activeFilters.dateTo).getTime();
+        entriesData = entriesData.filter((e: any) => new Date(e.date).getTime() <= to);
+      }
+      if (this.activeFilters.type) {
+        entriesData = entriesData.filter((e: any) => e.type === this.activeFilters.type);
+      }
 
       this.party = this.selectedPartyId
         ? (Array.isArray(this.parties)
@@ -262,5 +304,14 @@ export class LedgerComponent implements OnInit {
       console.error(err);
       this.error = 'Failed to create entry';
     }
+  }
+
+  onToggleFilters() {
+    this.isFilterOpen = !this.isFilterOpen;
+  }
+
+  onFilterChange(filters: any) {
+    this.activeFilters = filters;
+    this.loadData();
   }
 }

@@ -12,50 +12,18 @@
       />
     </div>
 
-    <!-- DYNAMIC FILTERS -->
-    <div class="filters-container" *ngIf="filters?.length">
-      <div *ngFor="let filter of filters">
+    <!-- DYNAMIC FILTERS (REMOVED: Moved to Sidebar) -->
 
-        <!-- STATUS / PAYMENT CHIPS (Modern UI) -->
-        <div *ngIf="filter.name === 'status' || filter.name === 'paymentStatus'" class="status-chips">
-          <label class="filter-label">{{ filter.label }}:</label>
-          <button 
-            type="button"
-            class="chip border-dashed" 
-            [class.active]="activeFilters[filter.name] === undefined"
-            (click)="setFilter(filter.name, undefined)">
-            🌎 All
-          </button>
-          <button 
-            type="button"
-            *ngFor="let opt of filter.options"
-            class="chip"
-            [class.active]="activeFilters[filter.name] === opt.value"
-            [ngClass]="getSoftClass(opt.label)"
-            (click)="setFilter(filter.name, opt.value)">
-            {{ opt.label }}
-          </button>
-        </div>
-
-        <!-- GENERIC SELECT (Other filters) -->
-        <select 
-          *ngIf="filter.name !== 'status' && filter.name !== 'paymentStatus' && filter.type === 'select'" 
-          [(ngModel)]="activeFilters[filter.name]" 
-          (change)="onFilterChange()" 
-          class="form-select-sm limit-select">
-            <option [ngValue]="undefined">All {{filter.label}}</option>
-            <option *ngFor="let opt of filter.options" [ngValue]="opt.value">{{opt.label}}</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="controls-right">
-      <!-- <button class="btn-outline-sm">
-        <span class="icon">📥</span> Export
+    <div class="controls-right" style="margin-left: auto;">
+      <button class="btn-filter-trigger" [class.active]="isFilterActive" (click)="onToggleFilter()">
+        <span class="m-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
+          </svg>
+        </span>
+        <span class="m-text">Filters</span>
+        <span class="active-badge" *ngIf="activeFilterCount > 0"></span>
       </button>
-      <button *ngIf="addRoute" (click)="goToAdd()" class="btn-primary-pro-sm">
-        + Add New
-      </button> -->
     </div>
   </div>
 

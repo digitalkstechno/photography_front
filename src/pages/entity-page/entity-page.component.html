@@ -10,14 +10,27 @@
     </div>
   </div>
 
-  <div class="page-content">
-    <div class="section-card">
-      <app-entity-list
-        [entity]="entity"
-        [baseRoute]="'/admin/' + entity.key"
-        (editRecord)="onEdit($event)">
-      </app-entity-list>
+  <div class="page-content layout-with-sidebar" *ngIf="entity">
+    <div class="main-list-area">
+      <div class="section-card">
+        <app-entity-list
+          [entity]="entity"
+          [baseRoute]="'/admin/' + entity.key"
+          [reloadTrigger]="activeFilters"
+          [extraParams]="activeFilters"
+          (editRecord)="onEdit($event)"
+          (toggleFilters)="onToggleFilters()">
+        </app-entity-list>
+      </div>
     </div>
+
+    <app-filter-panel
+      *ngIf="entity.filters && entity.filters.length"
+      [filters]="entity.filters!"
+      [isOpen]="isFilterOpen"
+      (filterChange)="onFilterChange($event)"
+      (close)="isFilterOpen = false">
+    </app-filter-panel>
   </div>
 
 </div>

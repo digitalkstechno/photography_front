@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { TableComponent } from '../../table/table.component';
@@ -14,6 +14,10 @@ import { EntityService } from '../../../core/entity/entity.service';
 export class EntityListComponent implements OnChanges {
   @Input() entity!: EntityConfig;
   @Input() baseRoute!: string; // e.g. "/admin/client"
+  @Input() reloadTrigger?: any;
+  @Input() extraParams: Record<string, any> = {};
+  
+  @Output() toggleFilters = new EventEmitter<void>();
 
   columns: EntityColumn[] = [];
 
@@ -36,7 +40,11 @@ export class EntityListComponent implements OnChanges {
 
   fetchRows = async (params: any) => {
     // Merge URL query params (like partyId) into fetch params
-    const mergedParams = { ...this.route.snapshot.queryParams, ...params };
+    const mergedParams = { 
+      ...this.route.snapshot.queryParams, 
+      ...params,
+      ...this.extraParams 
+    };
     return await this.entityService.list(this.entity, mergedParams);
   };
 

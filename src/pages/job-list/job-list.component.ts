@@ -6,11 +6,14 @@ import { ApiService } from '../../core/http/api.service';
 import { firstValueFrom, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { TooltipDirective } from '../../shared/tooltip/tooltip.directive';
+import { EntityConfig } from '../../core/entity/entity.types';
+import { getEntityConfig } from '../../core/entity/entities';
+import { FilterPanelComponent } from '../../shared/filter-panel/filter-panel.component';
 
 @Component({
   selector: 'app-job-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, TooltipDirective],
+  imports: [CommonModule, RouterModule, FormsModule, TooltipDirective, FilterPanelComponent],
   templateUrl: './job-list.component.html',
   styles: [`
     .team-chips { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -56,9 +59,15 @@ export class JobListComponent implements OnInit {
   statusOptions = ['DRAFT', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'];
   selectedStatus = '';
 
+  // Advanced Filtering
+  isFilterOpen = false;
+  activeFilters: any = {};
+  entity?: EntityConfig;
+
   private searchSubject = new Subject<string>();
 
   constructor(private api: ApiService, private router: Router) {
+    this.entity = getEntityConfig('jobs') || undefined;
     // SETUP DEBOUNCED SEARCH
     this.searchSubject.pipe(
       debounceTime(400),
@@ -79,10 +88,10 @@ export class JobListComponent implements OnInit {
     try {
       const params: any = {
         page: this.currentPage,
-        limit: this.pageSize
+        limit: this.pageSize,
+        ...this.activeFilters
       };
       if (this.searchQuery) params.search = this.searchQuery;
-      if (this.selectedStatus) params.status = this.selectedStatus;
 
       const res: any = await firstValueFrom(this.api.get('/jobs', params));
       const payload = res.data;
@@ -121,6 +130,16 @@ export class JobListComponent implements OnInit {
   }
 
   onFilterChange() { this.currentPage = 1; this.load(); }
+
+  onToggleFilters() {
+    this.isFilterOpen = !this.isFilterOpen;
+  }
+
+  onFilterSidebarChange(filters: any) {
+    this.activeFilters = filters;
+    this.currentPage = 1;
+    this.load();
+  }
 
   setFilter(status: string) {
     this.selectedStatus = status === this.selectedStatus ? '' : status;

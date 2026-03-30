@@ -3,6 +3,7 @@
     *ngIf="entity && !loading"
     [entity]="entity"
     [(model)]="model"
+    [errors]="fieldErrors"
     [submitFn]="save"
     [submitLabel]="isEdit ? 'Update Record' : 'Create Record'"
     (cancelEvent)="onCancel()">

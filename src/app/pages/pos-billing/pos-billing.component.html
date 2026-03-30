@@ -1,0 +1,121 @@
+<div class="pos-container">
+  <div class="pos-main">
+    <!-- TOP SEARCH BAR -->
+    <header class="pos-header">
+      <div class="search-box">
+        <span class="icon">🔍</span>
+        <input 
+          type="text" 
+          [(ngModel)]="searchQuery" 
+          (input)="onSearch()"
+          placeholder="Search items by name, category or scan barcode..."
+          class="pos-search-input"
+        />
+        
+        <!-- Search Results Dropdown -->
+        <div class="search-results" *ngIf="filteredServices.length > 0">
+          <div 
+            class="result-item" 
+            *ngFor="let s of filteredServices"
+            (click)="addItem(s)">
+            <div class="result-info">
+              <span class="res-name">{{ s.name }}</span>
+              <span class="res-cat">{{ s.category }}</span>
+            </div>
+            <div class="result-price">₹{{ s.price }}</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- CART TABLE -->
+    <div class="pos-content">
+      <div class="cart-table-wrapper">
+        <table class="pos-table">
+          <thead>
+            <tr>
+              <th width="5%">#</th>
+              <th>ITEM</th>
+              <th width="15%">QTY</th>
+              <th width="15%">PRICE</th>
+              <th width="15%">TOTAL</th>
+              <th width="5%"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of items; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td class="item-name-cell">{{ item.name }}</td>
+              <td>
+                <div class="qty-control">
+                  <button (click)="item.qty = item.qty > 1 ? item.qty - 1 : 1; calculateTotals()">-</button>
+                  <input type="number" [(ngModel)]="item.qty" (change)="calculateTotals()" min="1" >
+                  <button (click)="item.qty = item.qty + 1; calculateTotals()">+</button>
+                </div>
+              </td>
+              <td class="price-cell">₹{{ item.price }}</td>
+              <td class="total-cell">₹{{ item.total }}</td>
+              <td>
+                <button class="btn-delete-pos" (click)="removeItem(i)">🗑️</button>
+              </td>
+            </tr>
+            <tr *ngIf="items.length === 0">
+              <td colspan="6" class="empty-cart-state">
+                <div class="empty-icon">🎒</div>
+                <p>Your cart is empty. Search items to start billing.</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT SIDEBAR: SUMMARY & PAYMENT -->
+  <aside class="pos-sidebar">
+    <div class="pos-card summary-card">
+      <h3>Bill Details</h3>
+      <div class="summary-row">
+        <span>Sub Total</span>
+        <span>₹{{ subTotal }}</span>
+      </div>
+      <div class="summary-row">
+        <span>Tax ({{ taxPercent }}%)</span>
+        <span>₹{{ taxAmount }}</span>
+      </div>
+      <div class="summary-row discount-row">
+        <span>Discount (₹)</span>
+        <input type="number" [(ngModel)]="discount" (change)="calculateTotals()" class="mini-input">
+      </div>
+      <hr>
+      <div class="summary-row grand-total">
+        <span>Grand Total</span>
+        <span class="total-value">₹{{ grandTotal }}</span>
+      </div>
+    </div>
+
+    <!-- CUSTOMER & ACCOUNT -->
+    <div class="pos-card settings-card">
+      <div class="control-group">
+        <label>Customer Details</label>
+        <select class="pos-input" [(ngModel)]="selectedParty">
+          <option *ngFor="let p of parties" [ngValue]="p">{{ p.name }}</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label>Payment Mode / Account</label>
+        <select class="pos-input" [(ngModel)]="selectedAccount">
+          <option *ngFor="let a of accounts" [ngValue]="a">{{ a.name }} ({{ a.type }})</option>
+        </select>
+      </div>
+    </div>
+
+    <button 
+      class="btn-checkout" 
+      [disabled]="items.length === 0 || loading"
+      (click)="saveAndPrint()">
+      {{ loading ? 'Saving...' : '💾 Save & Print Receipt (F6)' }}
+    </button>
+  </aside>
+</div>

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -23,6 +23,8 @@ export class TableComponent implements OnInit, OnChanges {
   @Input() addRoute?: string;
   @Input() updateRoute?: (row: any) => string;
   @Input() rowActions?: any[];
+  
+  @Output() toggleFilters = new EventEmitter<void>();
 
   data: any[] = [];
   total = 0;
@@ -129,9 +131,25 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   setFilter(name: string, value: any) {
-    this.activeFilters[name] = value;
+    if (value === undefined) {
+      delete this.activeFilters[name];
+    } else {
+      this.activeFilters[name] = value;
+    }
     this.page = 1;
     this.loadData();
+  }
+
+  onToggleFilter() {
+    this.toggleFilters.emit();
+  }
+
+  get activeFilterCount(): number {
+    return Object.keys(this.activeFilters).length;
+  }
+
+  get isFilterActive(): boolean {
+    return this.activeFilterCount > 0;
   }
 
   sort(column: string) {

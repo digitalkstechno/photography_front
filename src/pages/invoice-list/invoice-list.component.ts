@@ -4,11 +4,15 @@ import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/http/api.service';
 import { firstValueFrom } from 'rxjs';
+import { EntityConfig } from '../../core/entity/entity.types';
+import { getEntityConfig } from '../../core/entity/entities';
+import { FilterPanelComponent } from '../../shared/filter-panel/filter-panel.component';
+import { TableComponent } from '../../shared/table/table.component';
 
 @Component({
   selector: 'app-invoice-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, FilterPanelComponent],
   templateUrl: './invoice-list.component.html'
 })
 export class InvoiceComponent implements OnInit {
@@ -22,8 +26,15 @@ export class InvoiceComponent implements OnInit {
   totalPages = 1;
   totalItems = 0;
   pageSize = 10;
+  
+  // Advanced Filtering
+  isFilterOpen = false;
+  activeFilters: any = {};
+  entity?: EntityConfig;
 
-  constructor(private api: ApiService, private router: Router) {}
+  constructor(private api: ApiService, private router: Router) {
+    this.entity = getEntityConfig('invoices') || undefined;
+  }
 
   async ngOnInit() {
     this.load();
@@ -35,7 +46,8 @@ export class InvoiceComponent implements OnInit {
     try {
       const params: any = {
         page: this.currentPage,
-        limit: this.pageSize
+        limit: this.pageSize,
+        ...this.activeFilters
       };
       if (this.searchQuery) params.search = this.searchQuery;
 
@@ -78,6 +90,16 @@ export class InvoiceComponent implements OnInit {
   }
 
   onSearchChange() {
+    this.currentPage = 1;
+    this.load();
+  }
+
+  onToggleFilters() {
+    this.isFilterOpen = !this.isFilterOpen;
+  }
+
+  onFilterChange(filters: any) {
+    this.activeFilters = filters;
     this.currentPage = 1;
     this.load();
   }

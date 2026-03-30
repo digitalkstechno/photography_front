@@ -1,10 +1,10 @@
 <app-table
-  [reloadTrigger]="entity.key"
+  [reloadTrigger]="reloadTrigger || entity.key"
   [columns]="columns"
   [fetchFn]="fetchRows"
   [addRoute]="addRoute"
   [updateRoute]="getUpdateRoute"
   [rowActions]="rowActions"
   [filters]="entity.filters"
+  (toggleFilters)="toggleFilters.emit()"
 ></app-table>
-

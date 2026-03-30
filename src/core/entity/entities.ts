@@ -31,6 +31,10 @@ export const ENTITIES: Record<string, EntityConfig> = {
       },
       { name: 'address', label: 'Address', type: 'textarea', class: 'textarea', wrapperClass: 'col-12' },
       { name: 'notes', label: 'Notes', type: 'textarea', class: 'textarea', wrapperClass: 'col-12' },
+      { name: 'bankName', label: 'Bank Name', type: 'text', class: 'input', wrapperClass: 'col-6' },
+      { name: 'accountNumber', label: 'Account Number', type: 'text', class: 'input', wrapperClass: 'col-6' },
+      { name: 'ifscCode', label: 'IFSC Code', type: 'text', class: 'input', wrapperClass: 'col-6' },
+      { name: 'branchName', label: 'Branch Name', type: 'text', class: 'input', wrapperClass: 'col-6' },
     ],
     columns: [
       { key: 'name', label: 'Name' },
@@ -39,6 +43,18 @@ export const ENTITIES: Record<string, EntityConfig> = {
       { key: 'partyType', label: 'Type' },
     ],
     sidebar: true,
+    filters: [
+      {
+        name: 'partyType',
+        label: 'Party Type',
+        type: 'select',
+        options: [
+          { label: 'Customer', value: 'CUSTOMER' },
+          { label: 'Vendor', value: 'VENDOR' },
+          { label: 'Both', value: 'BOTH' }
+        ]
+      }
+    ],
     ui: {
       rowActions: [
         {
@@ -705,6 +721,14 @@ export const ENTITIES: Record<string, EntityConfig> = {
       { key: 'totalCost', label: 'Payout Total (₹)' },
     ],
     sidebar: true,
+    filters: [
+      {
+        name: 'status',
+        label: 'Job Status',
+        type: 'select',
+        options: WORKFLOW_STATUS_OPTIONS
+      }
+    ],
     ui: {
       rowActions: [
         {
@@ -797,6 +821,164 @@ export const ENTITIES: Record<string, EntityConfig> = {
       { key: 'category', label: 'Category' },
       { key: 'condition', label: 'Condition' },
       { key: 'serialNumber', label: 'Serial No.' }
+    ],
+    sidebar: true
+  },
+
+  // ── Universal Accounts ──
+  accounts: {
+    key: 'accounts',
+    label: 'Accounts',
+    icon: '🏦',
+    api: '/accounts',
+    idKey: '_id',
+    fields: [
+      { name: 'name', label: 'Account Name', type: 'text', required: true, class: 'input', wrapperClass: 'col-6' },
+      {
+        name: 'type',
+        label: 'Account Type',
+        type: 'select',
+        options: [
+          { label: 'Cash', value: 'CASH' },
+          { label: 'Bank', value: 'BANK' },
+          { label: 'Wallet', value: 'WALLET' },
+          { label: 'Credit Card', value: 'CREDIT' },
+          { label: 'Other', value: 'OTHER' }
+        ],
+        required: true,
+        class: 'input',
+        wrapperClass: 'col-6',
+      },
+      { name: 'initialBalance', label: 'Initial Balance (₹)', type: 'number', class: 'input', wrapperClass: 'col-6' },
+      { name: 'currentBalance', label: 'Current Balance (₹)', type: 'number', readonly: true, class: 'input', wrapperClass: 'col-6' },
+      { name: 'bankName', label: 'Bank Name', type: 'text', class: 'input', wrapperClass: 'col-6' },
+      { name: 'accountNumber', label: 'Account Number', type: 'text', class: 'input', wrapperClass: 'col-6' },
+      { name: 'description', label: 'Description', type: 'textarea', class: 'textarea', wrapperClass: 'col-12' },
+    ],
+    columns: [
+      { key: 'name', label: 'Account Name' },
+      { key: 'type', label: 'Type' },
+      { key: 'currentBalance', label: 'Balance (₹)' },
+    ],
+    sidebar: true
+  },
+
+  // ── Global Transaction Ledger ──
+  transactions: {
+    key: 'transactions',
+    label: 'Transactions',
+    icon: '📊',
+    api: '/transactions',
+    idKey: '_id',
+    fields: [
+      { name: 'date', label: 'Date', type: 'date', class: 'input', wrapperClass: 'col-6' },
+      {
+        name: 'type',
+        label: 'Type',
+        type: 'select',
+        options: [
+          { label: 'Income', value: 'INCOME' },
+          { label: 'Expense', value: 'EXPENSE' },
+          { label: 'Transfer', value: 'TRANSFER' }
+        ],
+        required: true,
+        class: 'input',
+        wrapperClass: 'col-6',
+      },
+      { name: 'amount', label: 'Amount (₹)', type: 'number', required: true, class: 'input', wrapperClass: 'col-6' },
+      {
+        name: 'account',
+        label: 'Account',
+        type: 'relation',
+        relation: { entity: 'accounts', valueKey: '_id', labelKey: 'name' },
+        required: true,
+        class: 'input',
+        wrapperClass: 'col-6',
+      },
+      {
+        name: 'toAccount',
+        label: 'To Account (Transfer Only)',
+        type: 'relation',
+        relation: { entity: 'accounts', valueKey: '_id', labelKey: 'name' },
+        class: 'input',
+        wrapperClass: 'col-6',
+      },
+      {
+        name: 'party',
+        label: 'Party',
+        type: 'relation',
+        relation: { entity: 'party', valueKey: '_id', labelKey: 'name' },
+        class: 'input',
+        wrapperClass: 'col-6',
+      },
+      { name: 'category', label: 'Category', type: 'text', class: 'input', wrapperClass: 'col-6' },
+      { name: 'notes', label: 'Notes', type: 'textarea', class: 'textarea', wrapperClass: 'col-12' },
+    ],
+    columns: [
+      { key: 'date', label: 'Date', format: 'date' },
+      { key: 'type', label: 'Type' },
+      { key: 'amount', label: 'Amount (₹)' },
+      { key: 'account.name', label: 'Account' },
+      { key: 'category', label: 'Category' },
+    ],
+    sidebar: true
+  },
+
+  // ── Generic Expenses ──
+  expenses: {
+    key: 'expenses',
+    label: 'Expenses',
+    icon: '💸',
+    api: '/expenses',
+    idKey: '_id',
+    fields: [
+      { name: 'date', label: 'Date', type: 'date', class: 'input', wrapperClass: 'col-6' },
+      { name: 'amount', label: 'Amount (₹)', type: 'number', required: true, class: 'input', wrapperClass: 'col-6' },
+      {
+        name: 'category',
+        label: 'Category',
+        type: 'select',
+        options: [
+          { label: 'Rent', value: 'RENT' },
+          { label: 'Electricity', value: 'ELECTRICITY' },
+          { label: 'Tea/Coffee', value: 'TEA_COFFEE' },
+          { label: 'Internet', value: 'INTERNET' },
+          { label: 'Travel', value: 'TRAVEL' },
+          { label: 'Maintenance', value: 'EQUIPMENT_MAINTENANCE' },
+          { label: 'Marketing', value: 'MARKETING' },
+          { label: 'Salary', value: 'SALARY' },
+          { label: 'Freelance Payout', value: 'FREELANCE_PAYOUT' },
+          { label: 'Other', value: 'OTHER' }
+        ],
+        required: true,
+        class: 'input',
+        wrapperClass: 'col-6',
+      },
+      {
+        name: 'account',
+        label: 'Paid From',
+        type: 'relation',
+        relation: { entity: 'accounts', valueKey: '_id', labelKey: 'name' },
+        required: true,
+        class: 'input',
+        wrapperClass: 'col-6',
+      },
+      {
+        name: 'party',
+        label: 'Paid To',
+        type: 'relation',
+        relation: { entity: 'party', valueKey: '_id', labelKey: 'name' },
+        class: 'input',
+        wrapperClass: 'col-6',
+      },
+      { name: 'reference', label: 'Reference #', type: 'text', class: 'input', wrapperClass: 'col-6' },
+      { name: 'notes', label: 'Notes', type: 'textarea', class: 'textarea', wrapperClass: 'col-12' },
+    ],
+    columns: [
+      { key: 'date', label: 'Date', format: 'date' },
+      { key: 'amount', label: 'Amount (₹)' },
+      { key: 'category', label: 'Category' },
+      { key: 'account.name', label: 'Account' },
     ],
     sidebar: true
   }

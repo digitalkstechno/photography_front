@@ -1,27 +1,90 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { HotkeyAction, HotkeyService } from '../core/services/hotkey.service';
+import { ShortcutsModalComponent } from '../shared/shortcuts-modal/shortcuts-modal.component';
+import { AuthService } from '../core/auth/auth.service';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet],
+  imports: [CommonModule, RouterOutlet, RouterModule, ShortcutsModalComponent],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.css'
 })
-export class LayoutComponent {
+export class LayoutComponent implements OnInit {
 
   expandedGroups: Record<string, boolean> = {
-    'Overview': true,
+    'Dashboard': true,
+    'Parties': false,
     'Sales': false,
-    'Team & Crew': false,
-    'Master Setup': false,
-    'Operations': false,
-    'Analytics': false
+    'Bookings & Jobs': false,
+    'Team': false,
+    'Finance': false,
+    'Billing & POS': false,
+    'Inventory': false
   };
+  
+  showProfileDropdown = false;
+  showShortcuts = false;
 
-  constructor(public router: Router) {
+  constructor(
+    public router: Router, 
+    private eRef: ElementRef,
+    private hotkeyService: HotkeyService,
+    public authService: AuthService
+  ) {
     this.autoExpandActiveGroup();
+  }
+
+  ngOnInit() {
+    this.hotkeyService.hotkeys.subscribe(action => {
+      if (action === HotkeyAction.TOGGLE_SHORTCUTS) {
+        this.showShortcuts = !this.showShortcuts;
+      }
+    });
+
+    // Default expand based on role
+    const role = this.authService.getUserRole().toLowerCase();
+    if (role === 'freelancer') {
+      this.expandedGroups['Dashboard'] = true;
+    }
+  }
+
+  isGroupVisible(groupName: string): boolean {
+    const role = this.authService.getUserRole().toLowerCase();
+    
+    // ADMIN has full access
+    if (role === 'admin') return true;
+
+    // STAFF access (Operations focused)
+    if (role === 'staff') {
+      const allowed = ['Dashboard', 'Parties', 'Bookings & Jobs', 'Team', 'Inventory'];
+      return allowed.includes(groupName);
+    }
+
+    // FREELANCER access (Task focused)
+    if (role === 'freelancer') {
+      const allowed = ['Dashboard', 'Bookings & Jobs', 'Finance']; // Finance for Payouts
+      return allowed.includes(groupName);
+    }
+
+    return true; // Default fallback
+  }
+
+  toggleProfileDropdown(event: Event) {
+    event.stopPropagation();
+    this.showProfileDropdown = !this.showProfileDropdown;
+  }
+
+  @HostListener('document:click', ['$event'])
+  clickout(event: any) {
+    // Specifically check if click was outside the profile wrapper
+    const profileWrapper = this.eRef.nativeElement.querySelector('.user-profile-wrapper');
+    if (profileWrapper && !profileWrapper.contains(event.target)) {
+      this.showProfileDropdown = false;
+    }
   }
 
   toggleGroup(groupLabel: string) {
@@ -34,12 +97,20 @@ export class LayoutComponent {
 
   autoExpandActiveGroup() {
     const url = this.router.url;
-    if (url.includes('/dashboard') || url.includes('/calendar')) this.expandedGroups['Overview'] = true;
-    if (url.includes('/admin/bookings') || url.includes('/admin/quotations') || url.includes('/admin/invoices') || url.includes('/admin/payments')) this.expandedGroups['Sales'] = true;
-    if (url.includes('/admin/jobs') || url.includes('/admin/team') || url.includes('/admin/freelancers')) this.expandedGroups['Team & Crew'] = true;
-    if (url.includes('/admin/party') || url.includes('/admin/services') || url.includes('/admin/packages')) this.expandedGroups['Master Setup'] = true;
-    if (url.includes('/admin/equipments') || url.includes('/ledger')) this.expandedGroups['Operations'] = true;
-    if (url.includes('/reports')) this.expandedGroups['Analytics'] = true;
+    // Set all to false first
+    Object.keys(this.expandedGroups).forEach(k => this.expandedGroups[k] = false);
+
+    if (url.includes('/dashboard')) this.expandedGroups['Dashboard'] = true;
+    if (url.includes('/party')) this.expandedGroups['Parties'] = true;
+    if (url.includes('/quotations') || url.includes('/invoices') || url.includes('/payments')) this.expandedGroups['Sales'] = true;
+    if (url.includes('/bookings') || url.includes('/jobs')) this.expandedGroups['Bookings & Jobs'] = true;
+    if (url.includes('/team') || url.includes('/freelancers')) this.expandedGroups['Team'] = true;
+    if (url.includes('/accounts') || url.includes('/transactions') || url.includes('/expenses') || url.includes('/ledger')) this.expandedGroups['Finance'] = true;
+    if (url.includes('/pos') || url.includes('/online-payments')) this.expandedGroups['Billing & POS'] = true;
+    if (url.includes('/equipments')) this.expandedGroups['Inventory'] = true;
+    
+    // Auto-expand overview for reports
+    if (url.includes('/reports')) this.expandedGroups['Dashboard'] = true;
   }
 
   get activeRouteLabel(): string {
@@ -65,7 +136,10 @@ export class LayoutComponent {
       'payments': 'Payments',
       'equipments': 'Equipment',
       'team': 'Team',
-      'jobs': 'Job Assignments'
+      'jobs': 'Job Assignments',
+      'accounts': 'Cash & Bank',
+      'transactions': 'Transactions',
+      'expenses': 'Expenses'
     };
 
     if (routeLabels[entityKey]) return routeLabels[entityKey];

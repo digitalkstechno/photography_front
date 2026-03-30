@@ -15,6 +15,7 @@
           *ngFor="let field of entity.fields"
           [field]="field"
           [(model)]="model"
+          [error]="errors[field.name]"
           (modelChange)="onFormChange()"
           (valueChange)="onFieldChange($event.field, $event.value)">
         </app-input-renderer>

@@ -1,36 +1,61 @@
 <div class="dashboard-container">
   <aside class="sidebar">
     <div class="logo-container">
-      <div class="logo-icon">P</div>
-      <div class="logo-text">Photography</div>
+      <div class="logo-icon">📸</div>
+      <div class="logo-text">Studio Command</div>
     </div>
 
     <ul class="menu">
-      <!-- OVERVIEW GROUP -->
-      <div class="menu-group">
-        <div class="group-header" (click)="toggleGroup('Overview')" [class.active-group]="isGroupActive(['/dashboard', '/calendar'])">
+      <!-- DASHBOARD -->
+      <div class="menu-group" *ngIf="isGroupVisible('Dashboard')">
+        <div class="group-header" (click)="toggleGroup('Dashboard')" [class.active-group]="isGroupActive(['/dashboard', '/calendar', '/reports'])">
           <span class="m-icon">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>
           </span>
-          <span class="m-text" style="flex: 1;">Overview</span>
+          <span class="m-text" style="flex: 1;">Dashboard</span>
           <span class="m-caret">
-            <svg *ngIf="expandedGroups['Overview']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
-            <svg *ngIf="!expandedGroups['Overview']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+            <svg *ngIf="expandedGroups['Dashboard']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+            <svg *ngIf="!expandedGroups['Dashboard']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
           </span>
         </div>
-        <div class="group-items" *ngIf="expandedGroups['Overview']">
+        <div class="group-items" *ngIf="expandedGroups['Dashboard']">
           <li class="menu-item" (click)="navigate('/dashboard')" [class.active]="router.url.includes('/dashboard')">
-            <span class="dot-indicator"></span><span class="m-text">Dashboard</span>
+            <span class="dot-indicator"></span><span class="m-text">Overview</span>
           </li>
           <li class="menu-item" (click)="navigate('/calendar')" [class.active]="router.url.includes('/calendar')">
-            <span class="dot-indicator"></span><span class="m-text">Calendar</span>
+            <span class="dot-indicator"></span><span class="m-text">Schedule</span>
+          </li>
+          <li class="menu-item" (click)="navigate('/reports')" [class.active]="router.url.includes('/reports')" *ngIf="authService.getUserRole().toLowerCase() === 'admin'">
+            <span class="dot-indicator"></span><span class="m-text">Analytics</span>
           </li>
         </div>
       </div>
 
-      <!-- SALES GROUP -->
-      <div class="menu-group">
-        <div class="group-header" (click)="toggleGroup('Sales')" [class.active-group]="isGroupActive(['/admin/bookings', '/admin/quotations', '/admin/invoices', '/admin/payments'])">
+      <!-- PARTIES -->
+      <div class="menu-group" *ngIf="isGroupVisible('Parties')">
+        <div class="group-header" (click)="toggleGroup('Parties')" [class.active-group]="isGroupActive(['/admin/party'])">
+          <span class="m-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg>
+          </span>
+          <span class="m-text" style="flex: 1;">Parties</span>
+          <span class="m-caret">
+            <svg *ngIf="expandedGroups['Parties']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+            <svg *ngIf="!expandedGroups['Parties']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+          </span>
+        </div>
+        <div class="group-items" *ngIf="expandedGroups['Parties']">
+          <li class="menu-item" (click)="navigate('/admin/party')" [class.active]="router.url === '/admin/party'">
+            <span class="dot-indicator"></span><span class="m-text">All Parties</span>
+          </li>
+          <li class="menu-item" (click)="navigate('/admin/party/new')" [class.active]="router.url.includes('/new')">
+            <span class="dot-indicator"></span><span class="m-text">Add Party</span>
+          </li>
+        </div>
+      </div>
+
+      <!-- SALES -->
+      <div class="menu-group" *ngIf="isGroupVisible('Sales')">
+        <div class="group-header" (click)="toggleGroup('Sales')" [class.active-group]="isGroupActive(['/admin/quotations', '/admin/invoices', '/admin/payments'])">
           <span class="m-icon">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
           </span>
@@ -41,9 +66,6 @@
           </span>
         </div>
         <div class="group-items" *ngIf="expandedGroups['Sales']">
-          <li class="menu-item" (click)="navigate('/admin/bookings')" [class.active]="router.url.includes('/admin/bookings')">
-            <span class="dot-indicator"></span><span class="m-text">Bookings</span>
-          </li>
           <li class="menu-item" (click)="navigate('/admin/quotations')" [class.active]="router.url.includes('/admin/quotations')">
             <span class="dot-indicator"></span><span class="m-text">Quotations</span>
           </li>
@@ -56,26 +78,43 @@
         </div>
       </div>
 
-      <!-- TEAM & CREW GROUP -->
-      <div class="menu-group">
-        <div class="group-header" (click)="toggleGroup('Team & Crew')" [class.active-group]="isGroupActive(['/admin/jobs', '/admin/team', '/admin/freelancers'])">
+      <!-- BOOKINGS & JOBS -->
+      <div class="menu-group" *ngIf="isGroupVisible('Bookings & Jobs')">
+        <div class="group-header" (click)="toggleGroup('Bookings & Jobs')" [class.active-group]="isGroupActive(['/admin/bookings', '/admin/jobs'])">
           <span class="m-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 \
-            0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a5.97 5.97 0 0 0-.94 3.197M15 6.75a3 \
-            3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" /></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" /></svg>
           </span>
-          <span class="m-text" style="flex: 1;">Team & Crew</span>
+          <span class="m-text" style="flex: 1;">{{ authService.getUserRole().toLowerCase() === 'freelancer' ? 'Assigned Shoots' : 'Bookings & Jobs' }}</span>
           <span class="m-caret">
-            <svg *ngIf="expandedGroups['Team & Crew']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
-            <svg *ngIf="!expandedGroups['Team & Crew']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+            <svg *ngIf="expandedGroups['Bookings & Jobs']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+            <svg *ngIf="!expandedGroups['Bookings & Jobs']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
           </span>
         </div>
-        <div class="group-items" *ngIf="expandedGroups['Team & Crew']">
-          <li class="menu-item" (click)="navigate('/admin/jobs')" [class.active]="router.url.includes('/admin/jobs')">
+        <div class="group-items" *ngIf="expandedGroups['Bookings & Jobs']">
+          <li class="menu-item" (click)="navigate('/admin/bookings')" [class.active]="router.url.includes('/admin/bookings')">
+            <span class="dot-indicator"></span><span class="m-text">{{ authService.getUserRole().toLowerCase() === 'freelancer' ? 'My Schedule' : 'Bookings' }}</span>
+          </li>
+          <li class="menu-item" (click)="navigate('/admin/jobs')" [class.active]="router.url.includes('/admin/jobs')" *ngIf="authService.getUserRole().toLowerCase() !== 'freelancer'">
             <span class="dot-indicator"></span><span class="m-text">Job Assignments</span>
           </li>
+        </div>
+      </div>
+
+      <!-- TEAM -->
+      <div class="menu-group" *ngIf="isGroupVisible('Team')">
+        <div class="group-header" (click)="toggleGroup('Team')" [class.active-group]="isGroupActive(['/admin/team', '/admin/freelancers'])">
+          <span class="m-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a5.97 5.97 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" /></svg>
+          </span>
+          <span class="m-text" style="flex: 1;">Team</span>
+          <span class="m-caret">
+            <svg *ngIf="expandedGroups['Team']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+            <svg *ngIf="!expandedGroups['Team']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+          </span>
+        </div>
+        <div class="group-items" *ngIf="expandedGroups['Team']">
           <li class="menu-item" (click)="navigate('/admin/team')" [class.active]="router.url.includes('/admin/team')">
-            <span class="dot-indicator"></span><span class="m-text">Team</span>
+            <span class="dot-indicator"></span><span class="m-text">Staff</span>
           </li>
           <li class="menu-item" (click)="navigate('/admin/freelancers')" [class.active]="router.url.includes('/admin/freelancers')">
             <span class="dot-indicator"></span><span class="m-text">Freelancers</span>
@@ -83,68 +122,72 @@
         </div>
       </div>
 
-      <!-- CLIENTS & WORK GROUP -->
-      <div class="menu-group">
-        <div class="group-header" (click)="toggleGroup('Clients & Work')" [class.active-group]="isGroupActive(['/admin/party', '/admin/services', '/admin/packages'])">
+      <!-- FINANCE -->
+      <div class="menu-group" *ngIf="isGroupVisible('Finance')">
+        <div class="group-header" (click)="toggleGroup('Finance')" [class.active-group]="isGroupActive(['/admin/accounts', '/admin/expenses', '/admin/transactions', '/ledger'])">
           <span class="m-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0-13.5h.75a.75.75 0 0 1 .75.75v.75m0 0h-.75A.75.75 0 0 1 21 3h-.75m0 0V3.375c0-.621.504-1.125 1.125-1.125h9.75c.621 0 1.125.504 1.125 1.125V15M2.25 18.75h1.5l1.018-7.126A4.5 4.5 0 0 1 9.214 8.25h5.572a4.5 4.5 0 0 1 4.446 3.374l1.018 7.126h1.5" /></svg>
           </span>
-          <span class="m-text" style="flex: 1;">Master Setup</span>
+          <span class="m-text" style="flex: 1;">{{ authService.getUserRole().toLowerCase() === 'freelancer' ? 'Payments' : 'Finance' }}</span>
           <span class="m-caret">
-            <svg *ngIf="expandedGroups['Clients & Work']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
-            <svg *ngIf="!expandedGroups['Clients & Work']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+            <svg *ngIf="expandedGroups['Finance']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+            <svg *ngIf="!expandedGroups['Finance']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
           </span>
         </div>
-        <div class="group-items" *ngIf="expandedGroups['Clients & Work']">
-          <li class="menu-item" (click)="navigate('/admin/party')" [class.active]="router.url.includes('/admin/party')">
-            <span class="dot-indicator"></span><span class="m-text">Parties (Client/Vend)</span>
+        <div class="group-items" *ngIf="expandedGroups['Finance']">
+          <li class="menu-item" (click)="navigate('/admin/accounts')" [class.active]="router.url.includes('/admin/accounts')" *ngIf="authService.getUserRole().toLowerCase() !== 'freelancer'">
+            <span class="dot-indicator"></span><span class="m-text">Cash & Bank</span>
           </li>
-          <li class="menu-item" (click)="navigate('/admin/services')" [class.active]="router.url.includes('/admin/services')">
-            <span class="dot-indicator"></span><span class="m-text">Services</span>
+          <li class="menu-item" (click)="navigate('/admin/expenses')" [class.active]="router.url.includes('/admin/expenses')" *ngIf="authService.getUserRole().toLowerCase() !== 'freelancer'">
+            <span class="dot-indicator"></span><span class="m-text">Expenses</span>
           </li>
-          <li class="menu-item" (click)="navigate('/admin/packages')" [class.active]="router.url.includes('/admin/packages')">
-            <span class="dot-indicator"></span><span class="m-text">Packages</span>
+          <li class="menu-item" (click)="navigate('/admin/transactions')" [class.active]="router.url.includes('/admin/transactions')">
+            <span class="dot-indicator"></span><span class="m-text">{{ authService.getUserRole().toLowerCase() === 'freelancer' ? 'My Payouts' : 'Transactions' }}</span>
           </li>
-        </div>
-      </div>
-
-      <!-- OPERATIONS GROUP -->
-      <div class="menu-group">
-        <div class="group-header" (click)="toggleGroup('Operations')" [class.active-group]="isGroupActive(['/admin/equipments', '/ledger'])">
-          <span class="m-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.559.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.894.149c-.424.07-.764.383-.929.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.398.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.272-.806.108-1.204-.165-.397-.506-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738a1.125 1.125 0 0 1 .12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
-          </span>
-          <span class="m-text" style="flex: 1;">Inventory & Ledg</span>
-          <span class="m-caret">
-            <svg *ngIf="expandedGroups['Operations']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
-            <svg *ngIf="!expandedGroups['Operations']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
-          </span>
-        </div>
-        <div class="group-items" *ngIf="expandedGroups['Operations']">
-          <li class="menu-item" (click)="navigate('/admin/equipments')" [class.active]="router.url.includes('/admin/equipments')">
-            <span class="dot-indicator"></span><span class="m-text">Equipment</span>
-          </li>
-          <li class="menu-item" (click)="navigate('/ledger')" [class.active]="router.url.includes('/ledger')">
+          <li class="menu-item" (click)="navigate('/ledger')" [class.active]="router.url.includes('/ledger')" *ngIf="authService.getUserRole().toLowerCase() === 'admin'">
             <span class="dot-indicator"></span><span class="m-text">Ledger</span>
           </li>
         </div>
       </div>
 
-      <!-- ANALYTICS GROUP -->
-      <div class="menu-group">
-        <div class="group-header" (click)="toggleGroup('Analytics')" [class.active-group]="isGroupActive(['/reports'])">
+      <!-- BILLING & POS -->
+      <div class="menu-group" *ngIf="isGroupVisible('Billing & POS')">
+        <div class="group-header" (click)="toggleGroup('Billing & POS')" [class.active-group]="isGroupActive(['/admin/pos', '/admin/online-payments'])">
           <span class="m-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V19.875c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75-6.75a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 .75.75v10.125a.75.75 0 0 1-.75.75H3.75a.75.75 0 0 1-.75-.75V8.25Z" /></svg>
           </span>
-          <span class="m-text" style="flex: 1;">Analytics</span>
+          <span class="m-text" style="flex: 1;">Billing & POS</span>
           <span class="m-caret">
-            <svg *ngIf="expandedGroups['Analytics']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
-            <svg *ngIf="!expandedGroups['Analytics']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+            <svg *ngIf="expandedGroups['Billing & POS']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+            <svg *ngIf="!expandedGroups['Billing & POS']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
           </span>
         </div>
-        <div class="group-items" *ngIf="expandedGroups['Analytics']">
-          <li class="menu-item" (click)="navigate('/reports')" [class.active]="router.url.includes('/reports')">
-            <span class="dot-indicator"></span><span class="m-text">Reports</span>
+        <div class="group-items" *ngIf="expandedGroups['Billing & POS']">
+          <li class="menu-item" (click)="navigate('/admin/pos')" [class.active]="router.url.includes('/admin/pos')">
+            <span class="dot-indicator"></span><span class="m-text">POS Billing</span>
+          </li>
+          <li class="menu-item">
+            <span class="dot-indicator"></span><span class="m-text">Online Payments</span>
+            <span class="badge badge-new" style="margin-left: auto;">NEW</span>
+          </li>
+        </div>
+      </div>
+
+      <!-- INVENTORY -->
+      <div class="menu-group" *ngIf="isGroupVisible('Inventory')">
+        <div class="group-header" (click)="toggleGroup('Inventory')" [class.active-group]="isGroupActive(['/admin/equipments'])">
+          <span class="m-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" /></svg>
+          </span>
+          <span class="m-text" style="flex: 1;">Inventory</span>
+          <span class="m-caret">
+            <svg *ngIf="expandedGroups['Inventory']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+            <svg *ngIf="!expandedGroups['Inventory']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+          </span>
+        </div>
+        <div class="group-items" *ngIf="expandedGroups['Inventory']">
+          <li class="menu-item" (click)="navigate('/admin/equipments')" [class.active]="router.url.includes('/admin/equipments')">
+            <span class="dot-indicator"></span><span class="m-text">Equipment</span>
           </li>
         </div>
       </div>
@@ -170,9 +213,51 @@
       </div>
 
       <div class="topbar-right">
-        <div class="user-profile">
-          <div class="avatar">AD</div>
-          <span class="user-name">Admin</span>
+        <div class="user-profile-wrapper">
+          <div class="user-profile" (click)="toggleProfileDropdown($event)">
+            <div class="avatar">AD</div>
+            <span class="user-name">Admin</span>
+            <span class="m-caret">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+            </span>
+          </div>
+
+          <!-- ADMIN PROFILE DROPDOWN -->
+          <div class="profile-dropdown" *ngIf="showProfileDropdown">
+            <div class="dropdown-item">
+              <span class="drop-icon">👤</span>
+              <span class="drop-text">Account</span>
+            </div>
+            <div class="dropdown-item active-business" [routerLink]="['/admin/business-settings']" (click)="showProfileDropdown = false">
+              <span class="drop-icon">💼</span>
+              <span class="drop-text">Manage Business</span>
+            </div>
+            <div class="dropdown-item">
+              <span class="drop-icon">🎨</span>
+              <span class="drop-text">Invoice Settings</span>
+            </div>
+            <div class="dropdown-item">
+              <span class="drop-icon">🖨️</span>
+              <span class="drop-text">Print Settings</span>
+            </div>
+            <div class="dropdown-item">
+              <span class="drop-icon">👥</span>
+              <span class="drop-text">Manage Users</span>
+            </div>
+            <div class="dropdown-item">
+              <span class="drop-icon">⏰</span>
+              <span class="drop-text">Reminders</span>
+            </div>
+            <div class="dropdown-item">
+              <span class="drop-icon">📉</span>
+              <span class="drop-text">CA Reports Sharing</span>
+            </div>
+            <hr class="drop-divider">
+            <div class="dropdown-item logout-item" (click)="logout()">
+              <span class="drop-icon">↩️</span>
+              <span class="drop-text">Logout</span>
+            </div>
+          </div>
         </div>
       </div>
     </header>
@@ -183,3 +268,6 @@
     </section>
   </main>
 </div>
+
+<!-- KEYBOARD SHORTCUTS DISCOVERY PANEL -->
+<app-shortcuts-modal *ngIf="showShortcuts" (close)="showShortcuts = false"></app-shortcuts-modal>

@@ -1,20 +1,73 @@
-<div class="reports-page-wrapper container">
+<div class="reports-page-wrapper entity-page-wrapper">
+  
+  <!-- PAGE HEADER -->
   <div class="page-header">
-    <div class="header-left">
+    <div class="title-group">
       <h1>Business Reports</h1>
       <p class="subtitle">Analyze revenue, growth and session statistics</p>
     </div>
     <div class="header-right">
-      <button class="btn-outline">Export All</button>
+      <button class="btn-outline-sm">Export All</button>
     </div>
   </div>
 
-  <div class="page-content">
-    <div class="section-card">
-      <app-table
-        [columns]="columns"
-        [fetchFn]="fetchReports">
-      </app-table>
+  <!-- KPI STATS GRID (3 Columns) -->
+  <div class="stats-grid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 24px;">
+    <div class="stat-card" *ngFor="let s of stats" style="background:var(--surface); border-radius:12px; padding:20px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <span style="font-size:24px;">{{ s.icon }}</span>
+        <span [class]="'badge-pill ' + s.color" style="font-size:10px;">{{ s.trend }}</span>
+      </div>
+      <div style="margin-top:12px;">
+        <div style="font-size:12px; color:var(--text-muted); font-weight:500;">{{ s.label }}</div>
+        <div style="font-size:24px; font-weight:700; margin-top:4px;">{{ s.value }}</div>
+      </div>
     </div>
   </div>
+
+  <!-- MAIN CONTENT WITH SIDEBAR -->
+  <div class="page-content layout-with-sidebar">
+    
+    <div class="main-list-area">
+      <div class="pro-table-wrapper">
+        
+        <!-- Custom Table Header with Filter Toggle -->
+        <div class="table-controls" style="display:flex; justify-content:space-between; align-items:center;">
+          <h3 style="font-size:16px; font-weight:600;">Report History</h3>
+          <div class="controls-right" style="display:flex; gap:12px; margin-left: auto;">
+            <button class="btn-outline-sm" (click)="fetchReports()" [disabled]="loading">
+              {{ loading ? 'Refreshing...' : '🔄 Refresh' }}
+            </button>
+
+            <!-- Standardized Filter Trigger (Extreme Right) -->
+            <button class="btn-filter-trigger" [class.active]="isFilterOpen" (click)="onToggleFilters()">
+              <span class="m-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
+                </svg>
+              </span>
+              <span class="m-text">Analyze</span>
+              <span class="active-badge" *ngIf="activeFilters && (activeFilters | json) !== '{}'"></span>
+            </button>
+          </div>
+        </div>
+
+        <app-table
+          [columns]="columns"
+          [fetchFn]="fetchReports">
+        </app-table>
+      </div>
+    </div>
+
+    <!-- REUSABLE ANALYTICAL SIDEBAR -->
+    <app-filter-panel
+      *ngIf="entity && entity.filters && entity.filters.length"
+      [filters]="entity.filters"
+      [isOpen]="isFilterOpen"
+      (filterChange)="onFilterChange($event)"
+      (close)="isFilterOpen = false">
+    </app-filter-panel>
+
+  </div>
+
 </div>

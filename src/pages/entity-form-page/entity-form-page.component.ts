@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { EntityFormComponent } from '../../shared/entity/entity-form/entity-form.component';
 import { EntityService } from '../../core/entity/entity.service';
+import { ModalService } from '../../shared/modal/modal.service';
 import { getEntityConfig } from '../../core/entity/entities';
 import { EntityConfig } from '../../core/entity/entity.types';
 import { flattenObject } from '../../shared/flatten';
@@ -23,11 +24,13 @@ export class EntityFormPageComponent implements OnInit {
   editId: string | null = null;
   loading = false;
   isEdit = false;
+  fieldErrors: any = {};
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private entityService: EntityService
+    private entityService: EntityService,
+    @Inject(ModalService) private modal: ModalService
   ) { }
 
   ngOnInit(): void {
@@ -168,14 +171,34 @@ export class EntityFormPageComponent implements OnInit {
   }
 
   save = async (data: any) => {
-    if (this.isEdit && this.editId) {
-      await this.entityService.update(this.entity, this.editId, data);
-    } else {
-      await this.entityService.create(this.entity, data);
-    }
+    this.loading = true;
+    this.fieldErrors = {}; // Clear previous errors
+    try {
+      if (this.isEdit && this.editId) {
+        await this.entityService.update(this.entity, this.editId, data);
+      } else {
+        await this.entityService.create(this.entity, data);
+      }
 
-    // Redirect back to list page
-    this.router.navigate([`/admin/${this.entityName}`]);
+      // Show success modal before redirect
+      this.modal.success('Record Saved', `${this.entity.label} has been stored successfully.`);
+      this.router.navigate([`/admin/${this.entityName}`]);
+
+    } catch (err: any) {
+      console.error('Save failed:', err);
+      
+      // Capture detailed field errors from backend (spread creates new reference for change detection)
+      this.fieldErrors = { ...(err.error?.errors || {}) };
+
+      // Extract high-precision summary message
+      const errorMsg = err.error?.message || err.message || 'Check your internet connection and try again.';
+      this.modal.error('Save Failed', errorMsg);
+
+      // CRITICAL: Re-throw so the form component stays in error state
+      throw err;
+    } finally {
+      this.loading = false;
+    }
   };
 
   onCancel() {

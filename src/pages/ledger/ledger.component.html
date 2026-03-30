@@ -1,6 +1,8 @@
-<div class="ledger-page container">
-  <div class="card-premium card-header-black mb-4">
-    <div class="header-inner">
+<div class="ledger-page entity-page-wrapper">
+  
+  <!-- PAGE HEADER -->
+  <div class="page-header card-premium card-header-black mb-4">
+    <div class="header-inner" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
       <div class="title-group">
         <div style="display: flex; align-items: center; gap: 12px;">
           <button *ngIf="selectedPartyId" class="btn-back" (click)="goBack()">← Back</button>
@@ -8,89 +10,118 @@
         </div>
         <p class="text-muted-light">{{ selectedPartyId ? 'Payment history and running balance' : 'All party balances at a glance' }}</p>
       </div>
+
+      <div class="header-right">
+        <!-- Standardized Filter Trigger (Extreme Right) -->
+        <button class="btn-filter-trigger" [class.active]="isFilterOpen" (click)="onToggleFilters()">
+          <span class="m-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
+            </svg>
+          </span>
+          <span class="m-text">Date Range</span>
+          <span class="active-badge" *ngIf="activeFilters && (activeFilters | json) !== '{}'"></span>
+        </button>
+      </div>
     </div>
   </div>
 
   <div *ngIf="isLoading" class="loading-text">Loading...</div>
   <div *ngIf="error" class="error-text">{{ error }}</div>
 
-  <!-- Summary Cards -->
-  <div class="summary-row" *ngIf="!isLoading">
-    <div class="summary-card">
-      <div class="summary-label">Total Credit (IN)</div>
-      <div class="summary-value text-success">₹{{ totalCredit | number }}</div>
-    </div>
-    <div class="summary-card">
-      <div class="summary-label">Total Debit (OUT)</div>
-      <div class="summary-value text-danger">₹{{ totalDebit | number }}</div>
-    </div>
-    <div class="summary-card">
-      <div class="summary-label">Net Balance</div>
-      <div class="summary-value" [class.text-success]="netBalance >= 0" [class.text-danger]="netBalance < 0">₹{{ netBalance | number }}</div>
-    </div>
-  </div>
+  <!-- MAIN CONTENT WITH SIDEBAR -->
+  <div class="page-content layout-with-sidebar" *ngIf="!isLoading">
+    
+    <div class="main-list-area">
+      <!-- Summary Cards -->
+      <div class="summary-row">
+        <div class="summary-card">
+          <div class="summary-label">Total Credit (IN)</div>
+          <div class="summary-value text-success">₹{{ totalCredit | number }}</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Total Debit (OUT)</div>
+          <div class="summary-value text-danger">₹{{ totalDebit | number }}</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Net Balance</div>
+          <div class="summary-value" [class.text-success]="netBalance >= 0" [class.text-danger]="netBalance < 0">₹{{ netBalance | number }}</div>
+        </div>
+      </div>
 
-  <!-- All Balances View -->
-  <div class="card-premium mt-4" *ngIf="!selectedPartyId && !isLoading">
-    <table class="ledger-table">
-      <thead>
-        <tr>
-          <th>Party</th>
-          <th>Type</th>
-          <th class="text-right">Credit (IN)</th>
-          <th class="text-right">Debit (OUT)</th>
-          <th class="text-right">Balance</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let b of balances" (click)="onPartySelect(b.partyId)" class="clickable-row">
-          <td class="party-name">{{ b.partyName }}</td>
-          <td><span class="badge badge-info">{{ b.partyType }}</span></td>
-          <td class="text-right text-success">₹{{ b.totalCredit | number }}</td>
-          <td class="text-right text-danger">₹{{ b.totalDebit | number }}</td>
-          <td class="text-right" [class.text-success]="b.balance >= 0" [class.text-danger]="b.balance < 0">₹{{ b.balance | number }}</td>
-          <td><button class="btn-sm btn-primary" (click)="onPartySelect(b.partyId); $event.stopPropagation()">View</button></td>
-        </tr>
-        <tr *ngIf="balances.length === 0">
-          <td colspan="6" class="empty-text">No payment data found</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+      <!-- All Balances View -->
+      <div class="card-premium mt-4" *ngIf="!selectedPartyId">
+        <table class="ledger-table">
+          <thead>
+            <tr>
+              <th>Party</th>
+              <th>Type</th>
+              <th class="text-right">Credit (IN)</th>
+              <th class="text-right">Debit (OUT)</th>
+              <th class="text-right">Balance</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let b of balances" (click)="onPartySelect(b.partyId)" class="clickable-row">
+              <td class="party-name">{{ b.partyName }}</td>
+              <td><span class="badge badge-info">{{ b.partyType }}</span></td>
+              <td class="text-right text-success">₹{{ b.totalCredit | number }}</td>
+              <td class="text-right text-danger">₹{{ b.totalDebit | number }}</td>
+              <td class="text-right" [class.text-success]="b.balance >= 0" [class.text-danger]="b.balance < 0">₹{{ b.balance | number }}</td>
+              <td><button class="btn-sm btn-primary" (click)="onPartySelect(b.partyId); $event.stopPropagation()">View</button></td>
+            </tr>
+            <tr *ngIf="balances.length === 0">
+              <td colspan="6" class="empty-text">No payment data found</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-  <!-- Party Ledger Detail View -->
-  <div class="card-premium mt-4" *ngIf="selectedPartyId && !isLoading">
-    <table class="ledger-table">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Type</th>
-          <th>Mode</th>
-          <th>Description</th>
-          <th class="text-right">Amount</th>
-          <th class="text-right">Balance</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let e of entries">
-          <td>{{ e.date | date:'mediumDate' }}</td>
-          <td>
-            <span class="badge" [class]="e.type === 'IN' ? 'badge-success' : 'badge-danger'">{{ e.type }}</span>
-          </td>
-          <td>{{ e.mode }}</td>
-          <td>{{ e.description || '—' }}</td>
-          <td class="text-right" [class.text-success]="e.type === 'IN'" [class.text-danger]="e.type === 'OUT'">
-            {{ e.type === 'IN' ? '+' : '-' }}₹{{ e.amount | number }}
-          </td>
-          <td class="text-right" [class.text-success]="e.runningBalance >= 0" [class.text-danger]="e.runningBalance < 0">
-            ₹{{ e.runningBalance | number }}
-          </td>
-        </tr>
-        <tr *ngIf="entries.length === 0">
-          <td colspan="6" class="empty-text">No payments recorded for this party</td>
-        </tr>
-      </tbody>
-    </table>
+      <!-- Party Ledger Detail View -->
+      <div class="card-premium mt-4" *ngIf="selectedPartyId">
+        <table class="ledger-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Mode</th>
+              <th>Description</th>
+              <th class="text-right">Amount</th>
+              <th class="text-right">Balance</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let e of entries">
+              <td>{{ e.date | date:'mediumDate' }}</td>
+              <td>
+                <span class="badge" [class]="e.type === 'IN' ? 'badge-success' : 'badge-danger'">{{ e.type }}</span>
+              </td>
+              <td>{{ e.mode }}</td>
+              <td>{{ e.description || '—' }}</td>
+              <td class="text-right" [class.text-success]="e.type === 'IN'" [class.text-danger]="e.type === 'OUT'">
+                {{ e.type === 'IN' ? '+' : '-' }}₹{{ e.amount | number }}
+              </td>
+              <td class="text-right" [class.text-success]="e.runningBalance >= 0" [class.text-danger]="e.runningBalance < 0">
+                ₹{{ e.runningBalance | number }}
+              </td>
+            </tr>
+            <tr *ngIf="entries.length === 0">
+              <td colspan="6" class="empty-text">No payments recorded for this party</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- REUSABLE ANALYTICAL SIDEBAR -->
+    <app-filter-panel
+      *ngIf="entity && entity.filters && entity.filters.length"
+      [filters]="entity.filters"
+      [isOpen]="isFilterOpen"
+      (filterChange)="onFilterChange($event)"
+      (close)="isFilterOpen = false">
+    </app-filter-panel>
+
   </div>
 </div>

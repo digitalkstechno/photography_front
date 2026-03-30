@@ -307,3 +307,20 @@ input:checked + .slider:before {
   border-color: var(--primary);
   box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
 }
+
+.field-error {
+  display: block;
+  color: #ef4444; /* tailwind-red-500 */
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+  margin-left: 0.25rem;
+  position: relative;
+  z-index: 5;
+  animation: slideInDown 0.2s ease-out;
+}
+
+@keyframes slideInDown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}

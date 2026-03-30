@@ -1,0 +1,54 @@
+<div class="filter-panel-container" [class.open]="isOpen">
+  <div class="panel-header">
+    <div class="header-content">
+      <h3>Advanced Filters</h3>
+      <p>Refine your results</p>
+    </div>
+    <button class="btn-close" (click)="onClose()">✕</button>
+  </div>
+
+  <div class="panel-content">
+    <div class="filter-group" *ngFor="let filter of filters">
+      <label class="group-label">{{ filter.label }}</label>
+      
+      <!-- CHIPS (for Status, etc.) -->
+      <div class="chips-grid" *ngIf="filter.type === 'select' && (filter.name === 'status' || filter.name === 'paymentStatus')">
+        <button 
+          class="chip-item"
+          [class.active]="activeFilters[filter.name] === undefined"
+          (click)="setFilter(filter.name, undefined)">
+          All
+        </button>
+        <button 
+          *ngFor="let opt of filter.options"
+          class="chip-item"
+          [class.active]="activeFilters[filter.name] === opt.value"
+          [ngClass]="getSoftClass(opt.label)"
+          (click)="setFilter(filter.name, opt.value)">
+          {{ opt.label }}
+        </button>
+      </div>
+
+      <!-- SELECT (for others) -->
+      <div class="select-wrapper" *ngIf="filter.type === 'select' && filter.name !== 'status' && filter.name !== 'paymentStatus'">
+        <select class="form-select" [(ngModel)]="activeFilters[filter.name]" (change)="apply()">
+          <option [ngValue]="undefined">All {{ filter.label }}</option>
+          <option *ngFor="let opt of filter.options" [ngValue]="opt.value">{{ opt.label }}</option>
+        </select>
+      </div>
+
+      <!-- DATE (Placeholder for future) -->
+      <div class="date-input" *ngIf="filter.type === 'date'">
+        <input type="date" class="form-control" [(ngModel)]="activeFilters[filter.name]" (change)="apply()">
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-footer">
+    <button class="btn-reset" (click)="clearAll()">Clear All</button>
+    <button class="btn-apply" (click)="apply()">Apply Filters</button>
+  </div>
+</div>
+
+<!-- BACKDROP -->
+<div class="panel-backdrop" *ngIf="isOpen" (click)="onClose()"></div>

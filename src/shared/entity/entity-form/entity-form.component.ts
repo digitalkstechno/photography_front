@@ -23,7 +23,7 @@ export class EntityFormComponent {
   @Output() modelChange = new EventEmitter<any>();
 
   @Input() submitLabel = 'Save';
-
+  @Input() errors: Record<string, string> = {};
   @Output() cancelEvent = new EventEmitter<void>();
 
   @Input() submitFn!: (data: any) => Promise<any>;

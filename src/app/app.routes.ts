@@ -18,6 +18,7 @@ import { InvoiceDetailComponent } from '../pages/invoice-detail/invoice-detail.c
 import { JobAssignmentComponent } from '../pages/job-assignment/job-assignment.component';
 import { JobListComponent } from '../pages/job-list/job-list.component';
 import { JobReceiptComponent } from '../pages/job-receipt/job-receipt.component';
+import { PosBillingComponent } from './pages/pos-billing/pos-billing.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -27,6 +28,7 @@ export const routes: Routes = [
     component: LayoutComponent,
     children: [
       { path: 'dashboard', component: DashboardComponent },
+      { path: 'admin/pos', component: PosBillingComponent },
 
       // Quotations Management
       { path: 'admin/quotations', component: QuotationListComponent },
@@ -46,11 +48,18 @@ export const routes: Routes = [
       { path: 'admin/:entity', component: EntityPageComponent },
       { path: 'admin/:entity/new', component: EntityFormPageComponent },
       { path: 'admin/:entity/edit/:id', component: EntityFormPageComponent },
+      { 
+        path: 'equipments', 
+        component: EntityPageComponent, 
+        data: { entity: 'equipment' } 
+      },
+      {
+        path: 'admin/business-settings',
+        loadComponent: () => import('../pages/business-settings/business-settings.component').then(m => m.BusinessSettingsComponent)
+      },
       {
         path: 'photoEditor',
-        loadComponent: () =>
-          import('../pages/passport-studio-component/passport-studio.component')
-            .then(m => m.PassportStudioComponent)
+        loadComponent: () => import('../pages/passport-studio-component/passport-studio.component').then(m => m.PassportStudioComponent)
       },
 
       // Calendar

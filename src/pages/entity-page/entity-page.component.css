@@ -1,0 +1,11 @@
+.layout-with-sidebar {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  transition: all 0.3s ease;
+}
+
+.main-list-area {
+  flex: 1;
+  min-width: 0; /* Ensures content doesn't overflow flex container */
+}

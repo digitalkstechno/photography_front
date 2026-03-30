@@ -4,11 +4,14 @@ import { HttpClient } from '@angular/common/http';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environment';
+import { EntityConfig } from '../../core/entity/entity.types';
+import { getEntityConfig } from '../../core/entity/entities';
+import { FilterPanelComponent } from '../../shared/filter-panel/filter-panel.component';
 
 @Component({
   selector: 'app-quotation-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, FilterPanelComponent],
   templateUrl: './quotation-list.component.html'
 })
 export class QuotationListComponent implements OnInit {
@@ -21,13 +24,20 @@ export class QuotationListComponent implements OnInit {
   totalPages = 1;
   totalItems = 0;
   limit = 10;
+  
+  // Advanced Filtering
+  isFilterOpen = false;
+  activeFilters: any = {};
+  entity?: EntityConfig;
 
   // Re-expose Date for Template
   Date = Date;
 
   private apiUrl = `${environment.apiUrl}/quotations`;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) {
+    this.entity = getEntityConfig('quotations') || undefined;
+  }
 
   ngOnInit(): void {
     this.fetchQuotations();
@@ -37,7 +47,8 @@ export class QuotationListComponent implements OnInit {
     this.loading = true;
     const params: any = {
       page: this.currentPage,
-      limit: this.limit
+      limit: this.limit,
+      ...this.activeFilters
     };
     if (this.searchQuery) params.search = this.searchQuery;
 
@@ -66,6 +77,16 @@ export class QuotationListComponent implements OnInit {
   }
 
   onSearchChange(): void {
+    this.currentPage = 1;
+    this.fetchQuotations();
+  }
+
+  onToggleFilters(): void {
+    this.isFilterOpen = !this.isFilterOpen;
+  }
+
+  onFilterChange(filters: any): void {
+    this.activeFilters = filters;
     this.currentPage = 1;
     this.fetchQuotations();
   }
