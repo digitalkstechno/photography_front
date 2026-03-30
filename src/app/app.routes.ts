@@ -16,6 +16,8 @@ import { InvoiceComponent } from './../pages/invoice-list/invoice-list.component
 import { InvoiceFormComponent } from '../pages/invoiceform/invoiceform.component';
 import { InvoiceDetailComponent } from '../pages/invoice-detail/invoice-detail.component';
 import { JobAssignmentComponent } from '../pages/job-assignment/job-assignment.component';
+import { JobListComponent } from '../pages/job-list/job-list.component';
+import { JobReceiptComponent } from '../pages/job-receipt/job-receipt.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -36,7 +38,9 @@ export const routes: Routes = [
       { path: 'admin/invoices/:id', component: InvoiceDetailComponent },
       { path: 'admin/invoices/edit/:id', component: InvoiceFormComponent },
       { path: 'admin/bookings/:bookingId/assign', component: JobAssignmentComponent },
+      { path: 'admin/jobs', component: JobListComponent },
       { path: 'admin/jobs/new', component: JobAssignmentComponent },
+      { path: 'admin/jobs/:id/receipt', component: JobReceiptComponent },
       { path: 'admin/jobs/edit/:id', component: JobAssignmentComponent },
 
       { path: 'admin/:entity', component: EntityPageComponent },

@@ -8,16 +8,10 @@
         <h1>Manage Team Assignments</h1>
       </div>
       <p class="subtitle" *ngIf="booking">Booking: <strong>{{ booking.title }}</strong> | Client: {{ booking.customer?.name }}</p>
-      <div class="mt-2" *ngIf="!booking && confirmedBookings.length">
-        <label style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;">SELECT BOOKING</label>
-        <select class="input-sm" formControlName="event" style="min-width: 300px;">
-          <option value="">-- Choose Confirmed Booking --</option>
-          <option *ngFor="let b of confirmedBookings" [value]="b._id">{{ b.title }} ({{ b.customer?.name }})</option>
-        </select>
-      </div>
     </div>
     <div class="header-right">
-      <button class="btn-primary-pro" (click)="save()" [disabled]="saving">
+      <button class="btn-primary-pro" (click)="save()" [disabled]="saving"
+        [appTooltip]="'Saves the full team assignment for this booking.\nAll rows must have a person, role and valid charge.'">
         {{ saving ? 'Saving...' : 'Confirm Assignments' }}
       </button>
     </div>
@@ -26,24 +20,67 @@
   <div *ngIf="loading" class="loading-text">Loading assignment data...</div>
 
   <form [formGroup]="form" *ngIf="!loading" class="mt-5">
-    
+
+    <!-- Booking selector — inside form so formControlName works -->
+    <div class="pro-form-container" *ngIf="!booking && confirmedBookings.length" style="margin-bottom:20px">
+      <div class="form-content">
+        <div class="form-field">
+          <label>
+            SELECT BOOKING <span style="color:var(--danger)">*</span>
+            <span class="help-icon"
+              appTooltip="Only bookings with an active status (CONFIRMED, IN_PROGRESS, etc.) are listed here. A job can only be created for an active booking.">?</span>
+          </label>
+          <select class="input" formControlName="event">
+            <option value="">-- Choose a Booking --</option>
+            <option *ngFor="let b of confirmedBookings" [value]="b._id">{{ b.title }} ({{ b.customer?.name }})</option>
+          </select>
+          <span *ngIf="form.get('event')?.invalid && form.get('event')?.touched"
+                style="color:var(--danger); font-size:12px">Please select a booking.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Personnel assignment table -->
     <div class="pro-form-container">
       <div class="form-header">
         <h2>Assigned Personnel</h2>
-        <p class="subtitle">Assign Staff or Freelancers to specific roles and track costs.</p>
+        <p class="subtitle">
+          Assign Staff or Freelancers to specific roles and track costs.
+          <span class="help-icon"
+            appTooltip="Add one row per team member. Each row tracks their daily charge × number of days to calculate the total job payout automatically.">?</span>
+        </p>
       </div>
 
       <div class="form-content">
-        
         <div class="pro-table-wrapper dashed-border">
           <table class="accounting-table">
             <thead>
               <tr>
-                <th>PERSONNEL NAME (STAFF/CREW)</th>
-                <th width="180">ASSIGNED ROLE</th>
-                <th width="140">CHARGE / DAY</th>
-                <th width="100">DAYS</th>
-                <th width="160" style="text-align:right">ROW TOTAL</th>
+                <th>
+                  PERSONNEL NAME (STAFF/CREW)
+                  <span class="help-icon"
+                    appTooltip="Select from internal staff [Staff] or registered freelancers [Crew]. Selecting a freelancer auto-fills their rate and skill.">?</span>
+                </th>
+                <th width="180">
+                  ASSIGNED ROLE
+                  <span class="help-icon"
+                    appTooltip="The role this person will perform for this specific booking (e.g. CANDID, VIDEO, DRONE). This may differ from their general skill.">?</span>
+                </th>
+                <th width="140">
+                  CHARGE / DAY
+                  <span class="help-icon" tooltipPosition="top"
+                    appTooltip="The agreed daily rate (₹) for this assignment. For freelancers this is auto-filled from their profile but can be overridden.">?</span>
+                </th>
+                <th width="100">
+                  DAYS
+                  <span class="help-icon"
+                    appTooltip="Number of days this person will work on this booking. ROW TOTAL = Charge/Day × Days.">?</span>
+                </th>
+                <th width="160" style="text-align:right">
+                  ROW TOTAL
+                  <span class="help-icon" tooltipPosition="top"
+                    appTooltip="Auto-calculated: Charge Per Day × Days. All rows sum to the Total Job Cost below.">?</span>
+                </th>
                 <th width="50"></th>
               </tr>
             </thead>
@@ -62,16 +99,19 @@
                   </select>
                 </td>
                 <td>
-                  <input type="number" class="input no-border" formControlName="chargePerDay">
+                  <input type="number" class="input no-border" formControlName="chargePerDay" min="0">
                 </td>
                 <td>
-                  <input type="number" class="input no-border" formControlName="days">
+                  <input type="number" class="input no-border" formControlName="days" min="1">
                 </td>
                 <td style="text-align:right; font-weight:700">
                   ₹{{ item.get('totalCharge')?.value | number:'1.2-2' }}
                 </td>
                 <td>
-                  <button type="button" class="btn-icon-link" (click)="removeAssignment(i)" style="color:var(--danger)">×</button>
+                  <button type="button" class="btn-icon-link" (click)="removeAssignment(i)"
+                    style="color:var(--danger)"
+                    appTooltip="Remove this team member from the assignment"
+                    tooltipPosition="left">×</button>
                 </td>
               </tr>
               <tr *ngIf="assignedUsers.length === 0">
@@ -82,7 +122,10 @@
             </tbody>
           </table>
           <div style="padding:15px; border-top:1px solid var(--border)">
-            <button type="button" class="btn-outline-sm" (click)="addAssignment()">+ Add New Personnel</button>
+            <button type="button" class="btn-outline-sm" (click)="addAssignment()"
+              appTooltip="Add a new row to assign another team member to this booking">
+              + Add New Personnel
+            </button>
           </div>
         </div>
 
@@ -90,14 +133,22 @@
         <div class="fields-grid mt-5">
           <div class="col-8">
             <div class="form-field">
-              <label>INTERNAL NOTES</label>
+              <label>
+                INTERNAL NOTES
+                <span class="help-icon"
+                  appTooltip="These notes are for internal team use only. They will NOT appear on the customer receipt — only on internal reports.">?</span>
+              </label>
               <textarea class="textarea" formControlName="notes" placeholder="Any specific instructions for the team..."></textarea>
             </div>
           </div>
           <div class="col-4">
             <div class="cost-summary-card">
               <div class="summary-item">
-                <span>Status</span>
+                <span>
+                  Status
+                  <span class="help-icon" tooltipPosition="right"
+                    appTooltip="PENDING = waiting for approval&#10;CONFIRMED = team confirmed, ready to shoot&#10;COMPLETED = job done, payouts can be processed">?</span>
+                </span>
                 <select class="input-sm" formControlName="status">
                   <option value="PENDING">Pending Approval</option>
                   <option value="CONFIRMED">Confirmed</option>
@@ -105,7 +156,11 @@
                 </select>
               </div>
               <div class="summary-item total-cost-row">
-                <span class="label">Total Job Cost</span>
+                <span class="label">
+                  Total Job Cost
+                  <span class="help-icon" tooltipPosition="right"
+                    appTooltip="Sum of all row totals (Charge/Day × Days) for every assigned team member. This is your internal payout cost — NOT shown to the customer.">?</span>
+                </span>
                 <span class="value">₹{{ form.get('totalCost')?.value | number:'1.2-2' }}</span>
               </div>
               <p class="summary-hint">Includes internal staff cost and freelancer payouts.</p>

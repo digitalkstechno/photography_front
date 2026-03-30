@@ -1,0 +1,189 @@
+<div class="page">
+
+  <!-- Toolbar -->
+  <div class="toolbar no-print">
+    <div style="display:flex; align-items:center; gap:12px">
+      <button class="btn btn--outline" routerLink="/admin/jobs">← Back to Jobs</button>
+      <span style="font-size:14px; color:#666">Job Dispatch & Billing Receipt</span>
+    </div>
+    <button class="btn" (click)="print()">🖨 Print / Save PDF</button>
+  </div>
+
+  <!-- Card -->
+  <div class="card" *ngIf="job && !loading">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header__brand">
+        <div class="header__logo">📸</div>
+        <div>
+          <div class="header__title">Photography Studio</div>
+          <div class="header__sub">Professional Photography & Videography Services</div>
+        </div>
+      </div>
+
+      <div class="header__meta">
+        <div class="receipt-label">DISPATCH RECEIPT</div>
+        <div class="receipt-id">{{ receiptNo }}</div>
+        <div class="receipt-date">{{ today | date:'dd MMM yyyy' }}</div>
+
+        <div class="badge"
+          [ngClass]="{
+            'badge--pending': job.status === 'PENDING',
+            'badge--confirmed': job.status === 'CONFIRMED',
+            'badge--completed': job.status === 'COMPLETED',
+            'badge--cancelled': job.status === 'CANCELLED'
+          }">
+          Job Status: {{ job.status }}
+        </div>
+      </div>
+    </div>
+
+    <div class="horizontal-line"></div>
+
+    <!-- MAIN INFO GRID -->
+    <div class="info-grid">
+      <!-- CUSTOMER -->
+      <div class="info-section">
+        <div class="info-section__label">PREPARED FOR</div>
+        <div class="info-section__name">{{ customer.name || 'Customer' }}</div>
+        <div class="info-text" *ngIf="customer.phone">📞 {{ customer.phone }}</div>
+        <div class="info-text" *ngIf="customer.email">📧 {{ customer.email }}</div>
+        <div class="info-text" *ngIf="customer.address">📍 {{ customer.address }}</div>
+      </div>
+
+      <!-- EVENT -->
+      <div class="info-section">
+        <div class="info-section__label">EVENT DETAILS</div>
+        <div class="info-section__name">{{ booking.title || 'Booking' }}</div>
+        <div class="row-meta">
+          <span class="row-meta__label">Start Date:</span>
+          <span class="row-meta__value">{{ booking.startDate | date:'EEEE, dd MMM yyyy' }}</span>
+        </div>
+        <div class="row-meta" *ngIf="booking.endDate">
+          <span class="row-meta__label">End Date:</span>
+          <span class="row-meta__value">{{ booking.endDate | date:'dd MMM yyyy' }}</span>
+        </div>
+        <div class="row-meta">
+          <span class="row-meta__label">Booking Status:</span>
+          <span class="row-meta__value">{{ booking.status }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEAM (Minimal Table) -->
+    <div class="section-title">
+      <span>👥</span> Assigned Team members
+    </div>
+    <div class="team-list" *ngIf="assignedTeam.length > 0">
+      <table class="simple-table">
+        <thead>
+          <tr>
+            <th width="50">#</th>
+            <th>Personnel Name</th>
+            <th width="150">Type</th>
+            <th width="200">Role assigned</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let m of assignedTeam; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td class="bold">{{ getMemberName(m) }}</td>
+            <td><span class="type-pill">{{ getMemberType(m) }}</span></td>
+            <td>{{ m.role || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div *ngIf="assignedTeam.length === 0" class="empty-msg">No team members assigned to this job.</div>
+
+    <!-- BILLING (From Invoice) -->
+    <div *ngIf="invoice">
+      <div class="section-title" style="margin-top:40px">
+        <span>🧾</span> Billing Details (Invoice {{ invoice.invoiceNumber }})
+      </div>
+      
+      <table class="simple-table billing-table">
+        <thead>
+          <tr>
+            <th width="50">#</th>
+            <th>Service Description</th>
+            <th width="80" class="text-center">Days</th>
+            <th width="150" class="text-right">Rate</th>
+            <th width="150" class="text-right">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of invoice.items; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ item.description }}</td>
+            <td class="text-center">{{ item.days }}</td>
+            <td class="text-right">₹{{ item.rate | number:'1.2-2' }}</td>
+            <td class="text-right bold">₹{{ item.total | number:'1.2-2' }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- TOTALS BLOCK -->
+      <div class="totals-container">
+        <div class="notes-box">
+          <div class="notes-box__label">NOTES / REMARKS</div>
+          <div class="notes-box__text">{{ invoice.notes || 'No additional notes.' }}</div>
+        </div>
+        
+        <div class="totals-pane">
+          <div class="total-row">
+            <span>Subtotal</span>
+            <span>₹{{ invoice.subtotal | number:'1.2-2' }}</span>
+          </div>
+          <div class="total-row" *ngIf="invoice.discount > 0">
+            <span>Discount</span>
+            <span class="negative">- ₹{{ invoice.discount | number:'1.2-2' }}</span>
+          </div>
+          <div class="total-row" *ngIf="invoice.extraCharges > 0">
+            <span>Extra Charges</span>
+            <span>+ ₹{{ invoice.extraCharges | number:'1.2-2' }}</span>
+          </div>
+          <div class="total-row">
+            <span>Tax ({{ invoice.taxRate }}%)</span>
+            <span>₹{{ invoice.tax | number:'1.2-2' }}</span>
+          </div>
+          <div class="total-row grand">
+            <span>Grand Total</span>
+            <span>₹{{ invoice.grandTotal | number:'1.2-2' }}</span>
+          </div>
+          <div class="total-row paid">
+            <span>Amount Paid</span>
+            <span>₹{{ invoice.paidAmount | number:'1.2-2' }}</span>
+          </div>
+          <div class="total-row balance">
+            <span>Balance Due</span>
+            <span class="due-val">₹{{ invoice.dueAmount | number:'1.2-2' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NO INVOICE BLIP -->
+    <div *ngIf="!invoice" class="empty-msg dashed">
+      ⚠️ No invoice is currently linked to this booking. Billing details will appear once an invoice is generated.
+    </div>
+
+    <!-- FOOTER -->
+    <div class="receipt-footer">
+      <div class="footer-thanks">Thank you for your business!</div>
+      <div class="footer-disclaimer">
+        This is a computer-generated dispatch receipt. For any queries, please contact our studio.
+      </div>
+      <div class="footer-timestamp">Generated on {{ today | date:'dd MMM yyyy, hh:mm a' }}</div>
+    </div>
+
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="card loading-card">
+    <div class="spinner"></div>
+    <p>Preparing the dispatch document...</p>
+  </div>
+
+</div>

@@ -4,11 +4,12 @@ import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } fr
 import { ApiService } from '../../core/http/api.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
+import { TooltipDirective } from '../../shared/tooltip/tooltip.directive';
 
 @Component({
   selector: 'app-job-assignment',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TooltipDirective],
   templateUrl: './job-assignment.component.html',
   styleUrls: ['./job-assignment.component.css']
 })
@@ -94,8 +95,11 @@ export class JobAssignmentComponent implements OnInit {
   confirmedBookings: any[] = [];
   async loadConfirmedBookings() {
     try {
-      const res: any = await firstValueFrom(this.api.get('/events?status=CONFIRMED'));
-      this.confirmedBookings = res.data?.data || res.data || [];
+      // Fetch ALL bookings — filter client-side to exclude only cancelled/draft
+      const res: any = await firstValueFrom(this.api.get('/events?limit=200'));
+      const all: any[] = res.data?.data || res.data || [];
+      const excluded = ['CANCELLED', 'DRAFT', 'REJECTED'];
+      this.confirmedBookings = all.filter(b => !excluded.includes(b.status?.toUpperCase()));
     } catch { this.confirmedBookings = []; }
   }
 
@@ -191,8 +195,25 @@ export class JobAssignmentComponent implements OnInit {
   }
 
   async save() {
+    // Mark everything touched so inline errors appear
+    this.form.markAllAsTouched();
+
     if (this.form.invalid) {
-      alert('Please fill all required fields correctly.');
+      const errors: string[] = [];
+
+      if (this.form.get('event')?.invalid) {
+        errors.push('• Booking is not selected.');
+      }
+
+      this.assignedUsers.controls.forEach((ctrl, i) => {
+        const g = ctrl as any;
+        if (g.get('personId')?.invalid) errors.push(`• Row ${i + 1}: Person not selected.`);
+        if (g.get('role')?.invalid)     errors.push(`• Row ${i + 1}: Role not selected.`);
+        if (g.get('chargePerDay')?.invalid) errors.push(`• Row ${i + 1}: Charge per day is invalid.`);
+        if (g.get('days')?.invalid)     errors.push(`• Row ${i + 1}: Days must be at least 1.`);
+      });
+
+      alert('Please fix the following:\n\n' + (errors.length ? errors.join('\n') : 'Some fields are incomplete.'));
       return;
     }
 

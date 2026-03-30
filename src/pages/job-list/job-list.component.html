@@ -1,0 +1,162 @@
+<div class="entity-page-wrapper">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="title-group">
+      <h1>Jobs</h1>
+      <p class="subtitle">Manage and organize your job assignments</p>
+    </div>
+    <div class="header-right">
+      <button class="btn-primary-pro" routerLink="/admin/jobs/new">+ Add Job</button>
+    </div>
+  </div>
+
+  <!-- TABLE CARD -->
+  <div class="page-content">
+    <div class="pro-table-wrapper">
+
+      <!-- Table Controls -->
+      <div class="table-controls">
+        <div class="search-box">
+          <span class="icon">🔍</span>
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Filter results..."
+            [(ngModel)]="searchQuery"
+            (input)="onSearchChange()"
+          />
+        </div>
+        <div class="controls-right" style="display:flex; gap:8px; align-items:center">
+          <select class="input-sm" [(ngModel)]="selectedStatus" (change)="onFilterChange()" style="min-width:160px">
+            <option value="">All Statuses</option>
+            <option *ngFor="let s of statusOptions.slice(1)" [value]="s">{{ s }}</option>
+          </select>
+          <button class="btn-outline-sm" (click)="load()" [disabled]="loading">
+            {{ loading ? 'Refreshing...' : '🔄 Refresh' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Table Content -->
+      <div class="table-responsive">
+        <table class="accounting-table">
+          <thead>
+            <tr>
+              <th>BOOKING</th>
+              <th>START DATE</th>
+              <th appTooltip="Team members assigned to this job — name, type (Staff/Crew) and their role">ASSIGNED TEAM</th>
+              <th>STATUS</th>
+              <th appTooltip="Total internal payout cost = sum of (Charge/Day × Days) for every team member. Not shown to customer.">PAYOUT TOTAL (₹)</th>
+              <th style="text-align:right" appTooltip="Receipt → printable customer document&#10;Booking → edit the linked booking&#10;Team → edit who is assigned">ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let job of jobs">
+
+              <!-- Booking — clickable link -->
+              <td>
+                <span class="link-cell" (click)="editBooking(job)" title="Edit this booking">
+                  {{ job.event?.title || '—' }}
+                </span>
+                <div style="font-size:11px; color:var(--text-muted); margin-top:2px">
+                  {{ job.event?.customer?.name || '' }}
+                </div>
+              </td>
+
+              <!-- Start Date -->
+              <td>{{ (job.event?.startDate | date:'mediumDate') || '—' }}</td>
+
+              <!-- Assigned Team chips -->
+              <td style="min-width:200px">
+                <div class="team-chips" *ngIf="getAssignedTeam(job).length > 0; else noTeam">
+                  <span class="team-chip" *ngFor="let member of getAssignedTeam(job)" [title]="member.name + ' – ' + member.role">
+                    <span class="avatar-sm">{{ member.initials }}</span>
+                    {{ member.name }}
+                    <span class="chip-role">{{ member.role }}</span>
+                  </span>
+                </div>
+                <ng-template #noTeam>
+                  <span class="no-team">No team assigned</span>
+                </ng-template>
+              </td>
+
+              <!-- Status badge -->
+              <td>
+                <span class="badge-pill" [ngClass]="getStatusClass(job.status)">{{ job.status }}</span>
+              </td>
+
+              <!-- Total payout -->
+              <td style="font-weight:700">₹{{ job.totalCost | number:'1.2-2' }}</td>
+
+              <!-- Actions -->
+              <td>
+                <div class="action-group">
+                  <button class="action-btn receipt" (click)="viewReceipt(job)"
+                    appTooltip="Generate a printable PDF receipt to send to the customer. Shows who will be there, booking date, and invoice billing."
+                    tooltipPosition="top">
+                    📄 Receipt
+                  </button>
+                  <button class="action-btn booking" (click)="editBooking(job)"
+                    appTooltip="Open and edit the linked booking — customer, dates, status and linked invoice."
+                    tooltipPosition="top">
+                    📅 Booking
+                  </button>
+                  <button class="action-btn team" (click)="manageTeam(job)"
+                    appTooltip="Open the team assignment editor — add/remove staff or freelancers, set roles and daily charges."
+                    tooltipPosition="top">
+                    👥 Team
+                  </button>
+                </div>
+              </td>
+
+            </tr>
+
+            <!-- Empty State -->
+            <tr *ngIf="!loading && !jobs.length">
+              <td colspan="6" style="text-align:center; padding:4rem; color:var(--text-muted)">
+                <div style="font-size:32px; margin-bottom:1rem">📋</div>
+                <div style="font-weight:600; font-size:16px">No jobs found</div>
+                <p>Create a job by assigning a team to a confirmed booking.</p>
+                <button class="btn-outline-sm" style="margin-top:1rem" routerLink="/admin/jobs/new">+ Add Job</button>
+              </td>
+            </tr>
+
+            <!-- Loading State -->
+            <tr *ngIf="loading && !jobs.length">
+              <td colspan="6" style="text-align:center; padding:3rem; color:var(--text-muted)">
+                Loading jobs…
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="table-footer" *ngIf="totalItems > 0">
+        <div class="footer-info">
+          Showing
+          <strong>{{ (currentPage - 1) * pageSize + 1 }}–{{ currentPage * pageSize > totalItems ? totalItems : currentPage * pageSize }}</strong>
+          of {{ totalItems }} entries &nbsp; Per page:
+          <select class="input-sm" [(ngModel)]="pageSize" (change)="currentPage = 1; load()" style="width:60px; margin-left:6px">
+            <option [value]="10">10</option>
+            <option [value]="25">25</option>
+            <option [value]="50">50</option>
+          </select>
+        </div>
+        <div class="pagination">
+          <span class="page-indicator">Page {{ currentPage }} of {{ totalPages }}</span>
+          <div style="display:flex; gap:6px">
+            <button class="btn-page" [disabled]="currentPage === 1"
+              (click)="currentPage = currentPage - 1; load()">Back</button>
+            <button class="btn-page active">Page {{ currentPage }}</button>
+            <button class="btn-page" [disabled]="currentPage >= totalPages"
+              (click)="currentPage = currentPage + 1; load()">Next</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
