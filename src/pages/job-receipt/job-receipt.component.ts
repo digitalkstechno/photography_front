@@ -105,4 +105,30 @@ export class JobReceiptComponent implements OnInit {
   print() {
     window.print();
   }
+
+  downloadPDF() {
+    const element = document.getElementById('receipt-card');
+    if (!element) return;
+
+    // Temporarily add a class to ensure single-page layout if needed
+    element.classList.add('pdf-mode');
+
+    const opt = {
+      margin:       [10, 5, 10, 5], // top, left, bot, right
+      filename:     `${this.receiptNo}.pdf`,
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { 
+        scale: 2, 
+        useCORS: true, 
+        logging: false,
+        letterRendering: true,
+        scrollY: 0
+      },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    (window as any).html2pdf().from(element).set(opt).save().then(() => {
+      element.classList.remove('pdf-mode');
+    });
+  }
 }

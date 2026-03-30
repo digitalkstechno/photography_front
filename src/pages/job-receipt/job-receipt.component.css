@@ -12,11 +12,25 @@
   max-width: 860px;
   margin: 0 auto;
   background: #fff;
-  padding: 48px;
+  padding: 40px; /* Reduced from 48px to save vertical space */
   border-radius: 4px;
   border: 1px solid #eee;
   box-shadow: 0 4px 34px rgba(0,0,0,0.04);
 }
+
+/* Force everything to fit on 1 page during PDF generation */
+.pdf-mode {
+  padding: 20px !important;
+  box-shadow: none !important;
+  width: 790px !important; /* Fixed width for better scaling */
+}
+.pdf-mode .header { margin-bottom: 12px; }
+.pdf-mode .header__logo { width: 48px; height: 48px; font-size: 30px; }
+.pdf-mode .horizontal-line { margin: 16px 0; }
+.pdf-mode .info-grid { margin-bottom: 20px; gap: 20px; }
+.pdf-mode .simple-table td { padding: 8px 10px; font-size: 12px; }
+.pdf-mode .totals-container { margin-top: 16px; gap: 20px; }
+.pdf-mode .receipt-footer { margin-top: 30px; }
 
 .loading-card {
   text-align: center;

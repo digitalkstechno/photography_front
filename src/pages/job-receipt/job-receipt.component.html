@@ -6,11 +6,14 @@
       <button class="btn btn--outline" routerLink="/admin/jobs">← Back to Jobs</button>
       <span style="font-size:14px; color:#666">Job Dispatch & Billing Receipt</span>
     </div>
-    <button class="btn" (click)="print()">🖨 Print / Save PDF</button>
+    <div style="display:flex; gap:10px">
+      <button class="btn btn--outline" (click)="downloadPDF()">📄 Download PDF</button>
+      <button class="btn" (click)="print()">🖨 Print / Save PDF</button>
+    </div>
   </div>
 
   <!-- Card -->
-  <div class="card" *ngIf="job && !loading">
+  <div class="card" *ngIf="job && !loading" id="receipt-card">
 
     <!-- HEADER -->
     <div class="header">

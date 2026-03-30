@@ -873,8 +873,35 @@ app-input-renderer {
   text-align: right;
 }
 
-.dashed-border {
-  border-style: dashed !important;
+.dashed-border { border-style: dashed !important; }
+
+/* ─── GLOBAL PRINT FIXES ─── */
+@media print {
+  /* Hide overall dashboard layout elements */
+  .sidebar, 
+  .topbar, 
+  .no-print,
+  button:not(.print-visible) {
+    display: none !important;
+  }
+
+  /* Reset main containers to take full width/height without offsets */
+  .dashboard-container,
+  .main-content,
+  .content,
+  .entity-page-wrapper {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    display: block !important;
+    background: white !important;
+  }
+
+  body {
+    background: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 }
 
 /* ─────────────────────────────────────────────────
