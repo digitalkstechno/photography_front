@@ -45,6 +45,10 @@ export const routes: Routes = [
       { path: 'admin/jobs/:id/receipt', component: JobReceiptComponent },
       { path: 'admin/jobs/edit/:id', component: JobAssignmentComponent },
 
+      {
+        path: 'admin/business-settings',
+        loadComponent: () => import('../pages/business-settings/business-settings.component').then(m => m.BusinessSettingsComponent)
+      },
       { path: 'admin/:entity', component: EntityPageComponent },
       { path: 'admin/:entity/new', component: EntityFormPageComponent },
       { path: 'admin/:entity/edit/:id', component: EntityFormPageComponent },
@@ -52,10 +56,6 @@ export const routes: Routes = [
         path: 'equipments', 
         component: EntityPageComponent, 
         data: { entity: 'equipment' } 
-      },
-      {
-        path: 'admin/business-settings',
-        loadComponent: () => import('../pages/business-settings/business-settings.component').then(m => m.BusinessSettingsComponent)
       },
       {
         path: 'photoEditor',
