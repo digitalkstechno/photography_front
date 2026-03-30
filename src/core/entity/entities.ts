@@ -1,6 +1,6 @@
 import { EntityConfig } from './entity.types';
 import { environment } from '../../../environments/environment';
-import { GLOBAL_STATUS_OPTIONS } from '../constants/status.constants';
+import { WORKFLOW_STATUS_OPTIONS, PAYMENT_STATUS_OPTIONS } from '../constants/status.constants';
 
 export const ENTITIES: Record<string, EntityConfig> = {
 
@@ -187,30 +187,43 @@ export const ENTITIES: Record<string, EntityConfig> = {
       { name: 'endDate', label: 'End Date', type: 'date', required: true, class: 'input', wrapperClass: 'col-6' },
       {
         name: 'status',
-        label: 'Status',
+        label: 'Work Status',
         type: 'select',
-        options: GLOBAL_STATUS_OPTIONS,
+        options: WORKFLOW_STATUS_OPTIONS,
         class: 'input',
         wrapperClass: 'col-6',
       },
-      { name: 'totalAmount', label: 'Total Amount (₹)', type: 'number', class: 'input', wrapperClass: 'col-6' },   
+      {
+        name: 'paymentStatus',
+        label: 'Payment Status',
+        type: 'select',
+        options: PAYMENT_STATUS_OPTIONS,
+        class: 'input',
+        wrapperClass: 'col-6',
+      },
+      { name: 'totalAmount', label: 'Total Amount (₹)', type: 'number', class: 'input', wrapperClass: 'col-6' },
       { name: 'notes', label: 'Notes', type: 'textarea', class: 'textarea', wrapperClass: 'col-12' },
     ],
     filters: [
       {
         name: 'status',
-        label: 'Status',
+        label: 'Work Status',
         type: 'select',
-        options: GLOBAL_STATUS_OPTIONS,
+        options: WORKFLOW_STATUS_OPTIONS,
+      },
+      {
+        name: 'paymentStatus',
+        label: 'Payment',
+        type: 'select',
+        options: PAYMENT_STATUS_OPTIONS,
       },
     ],
     columns: [
       { key: 'customer.name', label: 'Customer' },
-
       { key: 'startDate', label: 'Start', format: 'date' },
-      { key: 'endDate', label: 'End', format: 'date' },
-      { key: 'status', label: 'Status' },
-      { key: 'invoice.invoiceNumber', label: 'Invoice' },
+      { key: 'status', label: 'Workflow' },
+      { key: 'paymentStatus', label: 'Payment' },
+      { key: 'invoice.invoiceNumber', label: 'Inv #' },
     ],
     sidebar: true,
     ui: {
@@ -285,7 +298,7 @@ export const ENTITIES: Record<string, EntityConfig> = {
         name: 'status',
         label: 'Status',
         type: 'select',
-        options: GLOBAL_STATUS_OPTIONS,
+        options: WORKFLOW_STATUS_OPTIONS,
         class: 'input',
         wrapperClass: 'col-4',
       },
@@ -456,10 +469,19 @@ export const ENTITIES: Record<string, EntityConfig> = {
       },
       {
         name: 'status',
-        label: 'Status',
+        label: 'Work Status',
         type: 'select',
-        defaultValue: 'PENDING',
-        options: GLOBAL_STATUS_OPTIONS,
+        defaultValue: 'DRAFT',
+        options: WORKFLOW_STATUS_OPTIONS,
+        class: 'input',
+        wrapperClass: 'col-4',
+      },
+      {
+        name: 'paymentStatus',
+        label: 'Payment Status',
+        type: 'select',
+        defaultValue: 'UNPAID',
+        options: PAYMENT_STATUS_OPTIONS,
         class: 'input',
         wrapperClass: 'col-4',
       },
@@ -476,17 +498,23 @@ export const ENTITIES: Record<string, EntityConfig> = {
     filters: [
       {
         name: 'status',
-        label: 'Status',
+        label: 'Work Status',
         type: 'select',
-        options: GLOBAL_STATUS_OPTIONS,
+        options: WORKFLOW_STATUS_OPTIONS,
+      },
+      {
+        name: 'paymentStatus',
+        label: 'Payment',
+        type: 'select',
+        options: PAYMENT_STATUS_OPTIONS,
       },
     ],
     columns: [
-      { key: 'invoiceNumber', label: 'Invoice #' },
+      { key: 'invoiceNumber', label: 'Inv #' },
       { key: 'customer.name', label: 'Customer' },
       { key: 'grandTotal', label: 'Total (₹)' },
-      { key: 'paidAmount', label: 'Paid (₹)' },
-      { key: 'status', label: 'Status' },
+      { key: 'status', label: 'Work' },
+      { key: 'paymentStatus', label: 'Payment' },
       { key: 'createdAt', label: 'Date', format: 'date' },
     ],
     sidebar: true,
@@ -664,7 +692,7 @@ export const ENTITIES: Record<string, EntityConfig> = {
         name: 'status',
         label: 'Status',
         type: 'select',
-        options: GLOBAL_STATUS_OPTIONS,
+        options: WORKFLOW_STATUS_OPTIONS,
         class: 'input',
         wrapperClass: 'col-6',
       },

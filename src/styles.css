@@ -993,3 +993,149 @@ app-input-renderer {
 .help-icon:hover {
   background: #cbd5e1;
 }
+
+/* ─────────────────────────────────────────────────
+   GLOBAL SOFT UI BUTTONS (Pill Style)
+   ───────────────────────────────────────────────── */
+.btn-soft {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+
+.btn-soft:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.btn-soft:active {
+  transform: translateY(0);
+}
+
+/* Yellow / Warning (Receipts) */
+.btn-soft-yellow {
+  background: #fef3c7;
+  color: #92400e;
+  border-color: #fde68a;
+}
+.btn-soft-yellow:hover {
+  background: #fde68a;
+}
+
+/* Blue / Primary (Bookings) */
+.btn-soft-blue {
+  background: #e0e7ff;
+  color: #3730a3;
+  border-color: #c7d2fe;
+}
+.btn-soft-blue:hover {
+  background: #c7d2fe;
+}
+
+/* Green / Success (Team) */
+.btn-soft-green {
+  background: #dcfce7;
+  color: #166534;
+  border-color: #bbf7d0;
+}
+.btn-soft-green:hover {
+  background: #bbf7d0;
+}
+
+/* Red / Danger (Delete) */
+.btn-soft-red {
+  background: #fee2e2;
+  color: #991b1b;
+  border-color: #fecaca;
+}
+.btn-soft-red:hover {
+  background: #fecaca;
+}
+
+/* Purple / Info (Invoices / Ledger) */
+.btn-soft-purple {
+  background: #f3f4ff;
+  color: #5a5fc5;
+  border-color: #e0e2ff;
+}
+.btn-soft-purple:hover {
+  background: #e0e2ff;
+}
+
+/* Gray / Default */
+.btn-soft-gray {
+  background: #f3f4f6;
+  color: #4b5563;
+  border-color: #e5e7eb;
+}
+.btn-soft-gray:hover {
+  background: #e5e7eb;
+}
+
+/* --- Global Filter Chips (Shared by Tables and Job List) --- */
+.filters-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.status-chips {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.filter-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-right: 4px;
+}
+
+.chip {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1.5px solid #e2e8f0;
+  background: white;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.chip:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.chip.active {
+  background: #334155 !important;
+  color: white !important;
+  border-color: #334155 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.chip.border-dashed {
+  border-style: dashed !important;
+  border-width: 1.5px;
+}
+
+/* Status color variations for active chips */
+.chip.active.btn-soft-blue   { background: #1e3a8a !important; border-color: #1e3a8a !important; }
+.chip.active.btn-soft-green  { background: #14532d !important; border-color: #14532d !important; }
+.chip.active.btn-soft-yellow { background: #713f12 !important; border-color: #713f12 !important; }
+.chip.active.btn-soft-purple { background: #581c87 !important; border-color: #581c87 !important; }
+.chip.active.btn-soft-red    { background: #7f1d1d !important; border-color: #7f1d1d !important; }

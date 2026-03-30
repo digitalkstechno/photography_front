@@ -1,13 +1,15 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { EntityColumn, EntityTableFilter } from '../../core/entity/entity.types';
 
 @Component({
   selector: 'app-table',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
 })
@@ -34,8 +36,19 @@ export class TableComponent implements OnInit, OnChanges {
   activeFilters: Record<string, any> = {};
 
   private requestId = 0; // 🔒 race-condition guard
+  private searchSubject = new Subject<string>();
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) { 
+    // SETUP DEBOUNCED SEARCH
+    this.searchSubject.pipe(
+      debounceTime(400),
+      distinctUntilChanged()
+    ).subscribe((val) => {
+      this.search = val;
+      this.page = 1;
+      this.loadData();
+    });
+  }
 
   ngOnInit() {
     if (!this.fetchFn) {
@@ -101,9 +114,8 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   onSearch(event: Event) {
-    this.search = (event.target as HTMLInputElement).value;
-    this.page = 1;
-    this.loadData();
+    const val = (event.target as HTMLInputElement).value;
+    this.searchSubject.next(val);
   }
 
   onLimitChange() {
@@ -112,6 +124,12 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   onFilterChange() {
+    this.page = 1;
+    this.loadData();
+  }
+
+  setFilter(name: string, value: any) {
+    this.activeFilters[name] = value;
     this.page = 1;
     this.loadData();
   }
@@ -165,5 +183,16 @@ export class TableComponent implements OnInit, OnChanges {
 
   isActionVisible(action: any, row: any): boolean {
     return action.isVisible ? action.isVisible(row) : true;
+  }
+
+  getSoftClass(label: string): string {
+    const l = label?.toLowerCase() || '';
+    if (l.includes('receipt')) return 'btn-soft-yellow';
+    if (l.includes('booking') || l.includes('book')) return 'btn-soft-blue';
+    if (l.includes('team'))    return 'btn-soft-green';
+    if (l.includes('edit'))    return 'btn-soft-purple';
+    if (l.includes('delete'))  return 'btn-soft-red';
+    if (l.includes('ledger'))  return 'btn-soft-purple';
+    return 'btn-soft-gray';
   }
 }

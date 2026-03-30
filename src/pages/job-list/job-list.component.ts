@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/http/api.service';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { TooltipDirective } from '../../shared/tooltip/tooltip.directive';
 
 @Component({
@@ -38,24 +39,6 @@ import { TooltipDirective } from '../../shared/tooltip/tooltip.directive';
     }
     .link-cell:hover { text-decoration: underline; }
     .action-group { display: flex; justify-content: flex-end; gap: 4px; align-items: center; }
-    .action-btn {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 5px 10px; border-radius: 6px; font-size: 12px;
-      font-weight: 600; border: 1px solid transparent; cursor: pointer;
-      transition: all .15s;
-    }
-    .action-btn.booking {
-      background: #e0e7ff; color: #4338ca; border-color: #c7d2fe;
-    }
-    .action-btn.booking:hover { background: #c7d2fe; }
-    .action-btn.team {
-      background: #d1fae5; color: #065f46; border-color: #a7f3d0;
-    }
-    .action-btn.team:hover { background: #a7f3d0; }
-    .action-btn.receipt {
-      background: #fef3c7; color: #92400e; border-color: #fde68a;
-    }
-    .action-btn.receipt:hover { background: #fde68a; }
   `]
 })
 export class JobListComponent implements OnInit {
@@ -70,10 +53,22 @@ export class JobListComponent implements OnInit {
   totalItems = 0;
   pageSize = 10;
 
-  statusOptions = ['', 'PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED'];
+  statusOptions = ['DRAFT', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'];
   selectedStatus = '';
 
-  constructor(private api: ApiService, private router: Router) {}
+  private searchSubject = new Subject<string>();
+
+  constructor(private api: ApiService, private router: Router) {
+    // SETUP DEBOUNCED SEARCH
+    this.searchSubject.pipe(
+      debounceTime(400),
+      distinctUntilChanged()
+    ).subscribe((val) => {
+      this.searchQuery = val;
+      this.currentPage = 1;
+      this.load();
+    });
+  }
 
   async ngOnInit() {
     this.load();
@@ -120,8 +115,18 @@ export class JobListComponent implements OnInit {
     }
   }
 
-  onSearchChange() { this.currentPage = 1; this.load(); }
+  onSearchChange(event: Event) { 
+    const val = (event.target as HTMLInputElement).value;
+    this.searchSubject.next(val);
+  }
+
   onFilterChange() { this.currentPage = 1; this.load(); }
+
+  setFilter(status: string) {
+    this.selectedStatus = status === this.selectedStatus ? '' : status;
+    this.currentPage = 1;
+    this.load();
+  }
 
   /** Returns each assigned member's display info */
   getAssignedTeam(job: any): { name: string; role: string; initials: string }[] {

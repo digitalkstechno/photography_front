@@ -23,15 +23,33 @@
             type="text"
             class="search-input"
             placeholder="Filter results..."
-            [(ngModel)]="searchQuery"
-            (input)="onSearchChange()"
+            [ngModel]="searchQuery"
+            (input)="onSearchChange($event)"
           />
         </div>
-        <div class="controls-right" style="display:flex; gap:8px; align-items:center">
-          <select class="input-sm" [(ngModel)]="selectedStatus" (change)="onFilterChange()" style="min-width:160px">
-            <option value="">All Statuses</option>
-            <option *ngFor="let s of statusOptions.slice(1)" [value]="s">{{ s }}</option>
-          </select>
+
+        <div class="filters-container">
+          <div class="status-chips">
+            <label class="filter-label">Status:</label>
+            <button 
+              type="button"
+              class="chip border-dashed" 
+              [class.active]="selectedStatus === ''"
+              (click)="setFilter('')">
+              🌎 ALL
+            </button>
+            <button 
+              type="button"
+              *ngFor="let s of statusOptions"
+              class="chip"
+              [class.active]="selectedStatus === s"
+              (click)="setFilter(s)">
+              {{ s }}
+            </button>
+          </div>
+        </div>
+
+        <div class="controls-right" style="margin-left: auto;">
           <button class="btn-outline-sm" (click)="load()" [disabled]="loading">
             {{ loading ? 'Refreshing...' : '🔄 Refresh' }}
           </button>
@@ -92,17 +110,17 @@
               <!-- Actions -->
               <td>
                 <div class="action-group">
-                  <button class="action-btn receipt" (click)="viewReceipt(job)"
+                  <button class="btn-soft btn-soft-yellow" (click)="viewReceipt(job)"
                     appTooltip="Generate a printable PDF receipt to send to the customer. Shows who will be there, booking date, and invoice billing."
                     tooltipPosition="top">
                     📄 Receipt
                   </button>
-                  <button class="action-btn booking" (click)="editBooking(job)"
+                  <button class="btn-soft btn-soft-blue" (click)="editBooking(job)"
                     appTooltip="Open and edit the linked booking — customer, dates, status and linked invoice."
                     tooltipPosition="top">
                     📅 Booking
                   </button>
-                  <button class="action-btn team" (click)="manageTeam(job)"
+                  <button class="btn-soft btn-soft-green" (click)="manageTeam(job)"
                     appTooltip="Open the team assignment editor — add/remove staff or freelancers, set roles and daily charges."
                     tooltipPosition="top">
                     👥 Team

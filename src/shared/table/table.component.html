@@ -13,13 +13,40 @@
     </div>
 
     <!-- DYNAMIC FILTERS -->
-    <div class="filters-container d-flex gap-2 ms-3" *ngIf="filters?.length">
-      <ng-container *ngFor="let filter of filters">
-         <select *ngIf="filter.type === 'select'" [(ngModel)]="activeFilters[filter.name]" (change)="onFilterChange()" class="form-select-sm limit-select">
+    <div class="filters-container" *ngIf="filters?.length">
+      <div *ngFor="let filter of filters">
+
+        <!-- STATUS / PAYMENT CHIPS (Modern UI) -->
+        <div *ngIf="filter.name === 'status' || filter.name === 'paymentStatus'" class="status-chips">
+          <label class="filter-label">{{ filter.label }}:</label>
+          <button 
+            type="button"
+            class="chip border-dashed" 
+            [class.active]="activeFilters[filter.name] === undefined"
+            (click)="setFilter(filter.name, undefined)">
+            🌎 All
+          </button>
+          <button 
+            type="button"
+            *ngFor="let opt of filter.options"
+            class="chip"
+            [class.active]="activeFilters[filter.name] === opt.value"
+            [ngClass]="getSoftClass(opt.label)"
+            (click)="setFilter(filter.name, opt.value)">
+            {{ opt.label }}
+          </button>
+        </div>
+
+        <!-- GENERIC SELECT (Other filters) -->
+        <select 
+          *ngIf="filter.name !== 'status' && filter.name !== 'paymentStatus' && filter.type === 'select'" 
+          [(ngModel)]="activeFilters[filter.name]" 
+          (change)="onFilterChange()" 
+          class="form-select-sm limit-select">
             <option [ngValue]="undefined">All {{filter.label}}</option>
             <option *ngFor="let opt of filter.options" [ngValue]="opt.value">{{opt.label}}</option>
-         </select>
-      </ng-container>
+        </select>
+      </div>
     </div>
 
     <div class="controls-right">
@@ -71,27 +98,34 @@
           <!-- ACTIONS -->
           <td *ngIf="updateRoute || rowActions">
             <div class="row-actions">
-              <button *ngIf="updateRoute" (click)="goToUpdate(row)" class="btn-icon-link" title="Edit">
-                ✎
+              <!-- Default Edit Action -->
+              <button *ngIf="updateRoute" (click)="goToUpdate(row)" 
+                      class="btn-soft btn-soft-purple" title="Edit Record">
+                ✏️ Edit
               </button>
 
               <ng-container *ngIf="rowActions">
                   <button *ngFor="let action of rowActions"
-                          [class]="'btn-icon-link ' + (action.class || '')"
+                          class="btn-soft"
+                          [ngClass]="getSoftClass(action.label)"
                           (click)="handleAction(action, row)"
                           [title]="action.label"
                           [hidden]="!isActionVisible(action, row)">
+                      
                       <!-- Dynamic Icon -->
                       <span *ngIf="action.icon">{{ action.icon }}</span>
 
                       <!-- Default Icons for common labels if no icon provided -->
                       <ng-container *ngIf="!action.icon">
                         <span *ngIf="action.label === 'Ledger'">📒</span>
-                        <span *ngIf="action.label === 'Book'">📸</span>
+                        <span *ngIf="action.label === 'Book' || action.label === 'Booking'">📸</span>
                         <span *ngIf="action.label === 'Edit'">✏️</span>
                         <span *ngIf="action.label === 'Delete'">🗑️</span>
-                        <span *ngIf="action.label !== 'Ledger' && action.label !== 'Book' && action.label !== 'Edit' && action.label !== 'Delete'">⚡</span>
+                        <span *ngIf="action.label !== 'Ledger' && action.label !== 'Book' && action.label !== 'Booking' && action.label !== 'Edit' && action.label !== 'Delete'">⚡</span>
                       </ng-container>
+
+                      <!-- Action Label -->
+                      <span>{{ action.label }}</span>
                   </button>
               </ng-container>
             </div>
